@@ -1,50 +1,46 @@
 CREATE DATABASE IF NOT EXISTS gastronomia_db;
 USE gastronomia_db;
 
-CREATE TABLE IF NOT EXISTS usuarios (
+CREATE TABLE IF NOT EXISTS Usuarios (
     usuario_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(100) NOT NULL,
     rol VARCHAR(30) NOT NULL CHECK (rol IN ('cliente', 'admin')),
-    estado VARCHAR(30)
-        NOT NULL
-        DEFAULT 'activo'
-        CHECK (estado IN ('activo', 'inactivo'))
 );
 
-CREATE TABLE IF NOT EXISTS menus (
-    menu_id INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS Categorias(
+    categorias_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+)
+
+CREATE TABLE IF NOT EXISTS Productos(
+    producto_id INT PRIMARY KEY AUTO_INCREMENT,
+    categorias_id INT FOREIGN KEY REFERENCES Categorias(categorias_id) ON DELETE RESTRICT,
     nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT NULL,
-    precio DECIMAL(10, 2) NOT NULL,
-    categoria VARCHAR(30)
-        NOT NULL
-        CHECK (categoria IN ('plato', 'bebida', 'postre')),
-    disponible BOOLEAN NOT NULL DEFAULT TRUE
-);
+    precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
+)
 
-CREATE TABLE IF NOT EXISTS reservas (
+CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
-    usuario_id INT NULL,
     fecha DATE NOT NULL,
-    hora TIME NOT NULL,
-    comensales INT NOT NULL CHECK (comensales > 0),
+    email VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    DNI VARCHAR(20) NOT NULL,
+    servicio_ID INT FOREIGN KEY REFERENCES Servicios(servicio_id) ON DELETE RESTRICT,
+    telefono VARCHAR(20) NOT NULL,
+    cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
     estado VARCHAR(30)
         NOT NULL
         DEFAULT 'reservada'
-        CHECK (estado IN ('reservada', 'cancelada', 'finalizada')),
-    
-    FOREIGN KEY (usuario_id)
-        REFERENCES usuarios(usuario_id)
-        ON DELETE RESTRICT
+        CHECK (estado IN ('reservada', 'cancelada', 'finalizada'))
 );
 
-CREATE TABLE IF NOT EXISTS resenas (
+CREATE TABLE IF NOT EXISTS Resenas (
     resena_id INT PRIMARY KEY AUTO_INCREMENT,
-    usuario_id INT NULL,
     reserva_id INT NOT NULL UNIQUE,
     puntuacion_ambiente INT
         NOT NULL
@@ -58,10 +54,31 @@ CREATE TABLE IF NOT EXISTS resenas (
     comentario TEXT NULL,
     fecha DATE NOT NULL,
 
-    FOREIGN KEY (usuario_id)
-        REFERENCES usuarios(usuario_id)
-        ON DELETE RESTRICT,
     FOREIGN KEY (reserva_id)
-        REFERENCES reservas(reserva_id)
+        REFERENCES Reservas(reserva_id)
         ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS Servicios(
+    servicio_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+)
+
+CREATE TABLE IF NOT EXISTS Servicios_reserva(
+    servicios_reserva_id INT PRIMARY KEY AUTO_INCREMENT,
+    reserva_id INT NOT NULL,
+    servicio_id INT NOT NULL,
+
+    FOREIGN KEY (reserva_id)
+        REFERENCES Reservas(reserva_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (servicio_id)
+        REFERENCES Servicios(servicio_id)
+        ON DELETE RESTRICT
+)
+
+CREATE TABLE IF NOT EXISTS Mesas(
+    mesa_id INT PRIMARY KEY AUTO_INCREMENT,
+    estado VARCHAR(20) NOT NULL DEFAULT 'desocupados' CHECK (estado IN ('ocupados', 'desocupados')),
+    cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0)
 );
