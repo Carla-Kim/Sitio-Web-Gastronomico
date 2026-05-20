@@ -39,5 +39,27 @@ def agregar_categoria():
     else:
         return jsonify({'message': 'Categoría creada con éxito'}), 201
 
+#Endpoint para listar categorías
+@categorias_bp.route('/categorias', methods=['GET'])
+def listar_categorias():
+    base_url = request.base_url
+    query_args = request.args.to_dict() 
     
+    limit = request.args.get("_limit", type=int, default=10)
+    offset = request.args.get("_offset", type=int, default=0)
+    
+    if limit <= 0 or offset < 0:
+        return jsonify(ReturnErrors(400)), 400
 
+    try:
+        results = obtener_categorias(base_url, query_args, limit, offset)
+        return jsonify(results), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500

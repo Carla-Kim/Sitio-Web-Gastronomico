@@ -56,3 +56,22 @@ def insert_categoria(nombre):
         cursor.close()
         conn.close()
     
+# listado de categorías
+def seleccionar_categorias(limit, offset):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        count_query = "SELECT COUNT(*) AS total FROM Categorias"
+        cursor.execute(count_query)
+        total = cursor.fetchone()['total']
+
+        query = "SELECT * FROM Categorias ORDER BY categorias_id LIMIT %s OFFSET %s"
+        cursor.execute(query, [limit, offset])
+        categorias = cursor.fetchall()
+
+        return categorias, total
+
+    finally:
+        cursor.close()
+        conn.close()

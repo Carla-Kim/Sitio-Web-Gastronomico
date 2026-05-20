@@ -1,6 +1,7 @@
 import re
 from ..database.categorias import *
-
+from ..utils.errors import *
+from ..utils.pagination import build_links
 
 #Función para el endpoint update categoría
 def actualizar_categoria(id, data):
@@ -41,3 +42,25 @@ def crear_categoria(data):
         return 'exito', resultado  
     except Exception:
         return 'error_db'
+
+#Función para el endpoint de listar categorías
+def obtener_categorias(base_url, query_params, limit, offset):
+    categorias, total = seleccionar_categorias(limit, offset)
+
+    if total == 0:
+        raise ValueError("NOT_FOUND")
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": categorias
+    }
+    
+    return response_body
+    
