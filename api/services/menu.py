@@ -1,6 +1,7 @@
 from api.database import menu as menu_db
-from data import get_cursor
+# from data import get_cursor
 from api.utils.errors import ReturnErrors
+from ..database.connection import get_connection, get_cursor
 
 def editar_producto(id, data):
     if not data:
