@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ..services.categorias import *
+from ..utils.errors import *
 
 categorias_bp = Blueprint('categorias', __name__)
 
@@ -11,13 +12,13 @@ def formatear_categoria(id):
     result = actualizar_categoria(id, data)
 
     if result == 'body_invalido':
-        return jsonify({'error': 'El body es inválido'}), 400
+        return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
-        return jsonify({'error': 'El nombre es inválido'}), 400
+        return jsonify(ReturnErrors(400)), 400
     elif result == 'error_db':
-        return jsonify({'error': 'Error en la conexión con la base de datos'}), 500
+        return jsonify(ReturnErrors(500)), 500
     elif result == 'categoria_no_encontrada':
-        return jsonify({'error': 'No se encontró una categoría con esa ID.'}), 404
+        return jsonify(ReturnErrors(404)), 404
     else:
         return '', 204
     
@@ -28,15 +29,14 @@ def agregar_categoria():
     data = request.get_json()
     result = crear_categoria(data)
     if result == 'body_invalido':
-        return jsonify({'error': 'El body es inválido'}), 400
+        return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
-        return jsonify({'error': 'El nombre es inválido'}), 400
+        return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_duplicado':
-        return jsonify({'error': 'Ya existe una categoría con ese nombre.'}), 409 
+        return jsonify(ReturnErrors(409)), 409 
     elif result == 'error_db':
-        return jsonify({'error': 'Error en la conexión con la base de datos'}), 500
+        return jsonify(ReturnErrors(500)), 500
     else:
-        nuevo_id = result
         return jsonify({'message': 'Categoría creada con éxito'}), 201
 
     
