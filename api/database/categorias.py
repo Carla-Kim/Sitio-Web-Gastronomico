@@ -5,6 +5,7 @@ from config import DB_CONFIG, DB_NAME
 def get_connection():
     return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
 
+#Update categoría
 def update_categoria(id, nombre):
     conn = get_connection()
     cursor = conn.cursor()
@@ -24,3 +25,34 @@ def update_categoria(id, nombre):
     finally:
         cursor.close()
         conn.close()
+
+
+#Insert categoría
+
+def insert_categoria(nombre):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "INSERT INTO Categorias (nombre) VALUES (%s)",
+            (nombre,)
+        )
+        conn.commit()
+        return cursor.lastrowid
+    
+
+    except mysql.connector.Error as err:
+        conn.rollback()
+        if err.errno == 1062:
+            return 'duplicado'
+        raise err
+    
+    except Exception as err:
+        conn.rollback()
+        raise err
+    
+    finally:
+        cursor.close()
+        conn.close()
+    
