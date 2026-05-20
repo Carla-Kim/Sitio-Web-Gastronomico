@@ -2,6 +2,7 @@ import re
 from ..database.categorias import *
 from ..utils.errors import *
 from ..utils.pagination import build_links
+from ..database.connection import get_connection, get_cursor
 
 #Función para el endpoint update categoría
 def actualizar_categoria(id, data):
