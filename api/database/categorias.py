@@ -2,8 +2,8 @@ import mysql.connector
 from config import DB_CONFIG, DB_NAME
 
 # Conexión a la base de datos; a delegar en /database/connection.py
-def get_connection():
-    return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
+# def get_connection():
+#    return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
 
 #Update categoría
 def update_categoria(id, nombre):
