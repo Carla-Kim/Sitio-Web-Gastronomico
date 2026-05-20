@@ -1,7 +1,6 @@
-import mysql.connector
-from config import DB_CONFIG, DB_NAME
-
-#def get_connection():
+# import mysql.connector
+# from config import DB_CONFIG, DB_NAME
+# def get_connection():
 #    return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
 
 def borrar_producto(id_producto):
