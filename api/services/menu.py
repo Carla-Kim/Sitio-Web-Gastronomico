@@ -24,3 +24,33 @@ def editar_producto(id, data):
         return ReturnErrors(500), 500
     
     return "", 204
+
+
+#codifo: consultar productos
+def ver_productos(base_url, limit, offset):
+    # schema_errors = validate_schema(
+    #    PaginationSchema,
+    #    limit=limit,
+    #    offset=offset
+    #)
+    #if schema_errors:
+    #   return ReturnErrors(400), 400   parte de la paginacion
+    try:
+        with get_cursor() as cursor:
+            productos = menu_db.obtener_productos(cursor, limit, offset)
+    except Exception:
+        return ReturnErrors(500), 500
+    
+    productos = [{
+        "id": d["producto_id"],
+        "categoria": d["categorias_id"],
+        "nombre": d["nombre"],
+        "precio": d["precio"]
+    } for d in productos["rows"] ]
+
+    count = productos["count"]
+
+    return {
+        "usuarios": usuarios,
+        #"_links": build_links(base_url, {}, limit, offset, count)  de la paginacion
+    }, 200
