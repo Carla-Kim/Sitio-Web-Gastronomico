@@ -1,8 +1,8 @@
 import mysql.connector
 from config import DB_CONFIG, DB_NAME
 
-def get_connection():
-    return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
+#def get_connection():
+#    return mysql.connector.connect(**DB_CONFIG, database=DB_NAME)
 
 def borrar_producto(id_producto):
     conn = get_connection()
@@ -20,6 +20,7 @@ def borrar_producto(id_producto):
     finally:
         cursor.close()
         conn.close()
+        
 def check_by_id(cursor, id):
     cursor.execute("SELECT 1 FROM productos WHERE id_producto = %s", (id,))
     return cursor.fetchone() is not None
