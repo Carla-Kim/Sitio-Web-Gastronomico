@@ -82,3 +82,6 @@ CREATE TABLE IF NOT EXISTS Mesas(
     estado VARCHAR(20) NOT NULL DEFAULT 'desocupados' CHECK (estado IN ('ocupados', 'desocupados')),
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0)
 );
+
+-- Insertamos la categoría inicial para que tu prueba de Postman no falle
+INSERT INTO Categorias (categorias_id, nombre) VALUES (1, 'Platos Principales');

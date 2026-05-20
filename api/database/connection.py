@@ -1,7 +1,7 @@
 import os
 import mysql.connector
 from contextlib import contextmanager
-from app.config import DB_NAME, DB_CONFIG
+from api.database.config import DB_NAME, DB_CONFIG
 
 def get_connection():
     return mysql.connector.connect(

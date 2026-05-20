@@ -16,3 +16,4 @@ DB_CONFIG = {
     'password': DB_PASSWORD,
     'port': DB_PORT
 }
+DB_NAME = "gastronomia_db"
