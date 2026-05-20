@@ -1,6 +1,6 @@
 import os
 import mysql.connector
-from contextlib import contextmanager
+# from contextlib import contextmanager
 from app.config import DB_NAME, DB_CONFIG
 
 def get_connection():
@@ -9,7 +9,7 @@ def get_connection():
         **DB_CONFIG
     )
 
-@contextmanager #sirve mas para cuando hosteemos en pythonanywhere
+# @contextmanager #sirve mas para cuando hosteemos en pythonanywhere
 def get_cursor():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
