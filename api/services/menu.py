@@ -51,6 +51,6 @@ def ver_productos(base_url, limit, offset):
     count = productos["count"]
 
     return {
-        "usuarios": usuarios,
+        "productos": productos,
         #"_links": build_links(base_url, {}, limit, offset, count)  de la paginacion
     }, 200

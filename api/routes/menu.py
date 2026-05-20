@@ -12,3 +12,15 @@ def editar_producto(id):
     if code == 204:
         return "", code
     return jsonify(updated), code
+
+#  Consultar productos - John
+
+@menu_bp.route('/productos', methods=['GET'])
+def obtener_productos():
+    base_url = request.base_url
+    #limit = request.args.get('limit', default=10, type=int)#  
+    #offset = request.args.get('offset', default=0, type=int) #
+    productos, code = menu_service.ver_productos(base_url) #van limit y offset
+    if code == 204:
+        return "", code
+    return jsonify(productos), code
