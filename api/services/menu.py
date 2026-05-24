@@ -1,6 +1,6 @@
 from api.database import menu as menu_db
-from data import get_cursor
 from api.utils.errors import ReturnErrors
+from api.database.connection import get_connection, get_cursor
 
 def ingresar_producto(data):
     if not data:

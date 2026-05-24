@@ -37,9 +37,8 @@ def eliminar_producto(id_producto):
         return jsonify(ReturnErrors(404)), 404
     else:
         return '', 204
-    
-# Ingresar producto - Neithan
 
+# Ingresar producto - Neithan
 @menu_bp.route('/productos', methods=['POST'])
 def ingresar_producto():
     if not request.is_json:
@@ -50,5 +49,4 @@ def ingresar_producto():
     resultado, code = menu_service.ingresar_producto(data)
     
     return jsonify(resultado), code
-
-    
+  
