@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from api.services import menu as menu_service
+from ..utils.errors import *
 
 menu_bp = Blueprint("menu", __name__)
 
@@ -16,12 +17,27 @@ def editar_producto(id):
 @menu_bp.route('/productos', methods=['GET'])
 def obtener_productos():
     base_url = request.base_url
-    #limit = request.args.get('limit', default=10, type=int)#  
-    #offset = request.args.get('offset', default=0, type=int) #
-    productos, code = menu_service.ver_productos(base_url) #van limit y offset
-    if code == 204:
-        return "", code
-    return jsonify(productos), code
+    query_args = request.args.to_dict() 
+
+    limit = request.args.get('limit', default=10, type=int) 
+    offset = request.args.get('offset', default=0, type=int) 
+
+    if limit <= 0 or offset < 0:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        results = menu_service.ver_productos(base_url, query_args, limit, offset)
+        return jsonify(results), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500
+    
 
 #Eliminar producto - Nico
 @productos_bp.route('/productos/<int:id_producto>', methods=['DELETE'])

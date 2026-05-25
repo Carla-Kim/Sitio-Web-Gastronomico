@@ -1,5 +1,6 @@
 from api.database import menu as menu_db
 from api.utils.errors import ReturnErrors
+from api.utils.pagination import build_links
 from api.database.connection import get_connection, get_cursor
 
 def ingresar_producto(data):
@@ -55,34 +56,28 @@ def editar_producto(id, data):
     return "", 204
 
 
-#codifo: consultar productos
-def ver_productos(base_url, limit, offset):
-    # schema_errors = validate_schema(
-    #    PaginationSchema,
-    #    limit=limit,
-    #    offset=offset
-    #)
-    #if schema_errors:
-    #   return ReturnErrors(400), 400   parte de la paginacion
-    try:
-        with get_cursor() as cursor:
-            productos = menu_db.obtener_productos(cursor, limit, offset)
-    except Exception:
-        return ReturnErrors(500), 500
+#codigo: consultar productos
+def ver_productos(base_url,query_params, limit, offset):
+    productos, total = menu_db.obtener_productos(limit, offset)
+
+    if total == 0:
+        raise ValueError("NOT_FOUND")
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": productos
+    }
     
-    productos = [{
-        "id": d["producto_id"],
-        "categoria": d["categorias_id"],
-        "nombre": d["nombre"],
-        "precio": d["precio"]
-    } for d in productos["rows"] ]
+    return response_body
+    
 
-    count = productos["count"]
-
-    return {
-        "productos": productos,
-        #"_links": build_links(base_url, {}, limit, offset, count)  de la paginacion
-    }, 200
 
 def elimina_producto(id_producto):
     if id_producto is None:

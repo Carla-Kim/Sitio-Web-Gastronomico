@@ -1,3 +1,7 @@
+# import mysql.connector
+# from config import DB_CONFIG, DB_NAME
+
+
 def borrar_producto(id_producto):
     conn = get_connection()
     cursor = conn.cursor()
@@ -23,20 +27,25 @@ def editar_producto(cursor, id, categoria, nombre, precio):
     query = 'UPDATE productos SET categorias_id = %s, nombre = %s, precio = %s WHERE id_producto = %s'
     cursor.execute(query,(categoria, nombre, precio, id))
 
-def obtener_productos(cursor, limit, offset):
-    sql_count = "SELECT COUNT(*) as count FROM productos"
-    sql_elems = "SELECT product_id, categorias_id, nombre, precio FROM productos LIMIT %s OFFSET %s"
+def obtener_productos(limit, offset):
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
 
-    cursor.execute(sql_count)
-    count = cursor.fetchone()["count"]
+    try:
+        count_query = "SELECT COUNT(*) AS total FROM productos"
+        cursor.execute(count_query)
+        total = cursor.fetchone()['total']
 
-    cursor.execute(sql_elems, (limit, offset))  #limit y offset para la paginacion
-    rows = cursor.fetchall()
+        query = "SELECT * FROM productos ORDER BY producto_id LIMIT %s OFFSET %s"
+        cursor.execute(query, [limit, offset])
+        productos = cursor.fetchall()
 
-    return {
-        "rows": rows,
-        "count": count
-    }
+        return productos, total
+
+    finally:
+        cursor.close()
+        conn.close()
   
 def check_by_nombre(cursor, nombre):
     query = "SELECT 1 FROM Productos WHERE nombre = %s"
