@@ -136,3 +136,46 @@ def modificar_usuario(id):
     except Exception as e:
         print(f"No fue posible actualizar el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para modificar parcialmente usuario
+@usuarios_bp.route('/usuarios/<int:id>', methods=['PATCH'])
+def modificar_usuario_parcial(id):
+    body = request.get_json()
+
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        actualizar_usuario_parcial(id, body)
+
+        return jsonify({
+            "message": "Usuario actualizado correctamente"
+        }), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible actualizar el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para borrar usuario
+@usuarios_bp.route('/usuarios/<int:id>', methods=['DELETE'])
+def borrar_usuario(id):
+    try:
+        eliminar_usuario(id)
+
+        return '', 204
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible eliminar el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500

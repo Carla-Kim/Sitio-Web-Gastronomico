@@ -103,3 +103,22 @@ def actualizar_usuario(id, body):
 
     if updated_rows == 0:
         raise ValueError("NOT_FOUND")
+    
+# Función para el endpoint de modificar parcialmente usuario
+def actualizar_usuario_parcial(id, body):
+    allowed_fields = ["email", "contrasena"]
+
+    if not any(field in body for field in allowed_fields):
+        raise ValueError("BAD_REQUEST")
+
+    updated_rows = actualizar_usuario_parcial_db(id, body)
+
+    if updated_rows == 0:
+        raise ValueError("NOT_FOUND")
+    
+# Función para el endpoint de borrar usuario
+def eliminar_usuario(id):
+    deleted_rows = eliminar_usuario_db(id)
+
+    if deleted_rows == 0:
+        raise ValueError("NOT_FOUND")

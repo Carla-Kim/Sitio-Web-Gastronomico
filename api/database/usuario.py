@@ -220,3 +220,59 @@ def actualizar_usuario_db(id, body):
     finally:
         cursor.close()
         conn.close()
+
+# modificar parcialmente usuario
+def actualizar_usuario_parcial_db(id, body):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        fields = []
+        values = []
+
+        if "email" in body:
+            fields.append("email = %s")
+            values.append(body["email"])
+
+        if "contrasena" in body:
+            fields.append("contrasena = %s")
+            values.append(body["contrasena"])
+
+        query = f"""
+            UPDATE Usuarios
+            SET {", ".join(fields)}
+            WHERE usuario_id = %s
+        """
+
+        values.append(id)
+
+        cursor.execute(query, values)
+
+        conn.commit()
+
+        return cursor.rowcount
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# borrar usuario
+def eliminar_usuario_db(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+            DELETE FROM Usuarios
+            WHERE usuario_id = %s
+        """
+
+        cursor.execute(query, [id])
+
+        conn.commit()
+
+        return cursor.rowcount
+
+    finally:
+        cursor.close()
+        conn.close()
