@@ -111,3 +111,28 @@ def crear_usuario():
     except Exception as e:
         print(f"No fue posible crear el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para modificar usuario
+@usuarios_bp.route('/usuarios/<int:id>', methods=['PUT'])
+def modificar_usuario(id):
+    body = request.get_json()
+
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        actualizar_usuario(id, body)
+
+        return jsonify({
+            "message": "Usuario actualizado correctamente"
+        }), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible actualizar el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500

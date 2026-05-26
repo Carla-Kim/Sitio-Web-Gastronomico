@@ -83,3 +83,23 @@ def crear_nuevo_usuario(body):
         "usuario_id": usuario_id,
         "message": "Usuario creado correctamente"
     }
+
+# Función para el endpoint de modificar usuario
+def actualizar_usuario(id, body):
+    required_fields = [
+        "usuario",
+        "contrasena",
+        "email",
+        "nombre",
+        "apellido",
+        "rol"
+    ]
+
+    for field in required_fields:
+        if field not in body:
+            raise ValueError("BAD_REQUEST")
+
+    updated_rows = actualizar_usuario_db(id, body)
+
+    if updated_rows == 0:
+        raise ValueError("NOT_FOUND")

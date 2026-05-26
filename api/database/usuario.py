@@ -182,3 +182,41 @@ def insertar_usuario(body):
     finally:
         cursor.close()
         conn.close()
+
+# modificar usuario
+def actualizar_usuario_db(id, body):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+            UPDATE Usuarios
+            SET
+                usuario = %s,
+                contrasena = %s,
+                email = %s,
+                nombre = %s,
+                apellido = %s,
+                rol = %s
+            WHERE usuario_id = %s
+        """
+
+        values = [
+            body["usuario"],
+            body["contrasena"],
+            body["email"],
+            body["nombre"],
+            body["apellido"],
+            body["rol"],
+            id
+        ]
+
+        cursor.execute(query, values)
+
+        conn.commit()
+
+        return cursor.rowcount
+
+    finally:
+        cursor.close()
+        conn.close()
