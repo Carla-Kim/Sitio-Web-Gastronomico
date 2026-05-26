@@ -53,3 +53,31 @@ def seleccionar_usuarios(limit, offset, rol=None):
     finally:
         cursor.close()
         conn.close()
+
+# buscar usuario por ID
+def seleccionar_usuario_por_id(id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            SELECT
+                usuario_id,
+                usuario,
+                email,
+                nombre,
+                apellido,
+                rol
+            FROM Usuarios
+            WHERE usuario_id = %s
+        """
+
+        cursor.execute(query, [id])
+
+        usuario = cursor.fetchone()
+
+        return usuario
+
+    finally:
+        cursor.close()
+        conn.close()

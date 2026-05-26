@@ -1,4 +1,4 @@
-from ..database.categorias import *
+from ..database.usuario import *
 from ..utils.errors import *
 from utils.pagination import build_links
 
@@ -31,3 +31,12 @@ def obtener_usuarios(base_url, query_params, limit, offset, rol):
     }
 
     return response_body
+
+# Función para el endpoint de buscar usuario por ID
+def obtener_usuario_por_id(id):
+    usuario = seleccionar_usuario_por_id(id)
+
+    if not usuario:
+        raise ValueError("NOT_FOUND")
+
+    return usuario

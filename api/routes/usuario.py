@@ -37,3 +37,21 @@ def listar_usuarios():
     except Exception as e:
         print(f"No fue posible listar los usuarios. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para buscar usuario por ID
+@usuarios_bp.route('/usuarios/<int:id>', methods=['GET'])
+def buscar_usuario(id):
+    try:
+        usuario = obtener_usuario_por_id(id)
+
+        return jsonify(usuario), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible obtener el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
