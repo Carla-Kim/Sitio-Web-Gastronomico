@@ -73,3 +73,18 @@ def mostrar_contrasena(email):
     except Exception as e:
         print(f"No fue posible obtener la contraseña. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para mostrar rol por email
+@usuarios_bp.route('/usuarios/rol/<string:email>', methods=['GET'])
+def mostrar_rol(email):
+    try:
+        rol = obtener_rol_por_email(email)
+
+        return jsonify(rol), 200
+
+    except ValueError:
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible obtener el rol del usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500

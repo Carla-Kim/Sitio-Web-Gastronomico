@@ -103,3 +103,25 @@ def seleccionar_contrasena_por_email(email):
     finally:
         cursor.close()
         conn.close()
+
+# mostrar rol por email
+def seleccionar_rol_por_email(email):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            SELECT rol
+            FROM Usuarios
+            WHERE email = %s
+        """
+
+        cursor.execute(query, [email])
+
+        rol = cursor.fetchone()
+
+        return rol
+
+    finally:
+        cursor.close()
+        conn.close()

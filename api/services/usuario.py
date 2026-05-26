@@ -49,3 +49,12 @@ def obtener_contrasena_por_email(email):
         raise ValueError("NOT_FOUND")
 
     return contrasena
+
+# Función para el endpoint de mostrar rol
+def obtener_rol_por_email(email):
+    rol = seleccionar_rol_por_email(email)
+
+    if not rol:
+        raise ValueError("NOT_FOUND")
+
+    return rol
