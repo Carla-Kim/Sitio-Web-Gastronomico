@@ -81,3 +81,25 @@ def seleccionar_usuario_por_id(id):
     finally:
         cursor.close()
         conn.close()
+
+# mostrar contraseña por email
+def seleccionar_contrasena_por_email(email):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        query = """
+            SELECT contrasena
+            FROM Usuarios
+            WHERE email = %s
+        """
+
+        cursor.execute(query, [email])
+
+        contrasena = cursor.fetchone()
+
+        return contrasena
+
+    finally:
+        cursor.close()
+        conn.close()

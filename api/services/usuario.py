@@ -40,3 +40,12 @@ def obtener_usuario_por_id(id):
         raise ValueError("NOT_FOUND")
 
     return usuario
+
+# Función para el endpoint de mostrar contraseña por email
+def obtener_contrasena_por_email(email):
+    contrasena = seleccionar_contrasena_por_email(email)
+
+    if not contrasena:
+        raise ValueError("NOT_FOUND")
+
+    return contrasena

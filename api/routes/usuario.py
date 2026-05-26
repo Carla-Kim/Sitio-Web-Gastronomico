@@ -55,3 +55,21 @@ def buscar_usuario(id):
     except Exception as e:
         print(f"No fue posible obtener el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para mostrar contraseña por email
+@usuarios_bp.route('/usuarios/<string:email>', methods=['GET'])
+def mostrar_contrasena(email):
+    try:
+        contrasena = obtener_contrasena_por_email(email)
+
+        return jsonify(contrasena), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible obtener la contraseña. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
