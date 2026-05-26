@@ -1,0 +1,33 @@
+from ..database.categorias import *
+from ..utils.errors import *
+from utils.pagination import build_links
+
+
+# Función para el endpoint de listar usuarios
+def obtener_usuarios(base_url, query_params, limit, offset, rol):
+    usuarios, total = seleccionar_usuarios(
+        limit=limit,
+        offset=offset,
+        rol=rol
+    )
+
+    args_for_links = query_params.copy()
+
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(
+        base_url=base_url,
+        query_params=args_for_links,
+        limit=limit,
+        offset=offset,
+        total=total
+    )
+
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": usuarios
+    }
+
+    return response_body

@@ -1,0 +1,55 @@
+from database.connection import *
+
+
+# listado de usuarios
+def seleccionar_usuarios(limit, offset, rol=None):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        filters = []
+        values = []
+
+        if rol:
+            filters.append("rol = %s")
+            values.append(rol)
+
+        where_clause = ""
+
+        if filters:
+            where_clause = "WHERE " + " AND ".join(filters)
+
+        count_query = f"""
+            SELECT COUNT(*) AS total
+            FROM Usuarios
+            {where_clause}
+        """
+
+        cursor.execute(count_query, values)
+
+        total = cursor.fetchone()["total"]
+
+        query = f"""
+            SELECT
+                usuario,
+                email,
+                nombre,
+                apellido
+            FROM Usuarios
+            {where_clause}
+            ORDER BY usuario_id
+            LIMIT %s OFFSET %s
+        """
+
+        cursor.execute(
+            query,
+            values + [limit, offset]
+        )
+
+        usuarios = cursor.fetchall()
+
+        return usuarios, total
+
+    finally:
+        cursor.close()
+        conn.close()
