@@ -58,3 +58,28 @@ def obtener_rol_por_email(email):
         raise ValueError("NOT_FOUND")
 
     return rol
+
+# Función para el endpoint de crear usuario
+def crear_nuevo_usuario(body):
+    required_fields = [
+        "usuario",
+        "contrasena",
+        "email",
+        "nombre",
+        "apellido",
+        "rol"
+    ]
+
+    for field in required_fields:
+        if field not in body:
+            raise ValueError("BAD_REQUEST")
+
+    usuario_id = insertar_usuario(body)
+
+    if usuario_id == "CONFLICT":
+        raise ValueError("CONFLICT")
+
+    return {
+        "usuario_id": usuario_id,
+        "message": "Usuario creado correctamente"
+    }

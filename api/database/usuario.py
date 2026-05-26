@@ -125,3 +125,60 @@ def seleccionar_rol_por_email(email):
     finally:
         cursor.close()
         conn.close()
+
+# crear usuario
+def insertar_usuario(body):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        check_query = """
+            SELECT usuario_id
+            FROM Usuarios
+            WHERE usuario = %s
+            OR email = %s
+        """
+
+        cursor.execute(
+            check_query,
+            [
+                body["usuario"],
+                body["email"]
+            ]
+        )
+
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            return "CONFLICT"
+
+        insert_query = """
+            INSERT INTO Usuarios (
+                usuario,
+                contrasena,
+                email,
+                nombre,
+                apellido,
+                rol
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+
+        values = [
+            body["usuario"],
+            body["contrasena"],
+            body["email"],
+            body["nombre"],
+            body["apellido"],
+            body["rol"]
+        ]
+
+        cursor.execute(insert_query, values)
+
+        conn.commit()
+
+        return cursor.lastrowid
+
+    finally:
+        cursor.close()
+        conn.close()

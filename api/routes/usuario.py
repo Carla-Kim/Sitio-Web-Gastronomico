@@ -88,3 +88,26 @@ def mostrar_rol(email):
     except Exception as e:
         print(f"No fue posible obtener el rol del usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+# Endpoint para crear usuario
+@usuarios_bp.route('/usuarios', methods=['POST'])
+def crear_usuario():
+    body = request.get_json()
+
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        nuevo_usuario = crear_nuevo_usuario(body)
+
+        return jsonify(nuevo_usuario), 201
+
+    except ValueError as val_err:
+        if str(val_err) == "CONFLICT":
+            return jsonify(ReturnErrors(409)), 409
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"No fue posible crear el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
