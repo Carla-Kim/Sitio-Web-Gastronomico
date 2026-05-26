@@ -1,0 +1,376 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@400;500&display=swap');
+
+
+*{
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  color: #6A6050;
+  background-color: #0C0C0C;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+a {
+    text-decoration:none;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
+    background-color: transparent;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    height: 68px;
+}
+
+
+
+nav.scrolled {
+    background: rgba(12, 12, 12, 0.96);
+    border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+}
+
+nav h1 a{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #C9A84C;
+    letter-spacing: 0.25em;
+    margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: #A09080;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+nav ul li:hover {
+  color: #C9A84C;
+}
+
+nav ul li.reservar {
+  color: #C9A84C;
+  border: 1px solid #C9A84C;
+  padding: 0.45rem 1.2rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+nav ul li.reservar:hover {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+footer {
+  background: rgba(12, 12, 12, 0.96);
+  border-top: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 3.5rem 3rem 0;
+  font-family: 'Montserrat', sans-serif;
+  color: #A09080;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  padding-bottom: 3rem;
+}
+
+.footer-brand h2.basheros {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #C9A84C;
+  letter-spacing: 0.25em;
+  margin: 0 0 1.2rem;
+}
+
+.footer-brand p {
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: #A09080;
+  margin: 0 0 1.8rem;
+  letter-spacing: 0.15em;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.brand a,
+.brand span {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  color: #A09080;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.footer-col-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #C9A84C;
+  margin-bottom: 1.8rem;
+}
+
+.horario-item {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+}
+
+.horario-dia {
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  color: #A09080;
+  margin-bottom: 0.3rem;
+}
+
+.horario-hora {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.mapa {
+  width: 100%;
+  height: 75%;
+  aspect-ratio: 16/9;
+  background: #1a1a1a;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: rgba(160, 144, 128, 0.4);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 1.2rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: rgba(160, 144, 128, 0.55);
+}
+.footer-bottom a{
+  color: rgba(160, 144, 128, 0.55);
+}
+
+.nav-menu {
+  display: flex;
+}
+
+.menu-toggle,
+.menu-close,
+.nav-overlay { 
+    display: none; 
+}
+
+
+@media (max-width:970px){
+    nav h1 {
+        font-size: 1rem;
+    }
+    nav ul li {
+        font-size: 0.8rem;
+    }
+    .footer-brand h2.basheros {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 780px){
+    nav {
+        padding: 0 1.8rem;
+    }
+
+    .nav-menu{
+        display: none;
+    }
+
+    .menu-toggle {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+    .nav-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        inset: 0;
+        background: rgba(12, 12, 12, 0.98);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .menu-close {
+        display: flex;
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .nav-overlay ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .nav-overlay ul li {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        font-weight: 400;
+        color: #A09080;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+        transition: color 0.2s;
+    }
+
+    .nav-overlay ul li:hover { 
+        color: #C9A84C; 
+    }
+
+    .nav-overlay ul li.reservar {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        letter-spacing: 0.2em;
+        color: #C9A84C;
+        border: 1px solid #C9A84C;
+        padding: 0.8rem 2.5rem;
+    }
+
+    .overlay-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.8rem;
+    }
+
+    .overlay-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.4rem;
+        font-weight: 400;
+        color: #C9A84C;
+        letter-spacing: 0.25em;
+    }
+
+    footer{
+        padding: 3.5rem 1.8rem 0;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .footer-brand h2.basheros {
+        font-size: 1.2rem;
+        letter-spacing: 0.15em;
+        white-space: nowrap;
+    }
+
+    footer.basheros-footer {
+        padding: 2.5rem 1.5rem 0;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 0.8rem;
+        text-align: center;
+        padding: 1.5rem 0;
+    }
+    .footer-col-title {
+        font-size: 0.8rem;
+    }
+
+
+    .horario-dia {
+        font-size: 0.7rem;
+    }
+
+    .horario-hora {
+        font-size: 1.3rem;
+    }
+    .footer-brand p {
+        font-size: 0.8rem;
+    }
+
+    .brand a,
+    .brand span {
+        font-size: 0.9rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+    }
+}

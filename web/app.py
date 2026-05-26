@@ -11,7 +11,7 @@ app = Flask(
 
 @app.route('/')
 def landing():
-    return render_template('index.html')
+    return render_template('inicio.html')
 
 @app.route('/login')
 def login():
