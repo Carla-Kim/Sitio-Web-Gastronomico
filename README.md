@@ -7,6 +7,6 @@ Proyecto integrador - Introducción al Desarrollo de Software 1C2026 (Curso Lanz
 - John, Lima, jlima@fi.uba.ar, 115622;
 - Kevin Ezequiel, La Rocca, klarocca@fi.uba.ar, 115834;
 - Luis, Pérez, lperezj@fi.uba.ar, 115066;
-- Matías Agustín Cáceres, , 101883;
+- Matías Agustín Cáceres, macaceres@fi.uba.ar, 101883;
 - Neithan, Larez, nlarez@fi.uba.ar, 114904;
 - Nicolás Agustín, West, nwest@fi.uba.ar, 115416.
