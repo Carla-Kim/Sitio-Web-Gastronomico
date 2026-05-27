@@ -11,7 +11,6 @@ window.addEventListener('scroll', () => {
         nav.classList.remove('scrolled');
     }
 });
-console.log("Hola")
 
 toggle.addEventListener('click', () => {
     overlay.classList.add('open');
