@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Reseñas{% endblock %}
+
+{% block content %}
+<div class="reviews-container">
+    <header class="reviews-header">
+        <p class="review-phrase">Lo que dicen nuestros comensales</p>
+        <h1 class="reviews-title">Reseñas</h1>
+        {# <img src=" " alt="Basheros reviews banner" class="reviews-img"> #}
+        <div class="review-stats">
+            <div class="review-ambiente">
+                <span class="review-value">0.0</span>
+                <span class="review-label">Ambiente:</span>
+            </div>
+            <div class="review-comida">
+                <span class="review-value">0.0</span>
+                <span class="review-label">Comida:</span>
+            </div>
+            <div class="review-servicio">
+                <span class="review-value">0.0</span>
+                <span class="review-label">Servicio:</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="reviews-content">
+
+        <div class="review-card">
+            <div class="review-body">
+                <h2 class="review-nombre">John Doe</h2>
+                <p class="review-text">Opinión sobre el restaurante...</p>
+            </div>
+            <div class="review-user-rating">
+                <div class="review-stars">
+                    <span class="review-text">Ambiente</span>
+                    <span class="stars"></span>
+                </div>
+                <div class="review-stars">
+                    <span class="review-text">Comida</span>
+                    <span class="stars"></span>
+                </div>
+                <div class="review-stars">
+                    <span class="review-text">Servicio</span>
+                    <span class="stars"></span> 
+                </div>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <div class="pagination-buttons">
+                <button class="pagination-btn" id="prev-btn">Anterior</button>
+                <button class="pagination-btn" id="page-info">1</button>
+                <button class="pagination-btn" id="next-btn">Siguiente</button>
+            </div>
+            <div class="pagination-stats">
+                <span class="pagination-text">Página 1 de 3 - 9 reseñas en total</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/reviews.js') }}"></script>
+{% endblock %}
