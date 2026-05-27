@@ -10,7 +10,7 @@ app = Flask(
 )
 
 @app.route('/')
-def landing():
+def index():
     return render_template('inicio.html')
 
 @app.route('/login')
