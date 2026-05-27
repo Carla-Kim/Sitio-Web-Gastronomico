@@ -48,11 +48,13 @@ def obtener_productos(limit, offset):
         conn.close()
   
 def check_by_nombre(cursor, nombre):
+    """Verifica si ya existe un producto con ese nombre exacto."""
     query = "SELECT 1 FROM Productos WHERE nombre = %s"
     cursor.execute(query, (nombre,))
     return cursor.fetchone() is not None
 
 def ingresar_producto(cursor, categoria_id, nombre, precio):
+    """Inserta el producto en la base de datos y retorna el ID autogenerado."""
     query = """
         INSERT INTO Productos (categorias_id, nombre, precio) 
         VALUES (%s, %s, %s)

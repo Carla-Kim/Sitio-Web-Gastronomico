@@ -54,15 +54,30 @@ def eliminar_producto(id_producto):
     else:
         return '', 204
 
-# Ingresar producto - Neithan
+# Endpoint para ingresar producto - Neithan
 @menu_bp.route('/productos', methods=['POST'])
 def ingresar_producto():
     if not request.is_json:
-        from api.utils.errors import ReturnErrors
         return jsonify(ReturnErrors(415)), 415
         
     data = request.get_json()
-    resultado, code = menu_service.ingresar_producto(data)
-    
-    return jsonify(resultado), code
+    try:
+        nuevo_id = menu_service.ingresar_producto(data)
+        
+        resultado = {
+            "status": "success",
+            "message": "Producto ingresado correctamente.",
+            "producto_id": nuevo_id
+        }
+        return jsonify(resultado), 201
+        
+    except ValueError as val_err:
+        error_msg = str(val_err)
+        if error_msg == "CONFLICT":
+            return jsonify(ReturnErrors(409)), 409
+        return jsonify(ReturnErrors(400)), 400
+        
+    except Exception as e:
+        print(f"No fue posible ingresar el producto. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
   

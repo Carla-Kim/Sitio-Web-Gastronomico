@@ -5,32 +5,21 @@ from api.database.connection import get_connection, get_cursor
 
 def ingresar_producto(data):
     if not data:
-        return ReturnErrors(400), 400
+        raise ValueError("BAD_REQUEST")
         
     categoria_id = data.get('categoria_id')
     nombre = data.get('nombre')
     precio = data.get('precio')
     
     if not all([categoria_id, nombre, precio]):
-        return ReturnErrors(400), 400
+        raise ValueError("BAD_REQUEST")
         
-    try:
-        with get_cursor() as cursor:
+    with get_cursor() as cursor:
+        if menu_db.check_by_nombre(cursor, nombre):
+            raise ValueError("CONFLICT")
             
-            if menu_db.check_by_nombre(cursor, nombre):
-                return ReturnErrors(409), 409
-                
-            nuevo_id = menu_db.ingresar_producto(cursor, categoria_id, nombre, precio)
-            
-            resultado = {
-                "status": "success",
-                "message": "Producto ingresado correctamente.",
-                "producto_id": nuevo_id
-            }
-            return resultado, 201
-
-    except Exception as e:
-        return ReturnErrors(500), 500
+        nuevo_id = menu_db.ingresar_producto(cursor, categoria_id, nombre, precio)
+        return nuevo_id
 
 def editar_producto(id, data):
     if not data:
