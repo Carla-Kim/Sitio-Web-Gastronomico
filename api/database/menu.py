@@ -24,6 +24,9 @@ def editar_producto(cursor, id, categoria, nombre, precio):
     cursor.execute(query,(categoria, nombre, precio, id))
 
 def obtener_productos(cursor, limit, offset):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
     sql_count = "SELECT COUNT(*) as count FROM productos"
     sql_elems = "SELECT product_id, categorias_id, nombre, precio FROM productos LIMIT %s OFFSET %s"
 
