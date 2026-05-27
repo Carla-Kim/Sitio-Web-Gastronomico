@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS Categorias (
 CREATE TABLE IF NOT EXISTS Productos (
     producto_id INT PRIMARY KEY AUTO_INCREMENT,
     categorias_id INT NOT NULL,
+    descripcion VARCHAR(300),
     nombre VARCHAR(100) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
     FOREIGN KEY (categorias_id) REFERENCES Categorias(categorias_id) ON DELETE RESTRICT
