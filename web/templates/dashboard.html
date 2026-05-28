@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Dashboard
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    {% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+
+    <header>
+
+        <div class="header-container">
+
+            <div class="brand">
+
+                <h1 class="brand-name">
+                    BASHEROS
+                </h1>
+                <span class="brand-badge">
+                    Administración
+                </span>
+
+            </div>
+
+            {% block admin_nav %}
+            <nav class="navbar">
+                <ul class="nav-list">
+
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_landing') }}" class="nav-link">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_reservas') }}" class="nav-link">
+                            Reservas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_reseñas') }}" class="nav-link">
+                            Reseñas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_menu') }}" class="nav-link">
+                            Menú
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('dashboard_usuarios') }}" class="nav-link">
+                            Usuarios
+                        </a>
+                    </li>
+                    <li>
+                        <div class="user-profile">
+                            <button class="profile-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="profile-icon">
+                                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </li>
+
+                </ul>
+            </nav>
+            {% endblock %}
+
+        </div>
+
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2026 BASHEROS. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- script src="{{ url_for('static', filename='js/dashboard.js') }}"></script-->
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
