@@ -10,7 +10,7 @@ def obtener_servicios(limit, offset):
         cursor.execute(sql_count)
         total = cursor.fetchone()["count"]
 
-        sql_elems = "SELECT * FROM servicios ORDER BY servicios_id LIMIT %s OFFSET %s"
+        sql_elems = "SELECT * FROM servicios ORDER BY servicio_id LIMIT %s OFFSET %s"
         cursor.execute(sql_elems, [limit, offset])
         servicios = cursor.fetchall()
 
@@ -27,7 +27,7 @@ def obtener_servicio_id(servicio_id):
     cursor = conn.cursor(dictionary=True)
 
     try:
-        query = "SELECT * FROM servicios WHERE servicios_id = %s"
+        query = "SELECT * FROM servicios WHERE servicio_id = %s"
         cursor.execute(query, [servicio_id])
         servicio = cursor.fetchone()
         return servicio
@@ -69,13 +69,29 @@ def insertar_servicio(body):
         conn.close()
 
 
+#Actualizar un servicio por ID en la db
+def servicio_actualizado_db(servicio_id, body):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = "UPDATE servicios SET nombre = %s WHERE servicio_id = %s"
+        cursor.execute(query, [body["nombre"], servicio_id])
+        conn.commit()
+
+        return cursor.rowcount
+    
+    finally:
+        cursor.close()
+        conn.close()
+
 #Eliminar servicio por ID de la db
 def servicio_eliminado(servicio_id):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
-        query = "DELETE FROM servicios WHERE servicios_id = %s"
+        query = "DELETE FROM servicios WHERE servicio_id = %s"
         cursor.execute(query, [servicio_id])
         conn.commit()
 

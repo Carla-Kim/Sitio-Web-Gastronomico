@@ -53,7 +53,19 @@ def crear_servicio(body):
         raise ValueError("CONFLICT")
 
 #Actualizar un servicio por ID
+def actualizar_servicio_id(servicio_id, body):
+    required_field = ["nombre"]
+    
+    if required_field[0] not in body:
+        raise ValueError("BAD_REQUEST")
+    
+    servicio = servicio_actualizado_db(servicio_id, body)
 
+    if servicio == 0:
+        raise ValueError("NOT_FOUND")
+    
+    return True
+    
 
 #Eliminar servicio por ID
 def eliminar_servicio_id(servicio_id):

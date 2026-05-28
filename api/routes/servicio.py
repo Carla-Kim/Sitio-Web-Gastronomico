@@ -73,7 +73,24 @@ def crear_new_servicio():
 
 #Endpoint para actualizar un servicio existente
 @servicio_br.route("/servicios/<int:servicio_id>", methods=["PUT"])
+def update_servicio(servicio_id):
+    body = request.get_json()
 
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        actualizar_servicio_id(servicio_id, body)
+        return jsonify({"message": "Servicio actualizado exitosamente"}), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500
 
 #Endpoint para eliminar un servicio existente
 @servicio_br.route("/servicios/<int:servicio_id>", methods = ["DELETE"])
