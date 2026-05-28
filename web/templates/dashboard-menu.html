@@ -1,0 +1,93 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}Menú | Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-menu.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="menu-section">
+
+    <div class="menu-header">
+        <h1 class="menu-title">Administración: Menú</h1>
+        <div class="action-buttons">
+            <button id="btn-abrir-agregar" class="btn-primary">Agregar producto</button>
+            <button id="btn-abrir-categoria" class="btn-secondary">Ver categorías</button>
+        </div>
+    </div>
+
+    <div class="filters-card">
+        <form class="filters-form">
+            <div class="filter-group">
+                <label for="search-input">Buscar producto</label>
+                <input type="text" id="search-input" placeholder="Nombre o descripción...">
+            </div>
+            <div class="filter-group">
+                <label for="input_precio_min">Precio Min</label>
+                <input type="number" id="input_precio_min" placeholder="Min">
+            </div>
+            <div class="filter-group">
+                <label for="input_precio_max">Precio Max</label>
+                <input type="number" id="input_precio_max" placeholder="Max">
+            </div>
+            <div class="filter-group">
+                <label for="category-filter">Categoría</label>
+                <select id="category-filter">
+                    <option value="all">Todas</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.nombre | lower }}">{{ categoria.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="menu-card">
+        <div class="menu-card-header">
+            <h2 class="card-title">Productos</h2>
+            <div class="pagination">
+                </div>
+        </div>
+
+        <div class="table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>ID</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Descripción</th>
+                        <th>Modificar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr class="producto-fila" data-categoria="{{ producto.categoria | lower }}">
+                        <td class="prod-name">{{ producto.nombre }}</td>
+                        <td class="prod-id">{{ producto.id }}</td>
+                        <td>{{ producto.categoria }}</td>
+                        <td class="prod-precio">${{ producto.precio }}</td>
+                        <td class="prod-descripcion">{{ producto.descripcion }}</td>
+                        <td>
+                            <button class="edit-button btn-editar-fila" aria-label="Editar">Editar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal-agregar" class="modal-overlay hidden">
+        </div>
+    
+    <div id="modal-editar" class="modal-overlay hidden">
+        </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}
