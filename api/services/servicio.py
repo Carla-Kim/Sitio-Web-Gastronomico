@@ -51,3 +51,21 @@ def crear_servicio(body):
         }
     else:
         raise ValueError("CONFLICT")
+
+#Actualizar un servicio por ID
+
+
+#Eliminar servicio por ID
+def eliminar_servicio_id(servicio_id):
+
+    servicio = verificacion_servicio_id(servicio_id)
+
+    if servicio is None:
+        raise ValueError("NOT_FOUND")
+    
+    else:
+        delete = servicio_eliminado(servicio_id)
+        return {
+            "message": "Servicio eliminado exitosamente"
+        }
+

@@ -68,3 +68,31 @@ def insertar_servicio(body):
         cursor.close()
         conn.close()
 
+#verificacion de un servicio por ID antes de su eliminacion
+def verificacion_servicio_id(servicio_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = "SELECT * FROM servicios WHERE servicios_id = %s"
+        cursor.execute(query, [servicio_id])
+        
+        return cursor.fetchone()
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+#Eliminar servicio por ID de la db
+def servicio_eliminado(servicio_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = "DELETE FROM servicios WHERE servicios_id = %s"
+        cursor.execute(query, [servicio_id])
+        conn.commit()
+    
+    finally:
+        cursor.close()
+        conn.close()
