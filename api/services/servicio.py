@@ -57,15 +57,10 @@ def crear_servicio(body):
 
 #Eliminar servicio por ID
 def eliminar_servicio_id(servicio_id):
-
-    servicio = verificacion_servicio_id(servicio_id)
-
-    if servicio is None:
-        raise ValueError("NOT_FOUND")
     
-    else:
-        delete = servicio_eliminado(servicio_id)
-        return {
-            "message": "Servicio eliminado exitosamente"
-        }
+    delete = servicio_eliminado(servicio_id)
+
+    if delete == 0:
+        raise ValueError("NOT_FOUND")
+        
 
