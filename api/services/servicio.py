@@ -3,6 +3,7 @@ from api.database.servicio import *
 from api.utils.errors import *
 from api.utils.pagination import *
 
+#Ver todos los servicios 
 def ver_servicios(base_url, query_params, limit, offset):
     servicios, total = obtener_servicios(limit, offset)
     
@@ -22,3 +23,12 @@ def ver_servicios(base_url, query_params, limit, offset):
     }
 
     return response_body
+
+#Ver un servicio por ID
+def ver_servicio_id(servicio_id):
+    servicio = obtener_servicio_id(servicio_id)
+    
+    if servicio is None:
+        raise ValueError("NOT_FOUND")
+    
+    return servicio
