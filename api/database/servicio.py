@@ -35,3 +35,36 @@ def obtener_servicio_id(servicio_id):
     finally:
         cursor.close()
         conn.close()
+
+
+#verificacion de un servicio antes de su creacion
+def verificacion_servicio(body):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = "SELECT * FROM servicios WHERE nombre = %s"
+        cursor.execute(query, [body["nombre"]])
+        
+        return cursor.fetchone()
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+#Insertar un nuevo servicio en la db
+def insertar_servicio(body):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    try:
+        query = "INSERT INTO servicios (nombre) VALUES (%s)"
+        cursor.execute(query, [body["nombre"]])
+        conn.commit()
+
+        return cursor.lastrowid
+    
+    finally:
+        cursor.close()
+        conn.close()
+

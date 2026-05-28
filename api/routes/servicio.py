@@ -47,3 +47,25 @@ def servicio_id(servicio_id):
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+
+#Endpoint para crear un nuevo servicio
+@servicio_br.route("/servicios", methods=["POST"])
+def crear_new_servicio():
+    body = request.get_json()
+
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+
+    try:
+        new_servicio = crear_servicio(body)
+        return jsonify(new_servicio), 201
+    
+    except ValueError as val_err:
+        if str(val_err) == "CONFLICT":
+            return jsonify(ReturnErrors(409)), 409
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500

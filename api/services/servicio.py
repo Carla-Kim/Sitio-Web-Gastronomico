@@ -32,3 +32,22 @@ def ver_servicio_id(servicio_id):
         raise ValueError("NOT_FOUND")
     
     return servicio
+
+
+#crear un nuevo servicio
+def crear_servicio(body):
+    required_field = ["nombre"]
+
+    if required_field[0] not in body:
+        raise ValueError("BAD_REQUEST")
+    
+    validacion = verificacion_servicio(body) 
+
+    if validacion is None:
+        create = insertar_servicio(body)
+        return {
+            "servicio": create,
+            "message": "Servicio creado exitosamente"
+        }
+    else:
+        raise ValueError("CONFLICT")
