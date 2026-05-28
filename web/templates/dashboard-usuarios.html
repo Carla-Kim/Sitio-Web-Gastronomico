@@ -1,0 +1,78 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}Usuarios | Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-usuarios.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="usuarios-section">
+
+    <div class="usuarios-header">
+        <h1 class="usuarios-title">Administración: Usuarios</h1>
+        <button id="btn-abrir-agregar" class="services-button">Agregar usuario</button>
+    </div>
+
+    <div class="filters-card">
+        <form class="filters-form">
+            <div class="filter-group">
+                <label>Búsqueda:</label>
+                <input type="text" placeholder="Buscar por nombre o apellido...">
+            </div>
+            <div class="filter-group">
+                <label for="input_id">ID:</label>
+                <input type="number" id="input_id" placeholder="ID">
+            </div>
+            <div class="filter-group">
+                <label for="input_email">Email:</label>
+                <input type="text" id="input_email" placeholder="EMAIL">
+            </div>
+            <div class="filter-group">
+                <label for="rol-filter">Rol:</label>
+                <select id="rol-filter">
+                    <option value="all">Todos los roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="usuario">Usuario</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="usuarios-card">
+        <div class="usuarios-card-header">
+            <h2 class="card-title">Usuarios</h2>
+        </div>
+
+        <div class="table-container">
+            <table class="usuarios-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombre y apellido</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Ver detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.usuario }}</td>
+                        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.rol }}</td>
+                        <td>
+                            <button type="button" class="view-button">Ver</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
