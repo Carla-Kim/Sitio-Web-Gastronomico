@@ -1,0 +1,249 @@
+.reservas-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 3rem 2rem;
+}
+
+.reservas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.reservas-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.services-button {
+    padding: 0.9rem 1.4rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #606060;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filters-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+    background-color: #F6F8FA;
+    border-radius: 10px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.filter-group input,
+.filter-group button {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+}
+
+.filter-group input {
+    border: 1px solid #D0D0D0;
+    background-color: #F6F8FA;
+}
+
+.filter-group button {
+    border: 1px solid transparent;
+    background-color: #606060;
+    color: #FFFFFF;
+}
+
+.reservas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: #F6F8FA;
+    border-radius: 10px;
+}
+
+.reservas-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-button {
+    padding: 0.55rem 0.9rem;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.page-button.active {
+    background-color: #606060;
+    color: #FFFFFF;
+}
+
+.page-dots {
+    font-size: 0.9rem;
+}
+
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+}
+
+.reservas-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reservas-table th,
+.reservas-table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+.reservas-table thead {
+    background-color: #F6F8FA;
+    border-bottom: 1px solid #E2E2E2;
+}
+
+.reservas-table tbody tr {
+    border-top: 1px solid #E2E2E2;
+}
+
+.view-button {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #606060;
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: #F6F8FA;
+    border-radius: 10px;
+}
+
+.close-modal-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    border: none;
+    background-color: transparent;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.modal-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.modal-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.modal-table th {
+    width: 280px;
+    background-color: #F6F8FA;
+    font-weight: 600;
+}
+
+.modal-table td,
+.modal-table th {
+    width: auto;
+    border-top: 1px solid #E2E2E2;
+}
+
+.register-button {
+    align-self: flex-end;
+    padding: 0.9rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #606060;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+
+@media (max-width: 900px) {
+    .reservas-card-header,
+    .reservas-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filters-form {
+        grid-template-columns: 1fr;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
