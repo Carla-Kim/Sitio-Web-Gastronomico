@@ -141,3 +141,35 @@ def filtrar_por_estado(base_url, query_params, estado, limit, offset):
     }
     return 'exito', response_body
     
+"""def borrar_reserva(id):
+    try:
+        rows = eliminar_reserva_id(id)
+    except Exception:
+        return 'error_db'
+
+    if not rows:
+        return 'reserva_no_encontrada'
+    return 'exito'"""
+def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
+    if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(fecha)) is None:
+        return 'fecha_invalida'
+
+    try:
+        reservas, total = seleccionar_reservas_por_fecha(fecha, limit, offset)
+        if total == 0:
+            return 'no_encontrado'
+    except Exception:
+        return 'error_db'
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+    
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": reservas
+    }
+    return 'exito', response_body

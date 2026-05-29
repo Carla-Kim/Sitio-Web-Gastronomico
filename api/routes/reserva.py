@@ -100,3 +100,26 @@ def listar_reservas_por_estado(estado):
     else:
         status, response_body = result
         return jsonify(response_body), 200
+    
+@reservas_bp.route('/reservas/fecha/<string:fecha>', methods=['GET'])
+def listar_reservas_por_fecha(fecha):
+    base_url = request.base_url
+    query_args = request.args.to_dict()
+    
+    limit = request.args.get("_limit", type=int, default=10)
+    offset = request.args.get("_offset", type=int, default=0)
+    
+    if limit <= 0 or offset < 0:
+        return jsonify(ReturnErrors(400)), 400
+
+    result = obtener_reservas_por_fecha(base_url, query_args, fecha, limit, offset)
+
+    if result == 'fecha_invalida':
+        return jsonify(ReturnErrors(400)), 400
+    elif result == 'no_encontrado':
+        return jsonify(ReturnErrors(404)), 404
+    elif result == 'error_db':
+        return jsonify(ReturnErrors(500)), 500
+    else:
+        status, response_body = result
+        return jsonify(response_body), 200

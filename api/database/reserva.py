@@ -90,3 +90,34 @@ def seleccionar_reservas_por_estado(estado, limit, offset): #Usamos paginacion t
     finally:
         cursor.close()
         conn.close()
+
+#Preguntar si eliminamos por id o pasamos a estado cancelado
+"""def eliminar_reserva_id(id): 
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM Reservas WHERE reserva_id = %s", [id])
+        conn.commit()
+        return cursor.rowcount
+    except Exception as err:
+        conn.rollback()
+        raise err
+    finally:
+        cursor.close()
+        conn.close()"""
+
+def seleccionar_reservas_por_fecha(fecha, limit, offset):#Misma lógica que la anterior, tal vez optimizable.
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        count_query = "SELECT COUNT(*) AS total FROM Reservas WHERE fecha = %s"
+        cursor.execute(count_query, [fecha])
+        total = cursor.fetchone()['total']
+        
+        query = "SELECT * FROM Reservas WHERE fecha = %s ORDER BY reserva_id LIMIT %s OFFSET %s"
+        cursor.execute(query, [fecha, limit, offset])
+        reservas = cursor.fetchall()
+        return reservas, total
+    finally:
+        cursor.close()
+        conn.close()
