@@ -62,3 +62,15 @@ def seleccionar_reservas(limit, offset):
     finally:
         cursor.close()
         conn.close()
+
+def seleccionar_unica_reserva(id): #Borrar en caso de no ser necesaria utilizar
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT * FROM Reservas WHERE reserva_id = %s"
+        cursor.execute(query, [id])
+        reserva = cursor.fetchone()
+        return reserva
+    finally:
+        cursor.close()
+        conn.close()

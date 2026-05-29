@@ -107,3 +107,12 @@ def obtener_reservas(base_url, query_params, limit, offset):
         "data": reservas
     }
     return response_body
+
+def obtener_reserva_por_id(id):
+    try:
+        reserva = seleccionar_unica_reserva(id)
+        if not reserva:
+            return 'reserva_no_encontrada'
+        return 'exito', reserva
+    except Exception:
+        return 'error_db'

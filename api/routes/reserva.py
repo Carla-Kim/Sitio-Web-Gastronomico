@@ -65,3 +65,15 @@ def listar_reservas():
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
+    
+@reservas_bp.route('/reservas/<int:id>', methods=['GET'])
+def buscar_reserva(id):
+    result = obtener_reserva_por_id(id)
+    
+    if result == 'reserva_no_encontrada':
+        return jsonify(ReturnErrors(404)), 404
+    elif result == 'error_db':
+        return jsonify(ReturnErrors(500)), 500
+    else:
+        status, reserva = result
+        return jsonify(reserva), 200
