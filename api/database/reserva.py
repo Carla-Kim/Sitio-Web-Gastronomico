@@ -74,3 +74,19 @@ def seleccionar_unica_reserva(id): #Borrar en caso de no ser necesaria utilizar
     finally:
         cursor.close()
         conn.close()
+
+def seleccionar_reservas_por_estado(estado, limit, offset): #Usamos paginacion también por si son muchas
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        count_query = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = %s"
+        cursor.execute(count_query, [estado])
+        total = cursor.fetchone()['total']
+        
+        query = "SELECT * FROM Reservas WHERE estado = %s ORDER BY reserva_id LIMIT %s OFFSET %s"
+        cursor.execute(query, [estado, limit, offset])
+        reservas = cursor.fetchall()
+        return reservas, total
+    finally:
+        cursor.close()
+        conn.close()

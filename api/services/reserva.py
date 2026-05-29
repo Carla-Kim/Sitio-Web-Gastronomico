@@ -1,5 +1,5 @@
 import re
-from ..database.reservas import *
+from ..database.reserva import *
 from ..utils.pagination import build_links
 
 def crear_reserva(data):
@@ -116,3 +116,28 @@ def obtener_reserva_por_id(id):
         return 'exito', reserva
     except Exception:
         return 'error_db'
+
+def filtrar_por_estado(base_url, query_params, estado, limit, offset):
+    if estado not in ['reservada', 'cancelada', 'finalizada']: #Son los estados que definimos en la bdd
+        return 'estado_invalido'
+    
+    try:
+        reservas, total = seleccionar_reservas_por_estado(estado, limit, offset)
+        if total == 0:
+            return 'no_encontrado'
+    except Exception:
+        return 'error_db'
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)#Chequear si funciona bien. Hacer pruebas unitarias
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+    
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": reservas
+    }
+    return 'exito', response_body
+    
