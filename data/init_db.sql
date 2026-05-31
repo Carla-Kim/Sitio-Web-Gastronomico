@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS Servicios (
     servicio_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
+INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES (1, 'Platos Principales');
+INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES (1, 'Servicio de Prueba');
 
 CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -70,3 +72,5 @@ CREATE TABLE IF NOT EXISTS Mesas (
 );
 
 INSERT INTO Categorias (categorias_id, nombre) VALUES (1, 'Platos Principales');
+INSERT INTO servicio (id, nombre, descripcion, precio) 
+VALUES (1, 'Servicio de Prueba', 'Descripción de testeo para reservas', 0.00);

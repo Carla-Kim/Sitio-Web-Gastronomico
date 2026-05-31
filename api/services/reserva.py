@@ -1,7 +1,6 @@
 import re
-from ..database.reserva import *
-from ..utils.pagination import build_links
-
+from api.database.reserva import *
+from api.utils.pagination import build_links
 def crear_reserva(data):
     campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas"]
     if not data or not all(i in data for i in campos):
@@ -18,15 +17,17 @@ def crear_reserva(data):
     estado = data.get("estado", "reservada")
 
     if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
+        print("--> FALLÓ EL NOMBRE")  # <--- AGREGAR
         return 'nombre_invalido'
     if re.fullmatch(r'[A-Za-z0-9 ]+', apellido) is None or len(apellido) > 100:
+        print("--> FALLÓ EL APELLIDO")  # <--- AGREGAR
         return 'nombre_invalido'
     if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is None or len(email) > 100:
+        print("--> FALLÓ EL EMAIL")  # <--- AGREGAR
         return 'email_invalido'
     if re.fullmatch(r'\d{7,12}', str(dni)) is None:
+        print("--> FALLÓ EL DNI")  # <--- AGREGAR
         return 'dni_invalido'
-    if estado not in ['reservada', 'cancelada', 'finalizada']:
-        return 'estado_invalido'
     
     try:
         cantidad_personas = int(cantidad_personas)

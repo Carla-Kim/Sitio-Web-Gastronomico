@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
-from ..services.reservas import *
-from ..utils.errors import *
+from api.services import reserva as reservas_service
+from api.utils.errors import ReturnErrors
 
 reservas_bp = Blueprint('reservas', __name__)
 
 @reservas_bp.route('/reservas', methods=['POST'])
 def agregar_reserva():
     data = request.get_json()
-    result = crear_reserva(data)
+    result = reservas_service.crear_reserva(data)
     
     if result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
@@ -27,7 +27,7 @@ def agregar_reserva():
 @reservas_bp.route('/reservas/<int:id>', methods=['PUT'])
 def formatear_reserva(id):
     data = request.get_json()
-    result = actualizar_reserva(id, data)
+    result = reservas_service.actualizar_reserva(id, data)
 
     if result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
@@ -56,7 +56,7 @@ def listar_reservas():
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        results = obtener_reservas(base_url, query_args, limit, offset)
+        results = reservas_service.obtener_reservas(base_url, query_args, limit, offset)
         return jsonify(results), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
@@ -68,7 +68,7 @@ def listar_reservas():
     
 @reservas_bp.route('/reservas/<int:id>', methods=['GET'])
 def buscar_reserva(id):
-    result = obtener_reserva_por_id(id)
+    result = reservas_service.obtener_reserva_por_id(id)
     
     if result == 'reserva_no_encontrada':
         return jsonify(ReturnErrors(404)), 404
@@ -89,8 +89,7 @@ def listar_reservas_por_estado(estado):
     if limit <= 0 or offset < 0:
         return jsonify(ReturnErrors(400)), 400
 
-    result = obtener_reservas_por_estado(base_url, query_args, estado, limit, offset)
-
+    result = reservas_service.filtrar_por_estado(base_url, query_args, estado, limit, offset)
     if result == 'estado_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'no_encontrado':
@@ -112,7 +111,7 @@ def listar_reservas_por_fecha(fecha):
     if limit <= 0 or offset < 0:
         return jsonify(ReturnErrors(400)), 400
 
-    result = obtener_reservas_por_fecha(base_url, query_args, fecha, limit, offset)
+    result = reservas_service.obtener_reservas_por_fecha(base_url, query_args, fecha, limit, offset)
 
     if result == 'fecha_invalida':
         return jsonify(ReturnErrors(400)), 400
