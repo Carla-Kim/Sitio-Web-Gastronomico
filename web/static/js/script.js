@@ -2,6 +2,7 @@ const nav = document.querySelector('nav');
 const toggle = document.querySelector('.menu-toggle');
 const overlay = document.querySelector('.nav-overlay');
 const close = document.querySelector('.menu-close');
+const navLinks = document.querySelectorAll('.nav-overlay ul li a');
 
 window.addEventListener('scroll', () => {
     if (window.scrollY>10) {
@@ -10,11 +11,16 @@ window.addEventListener('scroll', () => {
         nav.classList.remove('scrolled');
     }
 });
-console.log("Hola")
 
 toggle.addEventListener('click', () => {
     overlay.classList.add('open');
 });
 close.addEventListener('click', () => {
     overlay.classList.remove('open');
+});
+
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    overlay.classList.remove('open');
+  });
 });
