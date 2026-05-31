@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Reseñas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resenas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+
+    <div class="hero-fondo">
+        <img src="{{ url_for('static', filename='assets/images/fondo-resena.jpg') }}" alt="img_fondo">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+        <p class="hero-info">Lo que dicen nuestros comensales</p>
+        <h1 class="hero-title">Reseñas</h1>
+    </div>
+    
+</section>
+
+<section class="review-stats">
+    <div class="review-ambiente">
+        <span class="review-value">0.0</span>
+        <span class="review-label">Ambiente</span>
+    </div>
+    <div class="review-comida">
+        <span class="review-value">0.0</span>
+        <span class="review-label">Comida</span>
+    </div>
+    <div class="review-servicio">
+        <span class="review-value">0.0</span>
+        <span class="review-label">Servicio</span>
+    </div>
+</section>
+
+<section class="reviews-content">
+    <div class="review-card" id="review-1">
+        <div class="review-body">
+            <div class="review-title">
+                <h2 class="review-nombre">John Doe</h2>
+                <img src="{{ url_for('static', filename='assets/icons/quote.svg') }}" alt="Quote" class="quote-icon">
+            </div>
+            <p class="review-text">lore ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+
+        <div class="separador"></div>
+
+        <div class="review-user-rating">
+            <div class="review-stars">
+                <span class="review-text">Ambiente</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Comida</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Servicio</span>
+                <span class="stars"></span> 
+            </div>
+        </div>
+    </div>
+
+    <div class="review-card" id="review-2">
+        <div class="review-body">
+            <div class="review-title">
+                <h2 class="review-nombre">John Doe</h2>
+                <img src="{{ url_for('static', filename='assets/icons/quote.svg') }}" alt="Quote" class="quote-icon">
+            </div>
+            <p class="review-text">lore ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+
+        <div class="separador"></div>
+
+        <div class="review-user-rating">
+            <div class="review-stars">
+                <span class="review-text">Ambiente</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Comida</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Servicio</span>
+                <span class="stars"></span> 
+            </div>
+        </div>
+    </div>
+
+    <div class="review-card" id="review-3">
+        <div class="review-body">
+            <div class="review-title">
+                <h2 class="review-nombre">John Doe</h2>
+                <img src="{{ url_for('static', filename='assets/icons/quote.svg') }}" alt="Quote" class="quote-icon">
+            </div>
+            <p class="review-text">lore ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+
+        <div class="separador"></div>
+
+        <div class="review-user-rating">
+            <div class="review-stars">
+                <span class="review-text">Ambiente</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Comida</span>
+                <span class="stars"></span>
+            </div>
+            <div class="review-stars">
+                <span class="review-text">Servicio</span>
+                <span class="stars"></span> 
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pagination">
+    <div class="pagination-buttons">
+        <button class="pagination-btn" id="prev-btn">Anterior</button>
+        <button class="pagination-btn" id="page-info">1</button>
+        <button class="pagination-btn" id="next-btn">Siguiente</button>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/reviews.js') }}"></script>
+{% endblock %}

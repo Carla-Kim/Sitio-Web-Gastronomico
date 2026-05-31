@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Basheros{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
@@ -13,7 +14,7 @@
 
             <ul class="nav-menu">
                 <li>NOSOTROS</li>
-                <li>RESEÑAS</li>
+                <li><a href="{{ url_for('resenas') }}">RESEÑAS</a></li>
                 <li>MENÚ</li>
                 <li class="reservar">RESERVAR</li>
             </ul>
@@ -37,7 +38,7 @@
                 </div>
                 <ul>
                     <li>Nosotros</li>
-                    <li>Reseñas</li>
+                    <li><a href="{{ url_for('resenas') }}">Reseñas</a></li>
                     <li>Menú</li>
                     <li class="reservar">Reservar</li>
                 </ul>
