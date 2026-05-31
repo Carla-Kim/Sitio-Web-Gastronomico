@@ -14,9 +14,9 @@
 
             <ul class="nav-menu">
                 <li><a href="{{ url_for('index') }}#nosotros">NOSOTROS</a></li>
-                <li><a href="{{ url_for('index') }}">RESEÑAS</a></li> <!-- cambiar URL cuando exista la pagina-->
-                <li><a href="{{ url_for('index') }}">MENÚ</a></li> <!-- cambiar URL cuando exista la pagina-->
-                <li class="reservar"><a href="{{ url_for('index') }}">RESERVAR</a></li> <!-- cambiar URL cuando exista la pagina-->
+                <li><a href="{{ url_for('resenas') }}">RESEÑAS</a></li> <!-- cambiar URL cuando exista la pagina-->
+                <li><a href="{{ url_for('menu') }}">MENÚ</a></li>
+                <li class="reservar">RESERVAR</li>
             </ul>
 
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -37,10 +37,10 @@
                     </button>
                 </div>
                 <ul>
-                    <li><a href="{{ url_for('index') }}#nosotros">Nosotros</a></li> <!-- cambiar URL cuando exista la pagina-->
-                    <li><a href="">Reseñas</a></li> <!-- cambiar URL cuando exista la pagina-->
-                    <li><a href="">Menú</a></li> <!-- cambiar URL cuando exista la pagina-->
-                    <li class="reservar"><a href="">Reservar</a></li> <!-- cambiar URL cuando exista la pagina-->
+                    <li><a href="{{ url_for('index') }}#nosotros">Nosotros</a></li>
+                    <li><a href="{{ url_for('resenas') }}">Reseñas</a></li>
+                    <li><a href="{{ url_for('menu') }}">Menú</a></li>
+                    <li class="reservar">Reservar</li>
                 </ul>
             </div>
         </nav>
