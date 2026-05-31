@@ -59,10 +59,15 @@ def actualizar_servicio_id(servicio_id, body):
     if required_field[0] not in body:
         raise ValueError("BAD_REQUEST")
     
-    servicio = servicio_actualizado_db(servicio_id, body)
 
-    if servicio == 0:
+    if obtener_servicio_id(servicio_id) is None:
         raise ValueError("NOT_FOUND")
+        
+    existe_nombre = verificacion_servicio(body)
+    if existe_nombre and existe_nombre["servicio_id"] != servicio_id:
+        raise ValueError("CONFLICT") 
+    
+    servicio = servicio_actualizado_db(servicio_id, body)
     
     return True
     

@@ -86,6 +86,8 @@ def update_servicio(servicio_id):
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404
+        if str(val_err) == "CONFLICT":
+            return jsonify(ReturnErrors(409)), 409
         return jsonify(ReturnErrors(400)), 400
 
     except Exception as e:
