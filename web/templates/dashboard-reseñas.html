@@ -1,0 +1,93 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}Reseñas | Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-reseñas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="reseñas-section">
+
+    <div class="reseñas-header">
+        <h1 class="reseñas-title">Administración: Reseñas</h1>
+    </div>
+
+    <div class="filters-card">
+        <form class="filters-form">
+            <div class="filter-group">
+                <label for="input_id">ID:</label>
+                <input type="number" id="input_id" placeholder="ID">
+            </div>
+            <div class="filter-group">
+                <label for="input_id_reserva">ID Reserva:</label>
+                <input type="number" id="input_id_reserva" placeholder="ID RESERVA">
+            </div>
+            <div class="filter-group">
+                <label for="fecha-inicio">Desde:</label>
+                <input type="date" id="fecha-inicio">
+            </div>
+            <div class="filter-group">
+                <label for="fecha-fin">Hasta:</label>
+                <input type="date" id="fecha-fin">
+            </div>
+            <div class="filter-group">
+                <label for="puntaje-filter">Puntaje:</label>
+                <select id="puntaje-filter">
+                    <option value="all">Todos los puntajes</option>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <div class="reseñas-card">
+        <div class="reseñas-card-header">
+            <h2 class="card-title">Reseñas</h2>
+            <div class="pagination">
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="reseñas-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ID Reserva</th>
+                        <th>Nombre y apellido</th>
+                        <th>Ambiente</th>
+                        <th>Servicio</th>
+                        <th>Comida</th>
+                        <th>Fecha</th>
+                        <th>Ver detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reseña in reseñas %}
+                    <tr class="reseña-fila" data-id_reserva="{{ reseña.id_reserva | lower }}">
+                        <td class="reseña-id">{{ reseña.id }}</td>
+                        <td>{{ reseña.id_reserva }}</td>
+                        <td class="reseña-nombre-apellido">{{ reseña.nombre }} {{ reseña.apellido }}</td>
+                        <td class="reseña-ambiente">{{ reseña.ambiente }}</td>
+                        <td class="reseña-servicio">{{ reseña.servicio }}</td>
+                        <td class="reseña-comida">{{ reseña.comida }}</td>
+                        <td class="reseña-fecha">{{ reseña.fecha }}</td>
+                        <td>
+                            <button type="button" class="view-button btn-icon-eye" aria-label="Ver detalles">Ver</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard-reseñas.js') }}"></script>
+{% endblock %}

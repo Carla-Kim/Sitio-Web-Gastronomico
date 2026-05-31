@@ -1,0 +1,139 @@
+.reseñas-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 3rem 2rem;
+}
+
+.reseñas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.reseñas-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Filtros */
+.filters-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+    background-color: #F6F8FA;
+    border-radius: 10px;
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.filter-group input, 
+.filter-group select {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    border: 1px solid #D0D0D0;
+    background-color: #F6F8FA;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.reseñas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: #F6F8FA;
+    border-radius: 10px;
+}
+
+.reseñas-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+}
+
+.reseñas-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reseñas-table th,
+.reseñas-table td {
+    padding: 1rem;
+    text-align: left;
+}
+
+.reseñas-table thead {
+    background-color: #F6F8FA;
+    border-bottom: 1px solid #E2E2E2;
+}
+
+.reseñas-table tbody tr {
+    border-top: 1px solid #E2E2E2;
+}
+
+.view-button {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #606060;
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (max-width: 1100px) {
+    .filters-form {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .reseñas-card-header,
+    .reseñas-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
