@@ -1,0 +1,190 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Reservas | Dashboard
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-reservas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="reservas-section">
+
+    <div class="reservas-header">
+
+        <h1 class="reservas-title">
+            Administración: Reservas
+        </h1>
+
+        <button class="services-button">
+            Ver servicios
+        </button>
+
+    </div>
+
+    <div class="filters-card">
+
+        <form class="filters-form">
+
+            <div class="filter-group">
+                <label for="reserva-id">ID de la reserva</label>
+                <input type="text" id="reserva-id" name="reserva-id">
+            </div>
+            <div class="filter-group">
+                <label for="estado">Estado</label>
+                <input type="text" id="estado" name="estado">
+            </div>
+            <div class="filter-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha">
+            </div>
+            <div class="filter-group">
+                <label></label>
+                <button type="submit">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="reservas-card">
+
+        <div class="reservas-card-header">
+
+            <h2 class="card-title">
+                Reservas
+            </h2>
+
+            <div class="pagination">
+                <button class="page-button">
+                    Previous
+                </button>
+                <button class="page-button active">
+                    1
+                </button>
+                <button class="page-button">
+                    2
+                </button>
+                <button class="page-button">
+                    3
+                </button>
+                <span class="page-dots">
+                    ...
+                </span>
+                <button class="page-button">
+                    67
+                </button>
+                <button class="page-button">
+                    68
+                </button>
+                <button class="page-button">
+                    Next
+                </button>
+            </div>
+
+        </div>
+
+        <div class="table-container">
+            <table class="reservas-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>DNI</th>
+                        <th>Estado</th>
+                        <th>Cantidad de Personas</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>27/05/2026</td>
+                        <td>12345678</td>
+                        <td>Pendiente</td>
+                        <td>4</td>
+                        <td>
+                            <button class="view-button" id="open-modal-button">
+                                Ver
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay hidden" id="reserva-modal">
+        <div class="modal-card">
+
+            <button class="close-modal-button" id="close-modal-button">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de la reserva
+            </h2>
+
+            <div class="table-container">
+                <table class="reservas-table modal-table">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <th>Fecha</th>
+                            <td>27/05/2026</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>adrianv@fi.uba.ar</td>
+                        </tr>
+                        <tr>
+                            <th>Nombre y Apellido</th>
+                            <td>Adrián Velázquez</td>
+                        </tr>
+                        <tr>
+                            <th>DNI</th>
+                            <td>12345678</td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono</th>
+                            <td>11 2345 6789</td>
+                        </tr>
+                        <tr>
+                            <th>Servicios</th>
+                            <td>Estacionamiento</td>
+                        </tr>
+                        <tr>
+                            <th>Cantidad de Personas</th>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <th>Estado</th>
+                            <td>Pendiente</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="register-button">
+                Registrar ingreso
+            </button>
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard-reservas.js') }}"></script>
+{% endblock %}
