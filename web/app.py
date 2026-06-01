@@ -28,6 +28,10 @@ def admin_panel():
 def resenas():
     return render_template('resenas.html')
 
+@app.route('/reservas')
+def reservas():
+    return render_template('reservas.html')
+
 @app.route('/menu')
 def menu():
     return render_template('menu.html')
