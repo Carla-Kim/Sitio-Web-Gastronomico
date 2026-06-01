@@ -122,3 +122,17 @@ def listar_reservas_por_fecha(fecha):
     else:
         status, response_body = result
         return jsonify(response_body), 200
+    
+@reservas_bp.route('/reservas/<int:id>/cancelar', methods=['PATCH'])
+def cancelar_reserva_endpoint(id):
+    result = reservas_service.cancelar_reserva(id)
+
+    if result == 'id_invalido':
+        return jsonify(ReturnErrors(400)), 400
+    elif result == 'reserva_no_encontrada':
+        return jsonify(ReturnErrors(404)), 404
+    elif result == 'error_db':
+        return jsonify(ReturnErrors(500)), 500
+    else:
+        status, response_body = result
+        return jsonify(response_body), 200
