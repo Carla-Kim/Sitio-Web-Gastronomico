@@ -36,7 +36,7 @@ def update_reserva(id, fecha, email, nombre, apellido, dni, servicio_id, telefon
         )
         conn.commit()
         return cursor.rowcount
-    except mysql.connector.Error as err:
+    except mysql.connector.Error as err:#Manejo de errores que uso despues en services y r
         conn.rollback()
         if err.errno == 1452:
             return 'servicio_no_existe'
@@ -79,8 +79,8 @@ def seleccionar_reservas_por_estado(estado, limit, offset): #Usamos paginacion t
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count_query = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = %s"
-        cursor.execute(count_query, [estado])
+        query = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = %s"
+        cursor.execute(query, [estado])
         total = cursor.fetchone()['total']
         
         query = "SELECT * FROM Reservas WHERE estado = %s ORDER BY reserva_id LIMIT %s OFFSET %s"
@@ -91,27 +91,24 @@ def seleccionar_reservas_por_estado(estado, limit, offset): #Usamos paginacion t
         cursor.close()
         conn.close()
 
-#Preguntar si eliminamos por id o pasamos a estado cancelado
-"""def eliminar_reserva_id(id): 
+def cambiar_estado_cancelado(id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)    
     try:
-        cursor.execute("DELETE FROM Reservas WHERE reserva_id = %s", [id])
+        query = "UPDATE Reservas SET estado = 'cancelada' WHERE reserva_id = %s"
+        cursor.execute(query, (id,))
         conn.commit()
         return cursor.rowcount
-    except Exception as err:
-        conn.rollback()
-        raise err
-    finally:
-        cursor.close()
-        conn.close()"""
+    except Exception as e:
+        print(f"Error en DB al cancelar: {e}")
+        raise e
 
 def seleccionar_reservas_por_fecha(fecha, limit, offset):#Misma lógica que la anterior, tal vez optimizable.
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        count_query = "SELECT COUNT(*) AS total FROM Reservas WHERE fecha = %s"
-        cursor.execute(count_query, [fecha])
+        query = "SELECT COUNT(*) AS total FROM Reservas WHERE fecha = %s"
+        cursor.execute(query, [fecha])
         total = cursor.fetchone()['total']
         
         query = "SELECT * FROM Reservas WHERE fecha = %s ORDER BY reserva_id LIMIT %s OFFSET %s"

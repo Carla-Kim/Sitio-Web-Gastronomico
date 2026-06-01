@@ -17,16 +17,12 @@ def crear_reserva(data):
     estado = data.get("estado", "reservada")
 
     if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
-        print("--> FALLÓ EL NOMBRE")  # <--- AGREGAR
         return 'nombre_invalido'
     if re.fullmatch(r'[A-Za-z0-9 ]+', apellido) is None or len(apellido) > 100:
-        print("--> FALLÓ EL APELLIDO")  # <--- AGREGAR
         return 'nombre_invalido'
     if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is None or len(email) > 100:
-        print("--> FALLÓ EL EMAIL")  # <--- AGREGAR
         return 'email_invalido'
     if re.fullmatch(r'\d{7,12}', str(dni)) is None:
-        print("--> FALLÓ EL DNI")  # <--- AGREGAR
         return 'dni_invalido'
     
     try:
@@ -174,3 +170,17 @@ def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
         "data": reservas
     }
     return 'exito', response_body
+
+def cancelar_reserva(id):
+    try:
+        id = int(id)
+    except (ValueError, TypeError):
+        return 'id_invalido'
+
+    try:
+        rows_affected = cambiar_estado_cancelado(id)
+        if rows_affected == 0:
+            return 'reserva_no_encontrada'
+        return 'exito'
+    except Exception:
+        return 'error_db'
