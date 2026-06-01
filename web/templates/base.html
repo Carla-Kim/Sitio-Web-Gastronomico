@@ -16,7 +16,7 @@
                 <li><a href="{{ url_for('index') }}#nosotros">NOSOTROS</a></li>
                 <li><a href="{{ url_for('resenas') }}">RESEÑAS</a></li> <!-- cambiar URL cuando exista la pagina-->
                 <li><a href="{{ url_for('menu') }}">MENÚ</a></li>
-                <li class="reservar">RESERVAR</li>
+                <li class="reservar"><a href="{{ url_for('reservas') }}">RESERVAR</a></li>
             </ul>
 
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -40,7 +40,7 @@
                     <li><a href="{{ url_for('index') }}#nosotros">Nosotros</a></li>
                     <li><a href="{{ url_for('resenas') }}">Reseñas</a></li>
                     <li><a href="{{ url_for('menu') }}">Menú</a></li>
-                    <li class="reservar">Reservar</li>
+                    <li class="reservar"><a href="{{ url_for('reservas') }}">Reservar</a></li>
                 </ul>
             </div>
         </nav>
