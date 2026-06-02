@@ -1,4 +1,3 @@
-/* Hero Section */
 .hero {
     position: relative;
     height: 100vh;
@@ -80,7 +79,6 @@
     letter-spacing: 0.1rem;
 }
 
-/* Buttons */
 .btn {
     font-size: 0.8rem;
     letter-spacing: 0.2em;

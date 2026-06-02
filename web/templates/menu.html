@@ -19,7 +19,36 @@
 
 <section class="menu-container">
     <div class="menu-content">
-        <h2 class="menu-subtitle">Próximamente...</h2>
+        {% if menu_agrupado %}
+            {% for item in menu_agrupado %}
+                <article class="categoria">
+                    <h2 class="categoria-titulo">{{ item.categoria.nombre }}</h2>
+                    {% if item.productos %}
+                        <ul class="productos-lista">
+                            {% for producto in item.productos %}
+                                <li class="producto-item">
+                                    <div class="producto-imagen">
+                                        <img src="{{ url_for('static', filename='assets/images/' ~ producto.nombre ~ '.svg') }}" alt="{{ producto.nombre }}">
+                                    </div>
+
+                                    <div class="producto-info">
+                                        <div class="producto-header">
+                                            <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+                                            <span class="producto-precio">${{ "%.2f"|format(producto.precio) }}</span>  
+                                        </div>
+                                        <p class="producto-descripcion">{{ producto.descripcion }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No hay productos disponibles en esta categoría.</p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% else %}
+            <h2 class="menu-subtitle">Próximamente...</h2>
+        {% endif %}
     </div>
 </section>
 
