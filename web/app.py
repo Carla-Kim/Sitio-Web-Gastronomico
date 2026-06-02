@@ -34,10 +34,6 @@ def reservas():
     return render_template('reservas.html')
 
 @app.route('/menu')
-def menu():
-    return render_template('menu.html')
-
-@app.route('/menu')
 def mostrar_menu():
     todas_las_categorias = categorias.query.all() 
     todos_los_productos = menu.query.all()
