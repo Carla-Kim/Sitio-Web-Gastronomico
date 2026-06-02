@@ -1,5 +1,6 @@
+import requests
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -31,33 +32,29 @@ def dashboard_login():
 def dashboard_reservas():
     return render_template('dashboard-reservas.html')
 
-@app.route('/dashboard/reseñas')
+@app.route('/dashboard/reseñas', methods=['GET', 'POST'])
 def dashboard_reseñas():
-    lista_reseñas = [
-        {
-            "id": 3,
-            "id_reserva": 4,
-            "nombre": "Nicolás",
-            "apellido": "West",
-            "comentario": "Muy bueno todo", 
-            "ambiente": 4,
-            "servicio": 3,
-            "comida": 4,
-            "fecha": "25/05/2026"
-        },   
-        {
-            "id": 2,
-            "id_reserva": 5,
-            "nombre": "Agustín",
-            "apellido": "West",
-            "comentario": "Muy bueno todo", 
-            "ambiente": 2,
-            "servicio": 1,
-            "comida": 5,
-            "fecha": "26/05/2026"
-        }   
-    ] 
-    return render_template('dashboard-reseñas.html', reseñas=lista_reseñas)
+    if request.method == 'POST':
+       reseña_a_eliminar = request.form.get('id_reseña')
+       try:
+            url_api = f'http://localhost:5000/reseñas/eliminar/{reseña_a_eliminar}'
+            response = requests.post(url_api, timeout=5)
+            response.raise_for_status()
+            return redirect(url_for('dashboard_reseñas'))
+       except requests.exceptions.RequestException as e:
+            print(f"Error al eliminar en API: {e}")
+            return render_template('error-conexion.html'), 500
+    else:
+       try:
+           url_api = 'http://localhost:5000/reseñas'
+           response = requests.get(url_api, timeout=5)
+           response.raise_for_status()
+    
+           lista_reseñas = response.json()
+           return render_template('dashboard-reseñas.html', reseñas=lista_reseñas)
+       except requests.exceptions.RequestException as e:
+           print(f"Error crítico al conectar con la API: {e}")
+           return render_template('error-conexion.html'),500 
 
 @app.route('/dashboard/menu')
 def dashboard_menu():
@@ -116,4 +113,4 @@ def dashboard_usuarios():
     return render_template('dashboard-usuarios.html', usuarios=lista_usuarios)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
