@@ -1,9 +1,9 @@
-from ..database.servicios_reservas import *
+from ..database import servicios_reservas as sr
 from ..utils.errors import *
 
 
 def obtener_servicios_reserva():
-    servicios = seleccionar_servicios_reserva()
+    servicios = sr.seleccionar_servicios_reserva()
 
     if not servicios:
         raise ValueError("NOT_FOUND")
@@ -12,7 +12,7 @@ def obtener_servicios_reserva():
 
 
 def obtener_servicios_por_reserva(reserva_id):
-    servicios = seleccionar_servicios_por_reserva(reserva_id)
+    servicios = sr.seleccionar_servicios_por_reserva(reserva_id)
 
     if not servicios:
         raise ValueError("NOT_FOUND")
@@ -24,7 +24,7 @@ def asociar_servicios_reserva(reserva_id, body):
     if "servicios_id" not in body:
         raise ValueError("BAD_REQUEST")
 
-    result = insertar_servicios_reserva(
+    result = sr.insertar_servicios_reserva(
         reserva_id,
         body["servicios_id"]
     )
@@ -37,7 +37,7 @@ def asociar_servicios_reserva(reserva_id, body):
 
 
 def eliminar_servicios_reserva(reserva_id):
-    deleted_rows = eliminar_servicios_reserva_db(reserva_id)
+    deleted_rows = sr.eliminar_servicios_reserva_db(reserva_id)
 
     if deleted_rows == 0:
         raise ValueError("NOT_FOUND")

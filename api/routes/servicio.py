@@ -1,12 +1,11 @@
 from flask import Blueprint, request, jsonify
-
-from api.services.servicio import *
+from api.services import servicio as servicios
 from api.utils.errors import *
 
-servicio_br = Blueprint("servicio", __name__)
+servicio_bp = Blueprint("servicio", __name__)
 
 #Endpoint para listar servicios
-@servicio_br.route("/servicios", methods=["GET"])
+@servicio_bp.route("/servicios", methods=["GET"])
 def lista_servicios():
     base_url = request.base_url
     query_args = request.args.to_dict()
@@ -18,7 +17,7 @@ def lista_servicios():
         return jsonify(ReturnErrors(400)), 400
     
     try:
-        resultado = ver_servicios(base_url, query_args, limit, offset)
+        resultado = servicios.ver_servicios(base_url, query_args, limit, offset)
         return jsonify(resultado), 200
 
     except ValueError as val_err:
@@ -32,11 +31,11 @@ def lista_servicios():
     
 
 #Endpoint para obtener un servicio por ID
-@servicio_br.route("/servicios/<int:servicio_id>", methods=["GET"])
+@servicio_bp.route("/servicios/<int:servicio_id>", methods=["GET"])
 def servicio_id(servicio_id):
 
     try:
-        resultado = ver_servicio_id(servicio_id)
+        resultado = servicios.ver_servicio_id(servicio_id)
         return jsonify(resultado), 200
 
     except ValueError as val_err:
@@ -50,7 +49,7 @@ def servicio_id(servicio_id):
     
 
 #Endpoint para crear un nuevo servicio
-@servicio_br.route("/servicios", methods=["POST"])
+@servicio_bp.route("/servicios", methods=["POST"])
 def crear_new_servicio():
     body = request.get_json()
 
@@ -58,7 +57,7 @@ def crear_new_servicio():
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        new_servicio = crear_servicio(body)
+        new_servicio = servicios.crear_servicio(body)
         return jsonify(new_servicio), 201
     
     except ValueError as val_err:
@@ -72,7 +71,7 @@ def crear_new_servicio():
     
 
 #Endpoint para actualizar un servicio existente
-@servicio_br.route("/servicios/<int:servicio_id>", methods=["PUT"])
+@servicio_bp.route("/servicios/<int:servicio_id>", methods=["PUT"])
 def update_servicio(servicio_id):
     body = request.get_json()
 
@@ -80,7 +79,7 @@ def update_servicio(servicio_id):
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        actualizar_servicio_id(servicio_id, body)
+        servicios.actualizar_servicio_id(servicio_id, body)
         return jsonify({"message": "Servicio actualizado exitosamente"}), 200
 
     except ValueError as val_err:
@@ -95,11 +94,11 @@ def update_servicio(servicio_id):
         return jsonify(ReturnErrors(500)), 500
 
 #Endpoint para eliminar un servicio existente
-@servicio_br.route("/servicios/<int:servicio_id>", methods = ["DELETE"])
+@servicio_bp.route("/servicios/<int:servicio_id>", methods = ["DELETE"])
 def eliminar_servicio(servicio_id):
 
     try:
-        eliminar_servicio_id(servicio_id)
+        servicios.eliminar_servicio_id(servicio_id)
         return jsonify({"message": "Servicio eliminado exitosamente"}), 200
     
     except ValueError as val_err:

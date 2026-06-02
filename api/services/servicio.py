@@ -1,5 +1,4 @@
 from api.database.servicio import *
-
 from api.utils.errors import *
 from api.utils.pagination import *
 
@@ -14,7 +13,7 @@ def ver_servicios(base_url, query_params, limit, offset):
     args_for_links.pop("_limit", None)
     args_for_links.pop("_offset", None)
 
-    links = build_links(base_url, args_for_links, offset, limit, total)
+    links = build_links(base_url, args_for_links, limit, offset, total)
 
     response_body = {
         "_links" : links,

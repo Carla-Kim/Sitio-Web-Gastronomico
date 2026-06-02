@@ -1,99 +1,84 @@
+import re
 from api.database import menu as menu_db
 from api.utils.errors import ReturnErrors
-from api.database.connection import get_connection, get_cursor
+from api.utils.pagination import build_links
 
 def ingresar_producto(data):
     if not data:
         return ReturnErrors(400), 400
-        
-    categoria_id = data.get('categoria_id')
+    categorias_id = data.get('categorias_id')
     nombre = data.get('nombre')
+    descripcion = data.get('descripcion')
     precio = data.get('precio')
     
-    if not all([categoria_id, nombre, precio]):
+    if not all([categorias_id, nombre, descripcion, precio]):
         return ReturnErrors(400), 400
         
     try:
-        with get_cursor() as cursor:
+        if menu_db.check_by_nombre(nombre):
+            return ReturnErrors(409), 409
             
-            if menu_db.check_by_nombre(cursor, nombre):
-                return ReturnErrors(409), 409
-                
-            nuevo_id = menu_db.ingresar_producto(cursor, categoria_id, nombre, precio)
-            
-            resultado = {
-                "status": "success",
-                "message": "Producto ingresado correctamente.",
-                "producto_id": nuevo_id
-            }
-            return resultado, 201
+        nuevo_id = menu_db.ingresar_producto(categorias_id, nombre, descripcion, precio)
+        
+        resultado = {
+            "status": "success",
+            "message": "Producto ingresado correctamente.",
+            "producto_id": nuevo_id
+        }
+        return resultado, 201
 
     except Exception as e:
-        return ReturnErrors(500), 500
+        print(f"Error interno en servicio menu: {e}") 
 
 def editar_producto(id, data):
     if not data:
         return ReturnErrors(400), 400
-    categoria_id = data.get('categoria_id')
+    categoria_id = data.get('categorias_id')
     nombre = data.get('nombre')
+    descripcion = data.get('descripcion')
     precio = data.get('precio')
     
-    if not all([categoria_id, nombre, precio]):
-        return ReturnErrors(400),400
+    if not all([categoria_id, nombre, descripcion, precio]):
+        return ReturnErrors(400), 400
     
     try:
-        with get_cursor() as cursor:
-            exists_id = menu_db.check_by_id(cursor, id)
-            if not exists_id:
-                return ReturnErrors(404), 404
-            
-            menu_db.editar_producto(cursor, id, categoria_id, nombre, precio)
+        exists_id = menu_db.check_by_id(id)
+        if not exists_id:
+            return ReturnErrors(404), 404
+        
+        menu_db.editar_producto(id, categoria_id, nombre, descripcion, precio)
+        return "", 204
 
     except Exception:
         return ReturnErrors(500), 500
-    
-    return "", 204
 
-
-#codifo: consultar productos
 def ver_productos(base_url, limit, offset):
-    # schema_errors = validate_schema(
-    #    PaginationSchema,
-    #    limit=limit,
-    #    offset=offset
-    #)
-    #if schema_errors:
-    #   return ReturnErrors(400), 400   parte de la paginacion
     try:
-        with get_cursor() as cursor:
-            productos = menu_db.obtener_productos(cursor, limit, offset)
+        res_db = menu_db.obtener_productos(limit, offset)
     except Exception:
         return ReturnErrors(500), 500
     
-    productos = [{
+    productos_mapeados = [{
         "id": d["producto_id"],
         "categoria": d["categorias_id"],
         "nombre": d["nombre"],
         "precio": d["precio"]
-    } for d in productos["rows"] ]
+    } for d in res_db["rows"]]
 
-    count = productos["count"]
+    count = res_db["count"]
 
     return {
-        "productos": productos,
-        #"_links": build_links(base_url, {}, limit, offset, count)  de la paginacion
+        "productos": productos_mapeados
     }, 200
 
 def elimina_producto(id_producto):
     if id_producto is None:
-        return 'id_invalido'
+        return ReturnErrors(400), 400
     
     try:
-        resultado = borrar_producto(id_producto)
+        resultado = menu_db.borrar_producto(id_producto)
+        if resultado == 0:
+            return ReturnErrors(404), 404
+        return {"message": "Se elimino correctamente"}, 200
     except Exception:
-        return 'Error_db'
-    
-    if resultado == 0:
-        return 'Producto_no_encontrado'
-    
-    return 'Se elimino correctamente'
+        return ReturnErrors(500), 500

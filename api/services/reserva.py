@@ -79,13 +79,12 @@ def actualizar_reserva(id, data):
         rows = update_reserva(id, fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
         if rows == 'servicio_no_existe':
             return 'servicio_no_encontrado'
+        if not rows:
+            return 'reserva_no_encontrada'
+        return 'exito'
     except Exception:
         return 'error_db'
 
-    if not rows:
-        return 'reserva_no_encontrada'
-    
-    return 'exito'
 
 def obtener_reservas(base_url, query_params, limit, offset):
     reservas, total = seleccionar_reservas(limit, offset)
@@ -138,15 +137,17 @@ def filtrar_por_estado(base_url, query_params, estado, limit, offset):
     }
     return 'exito', response_body
     
-"""def borrar_reserva(id):
+def cancelar_reserva(id):
+    if id is None or id <= 0:
+        return 'id_invalido'
     try:
-        rows = eliminar_reserva_id(id)
+        rows = cambiar_estado_cancelado(id)
+        if not rows:
+            return 'reserva_no_encontrada'
+        return 'exito', {"message": f"Reserva {id} cancelada correctamente"}
     except Exception:
         return 'error_db'
-
-    if not rows:
-        return 'reserva_no_encontrada'
-    return 'exito'"""
+    
 def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
     if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(fecha)) is None:
         return 'fecha_invalida'
@@ -170,17 +171,3 @@ def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
         "data": reservas
     }
     return 'exito', response_body
-
-def cancelar_reserva(id):
-    try:
-        id = int(id)
-    except (ValueError, TypeError):
-        return 'id_invalido'
-
-    try:
-        rows_affected = cambiar_estado_cancelado(id)
-        if rows_affected == 0:
-            return 'reserva_no_encontrada'
-        return 'exito'
-    except Exception:
-        return 'error_db'

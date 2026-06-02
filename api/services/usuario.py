@@ -1,27 +1,25 @@
-from ..database.usuario import *
-from ..utils.errors import *
-from utils.pagination import build_links
+from ..database import usuario as us
+from api.utils.errors import ReturnErrors
+from api.utils.pagination import build_links
 
-
-# Función para el endpoint de listar usuarios
 def obtener_usuarios(base_url, query_params, limit, offset, rol):
-    usuarios, total = seleccionar_usuarios(
+    usuarios, total = us.seleccionar_usuarios(
         limit=limit,
         offset=offset,
         rol=rol
     )
 
     args_for_links = query_params.copy()
-
-    args_for_links.pop("_limit", None)
-    args_for_links.pop("_offset", None)
+    
+    args_for_links.pop("limit", None)
+    args_for_links.pop("offset", None)
 
     links = build_links(
         base_url=base_url,
-        query_params=args_for_links,
+        args=args_for_links,
         limit=limit,
         offset=offset,
-        total=total
+        count=total
     )
 
     response_body = {
@@ -34,7 +32,7 @@ def obtener_usuarios(base_url, query_params, limit, offset, rol):
 
 # Función para el endpoint de buscar usuario por ID
 def obtener_usuario_por_id(id):
-    usuario = seleccionar_usuario_por_id(id)
+    usuario = us.seleccionar_usuario_por_id(id)
 
     if not usuario:
         raise ValueError("NOT_FOUND")
@@ -43,7 +41,7 @@ def obtener_usuario_por_id(id):
 
 # Función para el endpoint de mostrar contraseña por email
 def obtener_contrasena_por_email(email):
-    contrasena = seleccionar_contrasena_por_email(email)
+    contrasena = us.seleccionar_contrasena_por_email(email)
 
     if not contrasena:
         raise ValueError("NOT_FOUND")
@@ -52,7 +50,7 @@ def obtener_contrasena_por_email(email):
 
 # Función para el endpoint de mostrar rol
 def obtener_rol_por_email(email):
-    rol = seleccionar_rol_por_email(email)
+    rol = us.seleccionar_rol_por_email(email)
 
     if not rol:
         raise ValueError("NOT_FOUND")
@@ -62,7 +60,7 @@ def obtener_rol_por_email(email):
 # Función para el endpoint de crear usuario
 def crear_nuevo_usuario(body):
     required_fields = [
-        "usuario",
+        "nombre_usuario",  
         "contrasena",
         "email",
         "nombre",
@@ -74,7 +72,7 @@ def crear_nuevo_usuario(body):
         if field not in body:
             raise ValueError("BAD_REQUEST")
 
-    usuario_id = insertar_usuario(body)
+    usuario_id = us.insertar_usuario(body)
 
     if usuario_id == "CONFLICT":
         raise ValueError("CONFLICT")
@@ -87,7 +85,7 @@ def crear_nuevo_usuario(body):
 # Función para el endpoint de modificar usuario
 def actualizar_usuario(id, body):
     required_fields = [
-        "usuario",
+        "nombre_usuario",
         "contrasena",
         "email",
         "nombre",
@@ -99,10 +97,12 @@ def actualizar_usuario(id, body):
         if field not in body:
             raise ValueError("BAD_REQUEST")
 
-    updated_rows = actualizar_usuario_db(id, body)
+    updated_rows = us.actualizar_usuario_db(id, body)
 
     if updated_rows == 0:
         raise ValueError("NOT_FOUND")
+        
+    return True
     
 # Función para el endpoint de modificar parcialmente usuario
 def actualizar_usuario_parcial(id, body):
@@ -111,14 +111,14 @@ def actualizar_usuario_parcial(id, body):
     if not any(field in body for field in allowed_fields):
         raise ValueError("BAD_REQUEST")
 
-    updated_rows = actualizar_usuario_parcial_db(id, body)
+    updated_rows =us.actualizar_usuario_parcial_db(id, body)
 
     if updated_rows == 0:
         raise ValueError("NOT_FOUND")
     
 # Función para el endpoint de borrar usuario
 def eliminar_usuario(id):
-    deleted_rows = eliminar_usuario_db(id)
+    deleted_rows = us.eliminar_usuario_db(id)
 
     if deleted_rows == 0:
         raise ValueError("NOT_FOUND")

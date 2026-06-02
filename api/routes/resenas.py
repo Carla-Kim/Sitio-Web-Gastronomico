@@ -4,12 +4,11 @@ from api.utils.errors import ReturnErrors
 
 resenas_bp = Blueprint("resenas", __name__)
 
-# Endpoint para listar reseñas
 @resenas_bp.route('/resenas', methods=['GET'])
 def obtener_resenas():
     base_url = request.base_url
-    limit = request.args.get('_limit', default=10, type=int)
-    offset = request.args.get('_offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    offset = request.args.get('offset', default=0, type=int)
     
     if limit <= 0 or offset < 0:
         return jsonify(ReturnErrors(400)), 400
@@ -25,8 +24,6 @@ def obtener_resenas():
         print(f"No fue posible listar las reseñas. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-
-# Endpoint para buscar por ID
 @resenas_bp.route('/resenas/<int:resena_id>', methods=['GET']) 
 def obtener_resena_por_id(resena_id):
     try:
@@ -40,8 +37,6 @@ def obtener_resena_por_id(resena_id):
         print(f"No fue posible obtener la reseña. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-
-# Endpoint para buscar por reserva
 @resenas_bp.route('/resenas/reserva/<int:reserva_id>', methods=['GET'])
 def obtener_resena_por_reserva(reserva_id):
     try:
@@ -55,8 +50,6 @@ def obtener_resena_por_reserva(reserva_id):
         print(f"No fue posible obtener la reseña de la reserva. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-
-# Endpoint para promedios
 @resenas_bp.route('/resenas/promedio/<string:columna>', methods=['GET'])
 def obtener_promedio_columna(columna):
     if columna not in ['ambiente', 'servicio', 'comida']:
@@ -73,8 +66,6 @@ def obtener_promedio_columna(columna):
         print(f"No fue posible obtener el promedio de {columna}. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-
-# Endpoint para crear reseña
 @resenas_bp.route('/resenas', methods=['POST'])
 def crear_resena():
     if not request.is_json:
@@ -95,8 +86,6 @@ def crear_resena():
         print(f"No fue posible crear la reseña. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-
-# Endpoint para borrar reseña
 @resenas_bp.route('/resenas/<int:resena_id>', methods=['DELETE']) 
 def borrar_resena(resena_id):                                    
     try:

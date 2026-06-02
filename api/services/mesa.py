@@ -5,8 +5,6 @@ from api.utils.errors import *
 #cantidad de mesas segun su estado (ocupada/desocupada)
 def disponibilidad_mesas():
     resultados = obtener_conteo_mesas_db()
-
-    
     if not resultados:
         raise ValueError("NOT_FOUND")
 
@@ -44,4 +42,14 @@ def actualizar_Estado(mesa_id, body):
     if estado == 0:
         raise ValueError("NOT_FOUND")
     
+    return True
+
+def crear_nueva_mesa():
+    nuevo_id = crear_mesa_db('desocupada', 2)
+    return nuevo_id
+
+def eliminar_mesa(mesa_id):
+    filas_afectadas = borrar_mesa_db(mesa_id)
+    if filas_afectadas == 0:
+        raise ValueError("NOT_FOUND")
     return True

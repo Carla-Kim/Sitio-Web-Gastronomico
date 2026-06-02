@@ -1,6 +1,4 @@
-from database.connection import *
-
-
+from .connection import get_connection
 # listado de usuarios
 def seleccionar_usuarios(limit, offset, rol=None):
     conn = get_connection()
@@ -9,7 +7,6 @@ def seleccionar_usuarios(limit, offset, rol=None):
     try:
         filters = []
         values = []
-
         if rol:
             filters.append("rol = %s")
             values.append(rol)
@@ -31,7 +28,7 @@ def seleccionar_usuarios(limit, offset, rol=None):
 
         query = f"""
             SELECT
-                usuario,
+                nombre_usuario,
                 email,
                 nombre,
                 apellido
@@ -63,7 +60,7 @@ def seleccionar_usuario_por_id(id):
         query = """
             SELECT
                 usuario_id,
-                usuario,
+                nombre_usuario,
                 email,
                 nombre,
                 apellido,
@@ -71,34 +68,45 @@ def seleccionar_usuario_por_id(id):
             FROM Usuarios
             WHERE usuario_id = %s
         """
-
         cursor.execute(query, [id])
-
         usuario = cursor.fetchone()
-
         return usuario
 
     finally:
         cursor.close()
         conn.close()
 
-# mostrar contraseña por email
-def seleccionar_contrasena_por_email(email):
+def actualizar_usuario_db(id, body):
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     try:
         query = """
-            SELECT contrasena
-            FROM Usuarios
-            WHERE email = %s
+            UPDATE Usuarios
+            SET
+                nombre_usuario = %s,
+                contrasena = %s,
+                email = %s,
+                nombre = %s,
+                apellido = %s,
+                rol = %s
+            WHERE usuario_id = %s
         """
 
-        cursor.execute(query, [email])
+        values = [
+            body["nombre_usuario"],
+            body["contrasena"],
+            body["email"],
+            body["nombre"],
+            body["apellido"],
+            body["rol"],
+            id
+        ]
 
-        contrasena = cursor.fetchone()
+        cursor.execute(query, values)
+        conn.commit()
 
-        return contrasena
+        return cursor.rowcount
 
     finally:
         cursor.close()
@@ -135,14 +143,14 @@ def insertar_usuario(body):
         check_query = """
             SELECT usuario_id
             FROM Usuarios
-            WHERE usuario = %s
+            WHERE nombre_usuario = %s
             OR email = %s
         """
 
         cursor.execute(
             check_query,
             [
-                body["usuario"],
+                body["nombre_usuario"],
                 body["email"]
             ]
         )
@@ -154,27 +162,26 @@ def insertar_usuario(body):
 
         insert_query = """
             INSERT INTO Usuarios (
-                usuario,
-                contrasena,
-                email,
                 nombre,
                 apellido,
+                nombre_usuario,
+                email,
+                contrasena,
                 rol
             )
             VALUES (%s, %s, %s, %s, %s, %s)
         """
 
         values = [
-            body["usuario"],
-            body["contrasena"],
-            body["email"],
             body["nombre"],
             body["apellido"],
+            body["nombre_usuario"],
+            body["email"],
+            body["contrasena"],
             body["rol"]
         ]
 
         cursor.execute(insert_query, values)
-
         conn.commit()
 
         return cursor.lastrowid
@@ -183,43 +190,6 @@ def insertar_usuario(body):
         cursor.close()
         conn.close()
 
-# modificar usuario
-def actualizar_usuario_db(id, body):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    try:
-        query = """
-            UPDATE Usuarios
-            SET
-                usuario = %s,
-                contrasena = %s,
-                email = %s,
-                nombre = %s,
-                apellido = %s,
-                rol = %s
-            WHERE usuario_id = %s
-        """
-
-        values = [
-            body["usuario"],
-            body["contrasena"],
-            body["email"],
-            body["nombre"],
-            body["apellido"],
-            body["rol"],
-            id
-        ]
-
-        cursor.execute(query, values)
-
-        conn.commit()
-
-        return cursor.rowcount
-
-    finally:
-        cursor.close()
-        conn.close()
 
 # modificar parcialmente usuario
 def actualizar_usuario_parcial_db(id, body):
