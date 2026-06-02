@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template
+from api.database import categorias, menu
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -35,6 +36,18 @@ def reservas():
 @app.route('/menu')
 def menu():
     return render_template('menu.html')
+
+@app.route('/menu')
+def mostrar_menu():
+    todas_las_categorias = categorias.query.all() 
+    todos_los_productos = menu.query.all()
+    
+    menu_agrupado = []
+    for cat in todas_las_categorias:
+        prod_filtrados = [p for p in todos_los_productos if p.categorias_id == cat.categorias_id]
+        menu_agrupado.append((cat, prod_filtrados))
+        
+    return render_template('menu.html', menu_agrupado=menu_agrupado)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
