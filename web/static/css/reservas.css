@@ -326,7 +326,6 @@
     font-size: 0.95rem;
 }
 
-/* ===== BUTTONS ===== */
 .bloque-botones {
     display: flex;
     gap: 1rem;
@@ -357,6 +356,10 @@
 .boton-cancelar:hover {
     background: rgba(201, 168, 76, 0.08);
     border-color: rgba(201, 168, 76, 0.5);
+}
+
+#icono-cancelar {
+    color: rgba(201, 168, 76, 0.8);
 }
 
 .boton-confirmar {
