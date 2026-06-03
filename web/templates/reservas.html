@@ -69,8 +69,16 @@
     </div>
 </section>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alerta alerta-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <section class="reserva-formulario">
-    <form action="#" method="#" class="formulario-reserva">
+    <form action="{{ url_for('reservas') }}" method="POST" class="formulario-reserva">
         <div class="columna-formulario">
             <div class="encabezado-bloque">
                 <span class="numero-bloque">01</span>
