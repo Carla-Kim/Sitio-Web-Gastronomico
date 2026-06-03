@@ -10,6 +10,7 @@ app = Flask(
     template_folder=os.path.join(BASE_DIR, 'templates'),
     static_folder=os.path.join(BASE_DIR, 'static')
 )
+app.secret_key = 'clave-secreta'
 
 @app.route('/')
 def index():
@@ -44,14 +45,14 @@ def reservas():
         apellido = nombre_completo[1] if len(nombre_completo) > 1 else ''
 
         data = {
-            "cantidad_personas": int(requests.form.get('comensales')),
-            "fecha": requests.form.get('fecha'),
+            "cantidad_personas": int(request.form.get('comensales')),
+            "fecha": request.form.get('fecha'),
             "servicio_ID": 1, #Servicio_id deberia ser null o no estar en la db ya que esto lo maneja servicio_reserva_id
             "nombre": nombre,
             "apellido": apellido,
-            "email": requests.form.get('email'),
-            "DNI": requests.form.get('documento'),
-            "telefono": requests.form.get('telefono'),
+            "email": request.form.get('email'),
+            "DNI": request.form.get('documento'),
+            "telefono": request.form.get('telefono'),
         }
 
         try:
@@ -61,20 +62,21 @@ def reservas():
                 reserva_id = response.json().get('reserva_id')
 
                 serv_seleccionados = request.form.getlist('servicios')
+
                 if serv_seleccionados and reserva_id:
-                    request.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]}
+                    requests.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]}
                     )
                 flash('Confirmado', 'success')
                 return redirect(url_for('reservas'))
             else:
-                error_msg = response.json().get('errors', [{}][0].get('message', 'Error inesperado'))
+                error_msg = response.json().get('errors', [{}])[0].get('message', 'Error inesperado')
                 flash(error_msg, 'error')
         
         except Exception as e:
             print(f"Error al conectar con la API: {e}")
             flash('Error de conexión.', 'error')
 
-    return render_template('reservas.html', servicios = servicios)
+    return render_template('reservas.html', servicios=servicios)
 
 @app.route('/menu')
 def mostrar_menu():
