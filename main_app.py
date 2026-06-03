@@ -1,9 +1,10 @@
 from flask import Flask
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from api import app as backend
-from web import app as frontend
+from api.app import app as backend
+from web.app import app as frontend
 
 app = Flask(__name__)
+
 app.wsgi_app = DispatcherMiddleware(
     frontend.wsgi_app,
     {
