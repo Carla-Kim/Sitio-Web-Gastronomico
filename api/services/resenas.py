@@ -11,6 +11,8 @@ def listar_resenas(base_url, limit, offset):
         resenas_formateadas = [{
                 "resena_id": r["resena_id"],
                 "reserva_id": r["reserva_id"],
+                "nombre_usuario": r["nombre_usuario"],
+                "comentario": r["comentario"],
                 "puntuacion_ambiente": r["puntuacion_ambiente"],
                 "puntuacion_servicio": r["puntuacion_servicio"],
                 "puntuacion_comida": r["puntuacion_comida"]
