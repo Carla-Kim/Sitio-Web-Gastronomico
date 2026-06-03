@@ -12,7 +12,8 @@
         {% endblock %}
     </title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/components.css') }}">
     {% block extra_css %}{% endblock %}
 
 </head>
@@ -91,7 +92,6 @@
         </div>
     </footer>
 
-    <!-- script src="{{ url_for('static', filename='js/dashboard.js') }}"></script-->
     {% block extra_js %}{% endblock %}
 
 </body>
