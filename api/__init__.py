@@ -1,1 +1,1 @@
-from .app import app
+"Para que se importe."

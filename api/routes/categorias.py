@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from ..services.categorias import *
-from ..utils.errors import *
+from ..services import categorias as cd
+from api.utils.errors import ReturnErrors
 
 categorias_bp = Blueprint('categorias', __name__)
 
@@ -9,7 +9,7 @@ categorias_bp = Blueprint('categorias', __name__)
 def formatear_categoria(id):
     data = request.get_json()
 
-    result = actualizar_categoria(id, data)
+    result = cd.actualizar_categoria(id, data)
 
     if result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
@@ -27,7 +27,7 @@ def formatear_categoria(id):
 @categorias_bp.route('/categorias', methods=['POST']) 
 def agregar_categoria():
     data = request.get_json()
-    result = crear_categoria(data)
+    result = cd.crear_categoria(data)
     if result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
@@ -52,7 +52,7 @@ def listar_categorias():
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        results = obtener_categorias(base_url, query_args, limit, offset)
+        results = cd.obtener_categorias(base_url, query_args, limit, offset)
         return jsonify(results), 200
 
     except ValueError as val_err:
