@@ -34,7 +34,7 @@
                                     <div class="producto-info">
                                         <div class="producto-header">
                                             <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-                                            <span class="producto-precio">${{ "%.2f"|format(producto.precio) }}</span>  
+                                            <span class="producto-precio">${{ "%.2f"|format(producto.precio|float) }}</span>  
                                         </div>
                                         <p class="producto-descripcion">{{ producto.descripcion }}</p>
                                     </div>

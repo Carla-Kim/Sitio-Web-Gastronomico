@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from api.app import app as api_app
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -31,13 +31,56 @@ def admin_panel():
 
 @app.route('/resenas')
 def resenas():
-    return render_template('resenas.html')
+    limit = request.args.get('limit', default=5, type=int)
+    offset = request.args.get('offset', default=0, type=int)
+    
+    with api_app.test_client() as client:
+        # Obtener reseñas paginadas
+        resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset})
+        # Obtener promedios
+        promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
+        promedio_comida_resp = client.get('/resenas/promedio/comida')
+        promedio_servicio_resp = client.get('/resenas/promedio/servicio')
+    
+    resenas_list = []
+    total_resenas = 0
+    promedio_ambiente = 0
+    promedio_comida = 0
+    promedio_servicio = 0
+    
+    # Procesar reseñas
+    if resenas_resp.status_code == 200:
+        resenas_data = resenas_resp.get_json()
+        resenas_list = resenas_data.get('resenas', [])
+        total_resenas = resenas_data.get('total', 0)
+    
+    # Procesar promedios
+    if promedio_ambiente_resp.status_code == 200:
+        promedio_ambiente = promedio_ambiente_resp.get_json().get('promedio', 0)
+    if promedio_comida_resp.status_code == 200:
+        promedio_comida = promedio_comida_resp.get_json().get('promedio', 0)
+    if promedio_servicio_resp.status_code == 200:
+        promedio_servicio = promedio_servicio_resp.get_json().get('promedio', 0)
+    
+    # Calcular paginación
+    total_paginas = (total_resenas + limit - 1) // limit if total_resenas > 0 else 1
+    pagina_actual = (offset // limit) + 1
+    
+    return render_template('resenas.html', 
+                          resenas=resenas_list,
+                          promedio_ambiente=promedio_ambiente,
+                          promedio_comida=promedio_comida,
+                          promedio_servicio=promedio_servicio,
+                          limit=limit,
+                          offset=offset,
+                          total_paginas=total_paginas,
+                          pagina_actual=pagina_actual)
 
 @app.route('/reservas')
 def reservas():
     return render_template('reservas.html')
 
-@app.route('/menu')
+@app.route('/menu', endpoint='menu')
 def mostrar_menu():
     with api_app.test_client() as client:
         categorias_resp = client.get('/categorias', query_string={'_limit': 1000, '_offset': 0})
