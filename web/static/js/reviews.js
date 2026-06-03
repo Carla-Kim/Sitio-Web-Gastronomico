@@ -1,1 +1,0 @@
-// funciones para mostrar el formulario de reseña

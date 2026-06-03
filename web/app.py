@@ -29,7 +29,29 @@ def dashboard_login():
 
 @app.route('/dashboard/reservas')
 def dashboard_reservas():
-    return render_template('dashboard-reservas.html')
+    lista_reservas = [{
+        "id": 1,
+        "fecha": "25-05-2026",
+        "email": "loremipsum@gmail.com",
+        "nombre": "lorem",
+        "apellido": "ipsum",
+        "dni": 12345678,
+        "telefono": "11 1234-5678",
+        "servicio": "Estacionamiento",
+        "estado": "Finalizado",
+        "cantidad": 5
+    }]
+
+    lista_servicios = [
+        {"id": 1, "nombre": "Estacionamiento"},
+        {"id": 2, "nombre": "Silla de ruedas"}
+    ]
+
+    return render_template(
+        'dashboard-reservas.html',
+        reservas=lista_reservas,
+        servicios=lista_servicios
+    )
 
 @app.route('/dashboard/reseñas')
 def dashboard_reseñas():
@@ -43,7 +65,7 @@ def dashboard_reseñas():
             "ambiente": 4,
             "servicio": 3,
             "comida": 4,
-            "fecha": "25/05/2026"
+            "fecha": "25-05-2026"
         },   
         {
             "id": 2,
@@ -54,10 +76,10 @@ def dashboard_reseñas():
             "ambiente": 2,
             "servicio": 1,
             "comida": 5,
-            "fecha": "26/05/2026"
+            "fecha": "26-05-2026"
         }   
     ] 
-    return render_template('dashboard-reseñas.html', reseñas=lista_reseñas)
+    return render_template('dashboard-resenas.html', reseñas=lista_reseñas)
 
 @app.route('/dashboard/menu')
 def dashboard_menu():
@@ -102,7 +124,7 @@ def dashboard_usuarios():
             "nombre": "Nicolás",
             "apellido": "West",
             "email": "nwest@fi.uba.ar", 
-            "rol": "Admin",
+            "rol": "admin",
         },
         {
             "id": 2,
@@ -110,7 +132,7 @@ def dashboard_usuarios():
             "nombre": "Agustín",
             "apellido": "West",
             "email": "nwest@fi.uba.ar", 
-            "rol": "Usuario",
+            "rol": "usuario",
         }      
     ] 
     return render_template('dashboard-usuarios.html', usuarios=lista_usuarios)

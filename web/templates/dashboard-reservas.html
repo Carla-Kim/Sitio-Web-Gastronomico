@@ -5,43 +5,50 @@ Reservas | Dashboard
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-reservas.css') }}">
 {% endblock %}
 
 {% block content %}
-<section class="reservas-section">
+<section class="page">
 
-    <div class="reservas-header">
+    <div class="page-header">
 
-        <h1 class="reservas-title">
+        <h1 class="page-title">
             Administración: Reservas
         </h1>
 
-        <button class="services-button">
-            Ver servicios
-        </button>
+        <div class="page-actions">
+            <button id="btn-open-view-services" class="btn btn-secondary btn-small">Ver servicios</button>
+        </div>
 
     </div>
 
-    <div class="filters-card">
+    <div class="card">
 
-        <form class="filters-form">
+        <form class="form form-filter">
 
-            <div class="filter-group">
-                <label for="reserva-id">ID de la reserva</label>
-                <input type="text" id="reserva-id" name="reserva-id">
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-reserva-id">ID de la reserva</label>
+                    <input type="text" id="filter-reserva-id" name="reserva-id" placeholder="ID de la reserva">
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="estado">Estado</label>
-                <input type="text" id="estado" name="estado">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-estado">Estado</label>
+                    <input type="text" id="filter-estado" name="estado" placeholder="Estado">
+                </div>
+                <div class="form-group">
+                    <label for="filter-fecha">Fecha</label>
+                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha">
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="fecha">Fecha</label>
-                <input type="date" id="fecha" name="fecha">
-            </div>
-            <div class="filter-group">
-                <label></label>
-                <button type="submit">
+
+            <div class="filter-actions">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/reservas'">
+                    Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary btn-small">
                     Filtrar
                 </button>
             </div>
@@ -50,37 +57,35 @@ Reservas | Dashboard
 
     </div>
 
-    <div class="reservas-card">
+    <div class="card">
 
-        <div class="reservas-card-header">
+        <div class="card-header">
 
             <h2 class="card-title">
                 Reservas
             </h2>
 
             <div class="pagination">
-                <button class="page-button">
+                <button class="btn btn-page">
                     Previous
                 </button>
-                <button class="page-button active">
+                <button class="btn btn-page active">
                     1
                 </button>
-                <button class="page-button">
+                <button class="btn btn-page">
                     2
                 </button>
-                <button class="page-button">
+                <button class="btn btn-page">
                     3
                 </button>
-                <span class="page-dots">
-                    ...
-                </span>
-                <button class="page-button">
+                <span class="page-dots">...</span>
+                <button class="btn btn-page">
                     67
                 </button>
-                <button class="page-button">
+                <button class="btn btn-page">
                     68
                 </button>
-                <button class="page-button">
+                <button class="btn btn-page">
                     Next
                 </button>
             </div>
@@ -88,7 +93,7 @@ Reservas | Dashboard
         </div>
 
         <div class="table-container">
-            <table class="reservas-table">
+            <table class="table">
 
                 <thead>
                     <tr>
@@ -102,18 +107,31 @@ Reservas | Dashboard
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>27/05/2026</td>
-                        <td>12345678</td>
-                        <td>Pendiente</td>
-                        <td>4</td>
+                    {% for reserva in reservas %}
+                    <tr class="reserva-fila"
+                        data-id="{{ reserva.id }}"
+                        data-fecha="{{ reserva.fecha }}"
+                        data-email="{{ reserva.email }}"
+                        data-nombre-apellido="{{ reserva.nombre}} {{ reserva.apellido }}"
+                        data-dni="{{ reserva.dni }}"
+                        data-telefono="{{ reserva.telefono }}"
+                        data-servicios="{{ reserva.servicio }}"
+                        data-estado="{{ reserva.estado }}"
+                        data-cantidad="{{ reserva.cantidad }}">
+
+                        <td class="reserva-id">{{ reserva.id }}</td>
+                        <td class="reserva-fecha">{{ reserva.fecha }}</td>
+                        <td class="reserva-dni">{{ reserva.dni }}</td>
+                        <td class="reserva-estado">{{ reserva.estado }}</td>
+                        <td class="reserva-cantidad">{{ reserva.cantidad }}</td>
+
                         <td>
-                            <button class="view-button" id="open-modal-button">
+                            <button class="btn btn-primary btn-small btn-open-view-reservation">
                                 Ver
                             </button>
                         </td>
                     </tr>
+                    {% endfor %}
                 </tbody>
 
             </table>
@@ -121,10 +139,124 @@ Reservas | Dashboard
 
     </div>
 
-    <div class="modal-overlay hidden" id="reserva-modal">
+    <div id="modal-view-services" class="modal-overlay hidden">
         <div class="modal-card">
 
-            <button class="close-modal-button" id="close-modal-button">
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de servicios
+            </h2>
+
+            <div class="table-container">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th class="table-actions"></th>
+                            <th class="table-actions"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for servicio in servicios %}
+                        <tr class="table-row">
+                            <td class="serv-nombre">
+                                {{ servicio.nombre }}
+                            </td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary btn-small btn-open-edit-service">
+                                    Editar
+                                </button>
+                            </td>
+                            <td class="table-actions">
+                                <button class="btn btn-secondary btn-small btn-delete-service">
+                                    Borrar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-open-add-service" class="btn btn-primary btn-small">
+                    Agregar servicio
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-add-service" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Agregar servicio
+            </h2>
+
+            <form id="form-add-service" action="/api/servicios" method="POST" class="form form-modal">
+                <div class="form-group">
+                    <label for="add-service-name">Nombre del servicio</label>
+                    <input type="text" id="add-service-name" name="nombre" placeholder="Nombre del servicio">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button type="submit" form="form-add-service" class="btn btn-primary btn-small btn-save-service">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-service" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Edición de servicio
+            </h2>
+
+            <form class="form form-modal">
+                <div class="form-group">
+                    <label for="edit-service-name">Nombre del servicio</label>
+                    <input type="text" id="edit-service-name" name="nombre" placeholder="Nombre del servicio">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary btn-small btn-save-service">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-view-reservation" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
                 x
             </button>
 
@@ -133,51 +265,52 @@ Reservas | Dashboard
             </h2>
 
             <div class="table-container">
-                <table class="reservas-table modal-table">
+                <table class="detail-table">
                     <tbody>
                         <tr>
                             <th>ID</th>
-                            <td>1</td>
+                            <td id="modal-reserva-id"></td>
                         </tr>
                         <tr>
                             <th>Fecha</th>
-                            <td>27/05/2026</td>
+                            <td id="modal-reserva-fecha"></td>
                         </tr>
                         <tr>
                             <th>Email</th>
-                            <td>adrianv@fi.uba.ar</td>
+                            <td id="modal-reserva-email"></td>
                         </tr>
                         <tr>
-                            <th>Nombre y Apellido</th>
-                            <td>Adrián Velázquez</td>
+                            <th>Nombre y apellido</th>
+                            <td id="modal-reserva-nombre-apellido"></td>
                         </tr>
                         <tr>
                             <th>DNI</th>
-                            <td>12345678</td>
+                            <td id="modal-reserva-dni"></td>
                         </tr>
                         <tr>
                             <th>Teléfono</th>
-                            <td>11 2345 6789</td>
+                            <td id="modal-reserva-telefono"></td>
                         </tr>
                         <tr>
                             <th>Servicios</th>
-                            <td>Estacionamiento</td>
-                        </tr>
-                        <tr>
-                            <th>Cantidad de Personas</th>
-                            <td>4</td>
+                            <td id="modal-reserva-servicios"></td>
+                        </tr><tr>
+                            <th>Cantidad de personas</th>
+                            <td id="modal-reserva-cantidad"></td>
                         </tr>
                         <tr>
                             <th>Estado</th>
-                            <td>Pendiente</td>
+                            <td id="modal-reserva-estado"></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <button class="register-button">
-                Registrar ingreso
-            </button>
+            <div class="modal-actions">
+                <button id="btn-open-register-income" class="btn btn-primary btn-small">
+                    Registrar ingreso
+                </button>
+            </div>
 
         </div>
     </div>
@@ -186,5 +319,5 @@ Reservas | Dashboard
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/dashboard-reservas.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/dashboard/reservas.js') }}"></script>
 {% endblock %}

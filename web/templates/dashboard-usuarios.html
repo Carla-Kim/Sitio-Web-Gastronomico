@@ -1,78 +1,237 @@
 {% extends 'dashboard.html' %}
 
-{% block title %}Usuarios | Dashboard{% endblock %}
+{% block title %}
+Usuarios | Dashboard
+{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-usuarios.css') }}">
 {% endblock %}
 
 {% block content %}
-<section class="usuarios-section">
+<section class="page">
 
-    <div class="usuarios-header">
-        <h1 class="usuarios-title">Administración: Usuarios</h1>
-        <button id="btn-abrir-agregar" class="services-button">Agregar usuario</button>
+    <div class="page-header">
+
+        <h1 class="page-title">
+            Administración: Usuarios
+        </h1>
+
+        <div class="page-actions">
+            <button id="btn-open-add-user" class="btn btn-primary btn-small">Agregar usuario</button>
+        </div>
+
     </div>
 
-    <div class="filters-card">
-        <form class="filters-form">
-            <div class="filter-group">
-                <label>Búsqueda:</label>
-                <input type="text" placeholder="Buscar por nombre o apellido...">
+    <div class="card">
+
+        <form class="form form-filter">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-nombre-apellido">Nombre o apellido</label>
+                    <input type="text" id="filter-nombre-apellido" placeholder="Nombre o apellido">
+                </div>
+                <div class="form-group">
+                    <label for="filter-usuario-id">ID de usuario</label>
+                    <input type="number" id="filter-usuario-id" placeholder="ID de usuario">
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="input_id">ID:</label>
-                <input type="number" id="input_id" placeholder="ID">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-usuario-email">Email</label>
+                    <input type="text" id="filter-usuario-email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="filter-usuario-rol">Rol</label>
+                    <select id="filter-usuario-rol">
+                        <option value="all">Todos los roles</option>
+                        <option value="admin">Administrador</option>
+                        <option value="usuario">Usuario</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-group">
-                <label for="input_email">Email:</label>
-                <input type="text" id="input_email" placeholder="EMAIL">
+
+            <div class="filter-actions">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/usuarios'">
+                    Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary btn-small">
+                    Filtrar
+                </button>
             </div>
-            <div class="filter-group">
-                <label for="rol-filter">Rol:</label>
-                <select id="rol-filter">
-                    <option value="all">Todos los roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="usuario">Usuario</option>
-                </select>
-            </div>
+
         </form>
     </div>
 
-    <div class="usuarios-card">
-        <div class="usuarios-card-header">
+    <div class="card">
+
+        <div class="card-header">
+
             <h2 class="card-title">Usuarios</h2>
+
+            <div class="pagination">
+                <button class="btn btn-page">
+                    Previous
+                </button>
+                <button class="btn btn-page active">
+                    1
+                </button>
+                <button class="btn btn-page">
+                    2
+                </button>
+                <button class="btn btn-page">
+                    3
+                </button>
+                <span class="page-dots">...</span>
+                <button class="btn btn-page">
+                    67
+                </button>
+                <button class="btn btn-page">
+                    68
+                </button>
+                <button class="btn btn-page">
+                    Next
+                </button>
+            </div>
+
         </div>
 
         <div class="table-container">
-            <table class="usuarios-table">
+            <table class="table">
+
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Nombre y apellido</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
                         <th>Email</th>
                         <th>Rol</th>
-                        <th>Ver detalles</th>
+                        <th></th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for usuario in usuarios %}
-                    <tr>
-                        <td>{{ usuario.id }}</td>
-                        <td>{{ usuario.usuario }}</td>
-                        <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
-                        <td>{{ usuario.email }}</td>
-                        <td>{{ usuario.rol }}</td>
+                    <tr class="usuario-fila"
+                        data-usuario-id="{{ usuario.id }}"
+                        data-usuario-usuario="{{ usuario.usuario }}"
+                        data-nombre="{{ usuario.nombre}}"
+                        data-apellido="{{ usuario.apellido }}"
+                        data-email="{{ usuario.email }}"
+                        data-rol="{{ usuario.rol }}">
+
+                        <td class="usuario-id">{{ usuario.id }}</td>
+                        <td class="usuario-usuario">{{ usuario.usuario }}</td>
+                        <td class="usuario-nombre">{{ usuario.nombre }}</td>
+                        <td class="usuario-apellido">{{ usuario.apellido }}</td>
+                        <td class="usuario-email">{{ usuario.email }}</td>
+                        <td class="usuario-rol">
+                            {{ {
+                                'admin': 'Administrador',
+                                'usuario': 'Usuario'
+                            }[usuario.rol] }}
+                        </td>
                         <td>
-                            <button type="button" class="view-button">Ver</button>
+                            <button class="btn btn-primary btn-small btn-open-edit-user-role">
+                                Editar rol
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
+        </div>
+
+    </div>
+
+    <div id="modal-add-user" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Agregar usuario
+            </h2>
+
+            <form id="form-add-user" action="/api/usuarios" method="POST" class="form form-modal">
+
+                <div class="form-group">
+                    <label for="add-user-name">Nombre</label>
+                    <input type="text" id="add-user-name" name="nombre" placeholder="Nombre">
+                </div>
+                <div class="form-group">
+                    <label for="add-user-last-name">Apellido</label>
+                    <input type="text" id="add-user-last-name" name="apellido" placeholder="Apellido">
+                </div>
+                <div class="form-group">
+                    <label for="add-user-username">Nombre de usuario</label>
+                    <input type="text" id="add-user-username" name="usuario" placeholder="Nombre de usuario">
+                </div>
+                <div class="form-group">
+                    <label for="add-user-email">Email</label>
+                    <input type="text" id="add-user-email" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="add-user-password">Contraseña</label>
+                    <input type="text" id="add-user-password" name="password" placeholder="Contraseña">
+                </div>
+                <div class="form-group">
+                    <label for="add-user-role">Rol</label>
+                    <select id="add-user-role" name="rol">
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+
+            </form>
+
+            <div class="modal-actions">
+                <button type="submit" form="form-add-user" class="btn btn-primary btn-small btn-save-user">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-user-role" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Editar rol de usuario
+            </h2>
+
+            <form class="form form-modal">
+                <div class="form-group">
+                    <label for="edit-user-role">Categoría</label>
+                    <select id="edit-user-role" name="rol">
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary btn-small btn-update-user-role">
+                    Guardar
+                </button>
+            </div>
+
         </div>
     </div>
 
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{{ url_for('static', filename='js/dashboard/usuarios.js') }}"></script>
 {% endblock %}
