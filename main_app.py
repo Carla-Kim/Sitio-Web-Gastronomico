@@ -13,4 +13,5 @@ app.wsgi_app = DispatcherMiddleware(
 )
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+# el host 0.0.0.0 sirve para que la app sea accesible desde fuera del contenedor Docker (para postman), y el puerto 5000 es el puerto por defecto de Flask. El debug=True es útil durante el desarrollo para ver errores detallados, pero debería ser False en producción
