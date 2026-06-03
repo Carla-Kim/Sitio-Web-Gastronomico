@@ -58,7 +58,6 @@
     letter-spacing: 0.2rem;
 }
 
-/* Menu Container */
 .menu-container {
     padding: 5rem 3rem;
     background-color: #0c0c0c;
@@ -79,7 +78,6 @@
     letter-spacing: 0.1rem;
 }
 
-/* Categoria */
 .categoria {
     margin-bottom: 3rem;
 }
@@ -96,7 +94,6 @@
     padding-bottom: 1rem;
 }
 
-/* Productos Lista */
 .productos-lista {
     list-style: none;
     padding: 0;
@@ -106,7 +103,6 @@
     gap: 1.5rem;
 }
 
-/* Producto Item */
 .producto-item {
     display: flex;
     gap: 1.5rem;
@@ -116,7 +112,6 @@
     border-radius: 0.25rem;
 }
 
-/* Producto Imagen */
 .producto-imagen {
     flex-shrink: 0;
     width: 120px;
@@ -144,7 +139,6 @@
     gap: 0.75rem;
 }
 
-/* Producto Header - Nombre y Precio en la misma línea */
 .producto-header {
     display: flex;
     justify-content: space-between;
@@ -168,7 +162,6 @@
     white-space: nowrap;
 }
 
-/* Producto Descripcion */
 .producto-descripcion {
     color: #A9A08B;
     line-height: 1.6;
@@ -176,7 +169,6 @@
     margin: 0;
 }
 
-/* Responsive - Tablet */
 @media (max-width: 900px) {
     .menu-container {
         padding: 3rem 1.5rem;
@@ -205,7 +197,6 @@
     }
 }
 
-/* Responsive - Mobile */
 @media (max-width: 560px) {
     .menu-container {
         padding: 2rem 1.5rem;
@@ -259,7 +250,6 @@
     }
 }
 
-/* Responsive - Small Mobile */
 @media (max-width: 420px) {
     .menu-container {
         padding: 1.5rem 0.5rem;

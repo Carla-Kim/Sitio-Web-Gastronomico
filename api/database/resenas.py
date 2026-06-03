@@ -10,6 +10,7 @@ def obtener_resenas(limit, offset):
             CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
             FROM Resenas res
             JOIN Reservas r ON res.reserva_id = r.reserva_id
+            LIMIT %s OFFSET %s
         """
         cursor.execute(sql_count)
         res_count = cursor.fetchone()
