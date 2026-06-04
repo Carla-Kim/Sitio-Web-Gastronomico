@@ -118,3 +118,18 @@ def seleccionar_reservas_por_fecha(fecha, limit, offset):#Misma lógica que la a
     finally:
         cursor.close()
         conn.close()
+
+def cambiar_estado_finalizado(id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)    
+    try:
+        query = "UPDATE Reservas SET estado = 'finalizada' WHERE reserva_id = %s"
+        cursor.execute(query, (id,))
+        conn.commit()
+        return cursor.rowcount
+    except Exception as e:
+        print(f"Error en DB al finalizar por QR: {e}")
+        raise e
+    finally:
+        cursor.close()
+        conn.close()

@@ -1,6 +1,8 @@
 import re
 from api.database.reserva import *
 from api.utils.pagination import build_links
+from api.utils.qrcode_generator import generar_qr_reserva
+
 def crear_reserva(data):
     campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas"]
     if not data or not all(i in data for i in campos):
@@ -38,8 +40,11 @@ def crear_reserva(data):
             return 'reserva_duplicada'
         if resultado == 'servicio_no_existe':
             return 'servicio_no_encontrado'
+        
         return 'exito', resultado
-    except Exception:
+        
+    except Exception as e:
+        print(f"Error real en la base de datos: {e}")
         return 'error_db'
 
 def actualizar_reserva(id, data):
@@ -171,3 +176,25 @@ def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
         "data": reservas
     }
     return 'exito', response_body
+
+def escanear_y_finalizar_reserva(id):
+    if id is None or id <= 0:
+        return 'id_invalido'
+    try:
+        reserva = seleccionar_unica_reserva(id)
+        if not reserva:
+            return 'reserva_no_encontrada'
+            
+        estado_actual = reserva.get('estado')
+        if estado_actual == 'finalizada':
+            return 'reserva_ya_finalizada'
+        if estado_actual == 'cancelada':
+            return 'reserva_cancelada'
+            
+        rows = cambiar_estado_finalizado(id)
+        if not rows:
+            return 'reserva_no_encontrada'
+            
+        return 'exito', {"message": f"Reserva {id} verificada correctamente. ¡Disfrute su visita!"}
+    except Exception:
+        return 'error_db'
