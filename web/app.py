@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+API_URL = os.getenv("API_URL", "http://localhost:5000/api")
 
 app = Flask(
     __name__,
@@ -20,8 +21,14 @@ def login():
     return render_template('login.html')
 
 @app.route('/dashboard')
-def dashboard_landing():
-    return render_template('dashboard-inicio.html')
+def dashboard_home():
+    response = requests.get(f"{API_URL}/stats")
+    stats = response.json()
+
+    return render_template(
+        "dashboard-home.html",
+        stats=stats
+    )
 
 @app.route('/dashboard/login')
 def dashboard_login():
