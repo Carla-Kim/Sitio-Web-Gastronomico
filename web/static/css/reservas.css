@@ -379,6 +379,43 @@
     height: 18px;
 }
 
+/*Cambios chicos de diseño*/
+
+/*Saco las flechas del input de tipo number que trae por default*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/*Cambio de color el calendario (antes no se veia)*/
+input[type="date"] {
+    color-scheme: dark; /
+}
+
+/*diseño para el flash*/
+
+
+.flash-msg {
+    padding: 1rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    margin: 1rem;
+}
+
+.alerta-success { 
+    background-color: transparent;
+    color: rgba(60, 255, 62, 0.47);
+    border: 1px solid rgba(60, 255, 62, 0.47);
+}
+.alerta-error { 
+    background-color: transparent; 
+    color: rgba(255, 131, 139, 0.5); 
+    border: 1px solid rgba(255, 131, 139, 0.5);
+
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .formulario-reserva {

@@ -9,9 +9,15 @@ def agregar_reserva():
     data = request.get_json()
     result = reservas_service.crear_reserva(data)
     
-    if result == 'body_invalido':
+    if isinstance(result, tuple) and result[0] == 'exito':
+        return jsonify({'message': 'Reserva creada con éxito'}), 201
+    elif result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
+        return jsonify(ReturnErrors(400)), 400
+    elif result == 'email_invalido':
+        return jsonify(ReturnErrors(400)), 400
+    elif result == 'dni_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'estado_invalido':
         return jsonify(ReturnErrors(400)), 400
@@ -22,7 +28,7 @@ def agregar_reserva():
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        return jsonify({'message': 'Reserva creada con éxito'}), 201
+        return jsonify(ReturnErrors(500)), 500
 
 @reservas_bp.route('/reservas/<int:id>', methods=['PUT'])
 def formatear_reserva(id):

@@ -68,9 +68,18 @@
         </div>
     </div>
 </section>
+<div id="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-msg alerta alerta-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</div>
 
 <section class="reserva-formulario">
-    <form action="#" method="#" class="formulario-reserva">
+    <form action="{{ url_for('reservas') }}" method="POST" class="formulario-reserva">
         <div class="columna-formulario">
             <div class="encabezado-bloque">
                 <span class="numero-bloque">01</span>
@@ -102,18 +111,10 @@
             <div class="grupo-campo">
                 <label class="etiqueta-campo">Servicios adicionales</label>
                 <div class="lista-checkboxes">
-                    {% set servicios = [
-                        ('estacionamiento', 'Estacionamiento'),
-                        ('silla_bebe', 'Silla para bebe'),
-                        ('discapacitados', 'Acceso para discapacitados'),
-                        ('aire_libre', 'Mesa al aire libre'),
-                        ('cumpleanos', 'Colaboración de cumpleaños')
-                    ] %} <!-- reemplazar con servicios reales -->
-
-                    {% for id, etiqueta in servicios %}
+                    {% for servicio in servicios %}
                     <label class="opcion-checkbox">
-                        <input type="checkbox" name="servicios" value="{{ id }}" class="checkbox-control">
-                        <span class="texto-checkbox">{{ etiqueta }}</span>
+                        <input type="checkbox" name="servicios" value="{{ servicio.servicio_id }}" class="checkbox-control">
+                        <span class="texto-checkbox">{{ servicio.nombre }}</span>
                     </label>
                     {% endfor %}
                 </div>
