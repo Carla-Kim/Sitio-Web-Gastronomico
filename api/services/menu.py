@@ -62,6 +62,7 @@ def ver_productos(base_url, limit, offset):
         "id": d["producto_id"],
         "categoria": d["categorias_id"],
         "nombre": d["nombre"],
+        "descripcion": d["descripcion"],
         "precio": d["precio"]
     } for d in res_db["rows"]]
 

@@ -1,5 +1,15 @@
+import os
+import sys
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+
 import mysql.connector
 from config import DB_CONFIG, DB_NAME
+
+conn = None
+cursor = None
 
 try:
     conn = mysql.connector.connect(**DB_CONFIG)
@@ -25,5 +35,13 @@ except FileNotFoundError:
     print("Archivo data/init_db.sql no encontrado.")
 
 finally:
-    cursor.close()
-    conn.close()
+    try:
+        if cursor is not None:
+            cursor.close()
+    except Exception:
+        pass
+    try:
+        if conn is not None:
+            conn.close()
+    except Exception:
+        pass

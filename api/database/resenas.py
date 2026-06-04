@@ -6,8 +6,10 @@ def obtener_resenas(limit, offset):
     try:
         sql_count = "SELECT COUNT(*) as count FROM Resenas"
         sql_elems = """
-            SELECT resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida 
-            FROM Resenas 
+            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario,
+            CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
+            FROM Resenas res
+            JOIN Reservas r ON res.reserva_id = r.reserva_id
             LIMIT %s OFFSET %s
         """
         cursor.execute(sql_count)
