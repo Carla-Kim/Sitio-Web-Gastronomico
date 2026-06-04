@@ -44,10 +44,12 @@ def reservas():
         nombre = nombre_completo[0]
         apellido = nombre_completo[1] if len(nombre_completo) > 1 else ''
 
+        comensales_form = request.form.get('comensales') or '0'
+
         data = {
-            "cantidad_personas": int(request.form.get('comensales')),
+            "cantidad_personas": int(comensales_form),
             "fecha": request.form.get('fecha'),
-            "servicio_ID": 1, #Servicio_id deberia ser null o no estar en la db ya que esto lo maneja servicio_reserva_id
+            "servicio_ID": 1, 
             "nombre": nombre,
             "apellido": apellido,
             "email": request.form.get('email'),
@@ -63,8 +65,7 @@ def reservas():
                 serv_seleccionados = request.form.getlist('servicios')
 
                 if serv_seleccionados and reserva_id:
-                    requests.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]}
-                    )
+                    requests.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]})
                 flash('Se realizó la reserva con exito.', 'success')
                 return redirect(url_for('reservas'))
             else:
