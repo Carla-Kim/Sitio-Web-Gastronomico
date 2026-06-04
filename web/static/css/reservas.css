@@ -410,8 +410,8 @@ input[type="date"] {
     border: 1px solid rgba(60, 255, 62, 0.47);
 }
 .alerta-error { 
-    background-color: rgba(255, 131, 139, 0.5); 
-    color: rgb(0, 0, 0); 
+    background-color: transparent; 
+    color: rgba(255, 131, 139, 0.5); 
     border: 1px solid rgba(255, 131, 139, 0.5);
 
 }

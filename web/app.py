@@ -56,20 +56,19 @@ def reservas():
         }
 
         try:
-            response = request.post('http://localhost:5000/api/reservas', json=data)
+            response = requests.post('http://localhost:5000/api/reservas', json=data)
 
             if response.status_code == 201:
                 reserva_id = response.json().get('reserva_id')
-
                 serv_seleccionados = request.form.getlist('servicios')
 
                 if serv_seleccionados and reserva_id:
                     requests.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]}
                     )
-                flash('Confirmado', 'success')
+                flash('Se realizó la reserva con exito.', 'success')
                 return redirect(url_for('reservas'))
             else:
-                error_msg = response.json().get('errors', [{}])[0].get('message', 'Error inesperado')
+                error_msg = response.json().get('errors', [{}])[0].get('message', 'Ha ocurrido un error inesperado')
                 flash(error_msg, 'error')
         
         except Exception as e:
