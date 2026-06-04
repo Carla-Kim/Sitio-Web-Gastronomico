@@ -13,6 +13,10 @@ def agregar_reserva():
         return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
         return jsonify(ReturnErrors(400)), 400
+    elif result == 'email_invalido':
+        return jsonify(ReturnErrors(400)), 400
+    elif result == 'dni_invalido':
+        return jsonify(ReturnErrors(400)), 400
     elif result == 'estado_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'cantidad_invalida':
