@@ -79,58 +79,69 @@ def reservas():
 
 @app.route('/menu')
 def mostrar_menu():
-    todas_las_categorias = categorias.query.all() 
-    todos_los_productos = menu.query.all()
-    
+    # Usar los endpoints de API para obtener categorías y productos
+    categorias_data = []
+    productos_data = []
+    try:
+        categorias_resp = requests.get('http://localhost:5000/api/categorias', params={"_limit": 1000, "_offset": 0})
+        productos_resp = requests.get('http://localhost:5000/api/productos', params={"limit": 1000, "offset": 0})
+
+        if categorias_resp.status_code == 200:
+            categorias_data = categorias_resp.json().get('data', [])
+        if productos_resp.status_code == 200:
+            productos_data = productos_resp.json().get('productos', [])
+    except Exception as e:
+        print(f"Error al conectar con la API de menú: {e}")
+
     menu_agrupado = []
-    for cat in todas_las_categorias:
-        prod_filtrados = [p for p in todos_los_productos if p.categorias_id == cat.categorias_id]
-        menu_agrupado.append((cat, prod_filtrados))
-        
+    for cat in categorias_data:
+        prod_filtrados = [p for p in productos_data if p.get('categoria') == cat.get('categorias_id')]
+        menu_agrupado.append({
+            'categoria': cat,
+            'productos': prod_filtrados
+        })
+
+    # Obtener reseñas usando la API interna de Flask
     limit = request.args.get('limit', default=5, type=int)
     offset = request.args.get('offset', default=0, type=int)
-    
+
     with api_app.test_client() as client:
-        # Obtener reseñas paginadas
         resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset})
-        # Obtener promedios
         promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
         promedio_comida_resp = client.get('/resenas/promedio/comida')
         promedio_servicio_resp = client.get('/resenas/promedio/servicio')
-    
+
     resenas_list = []
     total_resenas = 0
     promedio_ambiente = 0
     promedio_comida = 0
     promedio_servicio = 0
-    
-    # Procesar reseñas
+
     if resenas_resp.status_code == 200:
         resenas_data = resenas_resp.get_json()
         resenas_list = resenas_data.get('resenas', [])
         total_resenas = resenas_data.get('total', 0)
-    
-    # Procesar promedios
+
     if promedio_ambiente_resp.status_code == 200:
         promedio_ambiente = promedio_ambiente_resp.get_json().get('promedio', 0)
     if promedio_comida_resp.status_code == 200:
         promedio_comida = promedio_comida_resp.get_json().get('promedio', 0)
     if promedio_servicio_resp.status_code == 200:
         promedio_servicio = promedio_servicio_resp.get_json().get('promedio', 0)
-    
-    # Calcular paginación
+
     total_paginas = (total_resenas + limit - 1) // limit if total_resenas > 0 else 1
     pagina_actual = (offset // limit) + 1
-    
-    return render_template('resenas.html', 
-                          resenas=resenas_list,
-                          promedio_ambiente=promedio_ambiente,
-                          promedio_comida=promedio_comida,
-                          promedio_servicio=promedio_servicio,
-                          limit=limit,
-                          offset=offset,
-                          total_paginas=total_paginas,
-                          pagina_actual=pagina_actual)
+
+    return render_template('menu.html',
+                           menu_agrupado=menu_agrupado,
+                           resenas=resenas_list,
+                           promedio_ambiente=promedio_ambiente,
+                           promedio_comida=promedio_comida,
+                           promedio_servicio=promedio_servicio,
+                           limit=limit,
+                           offset=offset,
+                           total_paginas=total_paginas,
+                           pagina_actual=pagina_actual)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
