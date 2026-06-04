@@ -77,16 +77,30 @@ def reservas():
 
     return render_template('reservas.html', servicios=servicios)
 
-@app.route('/menu')
+@app.route('/menu', endpoint='menu')
 def mostrar_menu():
-    todas_las_categorias = categorias.query.all() 
-    todos_los_productos = menu.query.all()
-    
+    with api_app.test_client() as client:
+        categorias_resp = client.get('/categorias', query_string={'_limit': 1000, '_offset': 0})
+        productos_resp = client.get('/productos', query_string={'_limit': 1000, '_offset': 0})
+
+    if categorias_resp.status_code != 200 or productos_resp.status_code != 200:
+        return render_template('menu.html', menu_agrupado=[])
+
+    categorias_data = categorias_resp.get_json().get('data', [])
+    productos_data = productos_resp.get_json().get('productos', [])
+
     menu_agrupado = []
-    for cat in todas_las_categorias:
-        prod_filtrados = [p for p in todos_los_productos if p.categorias_id == cat.categorias_id]
-        menu_agrupado.append((cat, prod_filtrados))
-        
+    for categoria in categorias_data:
+        productos_filtrados = [p for p in productos_data if p['categoria'] == categoria['categorias_id']]
+        menu_agrupado.append({
+            'categoria': categoria,
+            'productos': productos_filtrados
+        })
+
+    return render_template('menu.html', menu_agrupado=menu_agrupado)
+
+@app.route('/resenas')
+def resenas():       
     limit = request.args.get('limit', default=5, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
