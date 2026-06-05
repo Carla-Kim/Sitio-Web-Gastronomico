@@ -24,12 +24,12 @@ Reservas | Dashboard
 
     <div class="card">
 
-        <form class="form form-filter">
+        <form action="/dashboard/reservas" method="GET" class="form form-filter">
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-reserva-id">ID de la reserva</label>
-                    <input type="text" id="filter-reserva-id" name="reserva-id" placeholder="ID de la reserva">
+                    <input type="text" id="filter-reserva-id" name="id" placeholder="ID de la reserva">
                 </div>
             </div>
 
@@ -112,9 +112,9 @@ Reservas | Dashboard
                         data-id="{{ reserva.id }}"
                         data-fecha="{{ reserva.fecha }}"
                         data-email="{{ reserva.email }}"
-                        data-nombre-apellido="{{ reserva.nombre}} {{ reserva.apellido }}"
+                        data-nombrecompleto="{{ reserva.nombre }} {{ reserva.apellido }}"
                         data-dni="{{ reserva.dni }}"
-                        data-telefono="{{ reserva.telefono }}"
+                        data-telefono="{{ reserva.telefono or '' }}"
                         data-servicios="{{ reserva.servicio }}"
                         data-estado="{{ reserva.estado }}"
                         data-cantidad="{{ reserva.cantidad }}">
@@ -163,7 +163,7 @@ Reservas | Dashboard
 
                     <tbody>
                         {% for servicio in servicios %}
-                        <tr class="table-row">
+                        <tr class="table-row" data-id="{{ servicio.id }}">
                             <td class="serv-nombre">
                                 {{ servicio.nombre }}
                             </td>
@@ -173,9 +173,10 @@ Reservas | Dashboard
                                 </button>
                             </td>
                             <td class="table-actions">
-                                <button class="btn btn-secondary btn-small btn-delete-service">
-                                    Borrar
-                                </button>
+                                <form action="/dashboard/servicios/eliminar" method="POST">
+                                    <input type="hidden" name="id_servicio" value="{{ servicio.id }}">
+                                    <button type="submit" class="btn btn-secondary btn-small btn-delete-service">Borrar</button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
@@ -204,7 +205,7 @@ Reservas | Dashboard
                 Agregar servicio
             </h2>
 
-            <form id="form-add-service" action="/api/servicios" method="POST" class="form form-modal">
+            <form id="form-add-service" action="/dashboard/servicios/crear" method="POST" class="form form-modal">
                 <div class="form-group">
                     <label for="add-service-name">Nombre del servicio</label>
                     <input type="text" id="add-service-name" name="nombre" placeholder="Nombre del servicio">
@@ -234,7 +235,9 @@ Reservas | Dashboard
                 Edición de servicio
             </h2>
 
-            <form class="form form-modal">
+            <form id="form-edit-service" action="/dashboard/servicios/editar" method="POST" class="form form-modal">
+                <input type="hidden" name="id_servicio" id="edit-service-id">
+            
                 <div class="form-group">
                     <label for="edit-service-name">Nombre del servicio</label>
                     <input type="text" id="edit-service-name" name="nombre" placeholder="Nombre del servicio">
@@ -245,7 +248,7 @@ Reservas | Dashboard
                 <button class="btn btn-secondary btn-small btn-close-modal">
                     Cancelar
                 </button>
-                <button class="btn btn-primary btn-small btn-save-service">
+                <button type="submit" form="form-edit-service" class="btn btn-primary btn-small btn-save-service">
                     Guardar
                 </button>
             </div>
@@ -307,9 +310,21 @@ Reservas | Dashboard
             </div>
 
             <div class="modal-actions">
-                <button id="btn-open-register-income" class="btn btn-primary btn-small">
-                    Registrar ingreso
-                </button>
+                <form action="/dashboard/reservas/registrar_ingreso" method="POST">
+                    <input type="hidden" name="id_reserva" id="hidden-id-reserva-ingreso">
+                    <button type="submit" id="btn-open-register-income" class="btn btn-primary btn-small">
+                        Registrar ingreso
+                    </button>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <form action="/dashboard/reservas" method="POST">
+                    <input type="hidden" name="tipo" value="reserva">
+                    <input type="hidden" name="id_reserva" id="hidden-id-reserva">
+                    <button type="submit" class="btn btn-danger btn-small">
+                       Cancelar Reserva
+                    </button>
+                </form>
             </div>
 
         </div>

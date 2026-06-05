@@ -24,28 +24,28 @@ Usuarios | Dashboard
 
     <div class="card">
 
-        <form class="form form-filter">
+        <form action="/dashboard/usuarios" method="GET" class="form form-filter">
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-nombre-apellido">Nombre o apellido</label>
-                    <input type="text" id="filter-nombre-apellido" placeholder="Nombre o apellido">
+                    <input type="text" name="nombre" id="filter-nombre-apellido" placeholder="Nombre o apellido">
                 </div>
                 <div class="form-group">
                     <label for="filter-usuario-id">ID de usuario</label>
-                    <input type="number" id="filter-usuario-id" placeholder="ID de usuario">
+                    <input type="number" name="id" id="filter-usuario-id" placeholder="ID de usuario">
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-usuario-email">Email</label>
-                    <input type="text" id="filter-usuario-email" placeholder="Email">
+                    <input type="text" name="email" id="filter-usuario-email" placeholder="Email">
                 </div>
                 <div class="form-group">
                     <label for="filter-usuario-rol">Rol</label>
-                    <select id="filter-usuario-rol">
-                        <option value="all">Todos los roles</option>
+                    <select name="rol" id="filter-usuario-rol">
+                        <option value="">Todos los roles</option>
                         <option value="admin">Administrador</option>
                         <option value="usuario">Usuario</option>
                     </select>
@@ -135,7 +135,12 @@ Usuarios | Dashboard
                         </td>
                         <td>
                             <button class="btn btn-primary btn-small btn-open-edit-user-role">
-                                Editar rol
+                                Editar credenciales
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-small btn-open-edit-completo">
+                                Editar Usuario
                             </button>
                         </td>
                     </tr>
@@ -158,7 +163,7 @@ Usuarios | Dashboard
                 Agregar usuario
             </h2>
 
-            <form id="form-add-user" action="/api/usuarios" method="POST" class="form form-modal">
+            <form id="form-add-user" action="/dashboard/usuarios/crear" method="POST" class="form form-modal">
 
                 <div class="form-group">
                     <label for="add-user-name">Nombre</label>
@@ -199,7 +204,7 @@ Usuarios | Dashboard
         </div>
     </div>
 
-    <div id="modal-edit-user-role" class="modal-overlay hidden">
+    <div id="modal-edit-user-parcial" class="modal-overlay hidden">
         <div class="modal-card">
 
             <button class="btn modal-close btn-close-modal">
@@ -207,27 +212,78 @@ Usuarios | Dashboard
             </button>
 
             <h2 class="modal-title">
-                Editar rol de usuario
+                Editar email y contraseña del usuario
             </h2>
 
-            <form class="form form-modal">
+            <form id="form-edit-user-role" action="/dashboard/usuarios/editar/parcial" method="POST" class="form form-modal">
+                <input type="hidden" name="id_usuario" id="input-edit-id-usuario">
                 <div class="form-group">
-                    <label for="edit-user-role">Categoría</label>
-                    <select id="edit-user-role" name="rol">
+                    <label for="edit-user-email">Nuevo email</label>
+                    <input type="email" id="edit-user-email" name="email" placeholder="Dejar vacío para no cambiar">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-password">Nueva Contraseña</label>
+                    <input type="password" id="edit-user-password" name="password" placeholder="Dejar vacío para no cambiar">
+                </div>
+                <div class="modal-actions">
+                  <button type="submit" class="btn btn-primary btn-small btn-update-user-role">
+                       Guardar
+                  </button>
+                </div>
+            </form>
+            <button type="button" class="btn btn-secondary btn-small btn-delete-user-modal" data-id=""> 
+                Borrar Usuario
+            </button>
+        </div>
+    </div>
+
+     <div id="modal-edit-user-completo" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Editar datos del usuario
+            </h2>
+
+            <form id="form-edit-user-completo" action="/dashboard/usuarios/editar/completo" method="POST" class="form form-modal">
+                <input type="hidden" name="id_usuario" id="input-full-id">
+                <div class="form-group">
+                    <label for="input-full-username">Usuario</label>
+                    <input type="text" name="usuario" id="input-full-username">
+                </div>
+                <div class="form-group">
+                    <label for="input-full-nombre">Nombre</label>
+                    <input type="text" name="nombre" id="input-full-nombre" placeholder="Nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-full-apellido">Apellido</label>
+                    <input type="text" name="apellido" id="input-full-apellido" placeholder="Apellido" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-full-rol">Rol</label>
+                    <select name="rol" id="input-full-rol">
                         <option value="usuario">Usuario</option>
                         <option value="admin">Administrador</option>
                     </select>
                 </div>
+                <input type="hidden" name="email" id="input-full-email">
+                <input type="hidden" name="password" id="input-full-password">
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary btn-small">Guardar cambios</button>
+                </div>
             </form>
-
-            <div class="modal-actions">
-                <button class="btn btn-primary btn-small btn-update-user-role">
-                    Guardar
-                </button>
-            </div>
-
+            <button type="button" class="btn btn-secondary btn-small btn-delete-user-modal" data-id=""> 
+                Borrar Usuario
+            </button>
         </div>
     </div>
+
+    <form id="form-delete-usuario" action="/dashboard/usuarios" method="POST" class="hidden">
+        <input type="hidden" name="id_usuario" id="delete-id-usuario">
+    </form>
 
 </section>
 {% endblock %}

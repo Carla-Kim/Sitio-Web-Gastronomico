@@ -59,6 +59,7 @@ document.querySelectorAll(".btn-open-edit-category").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
 
+        document.querySelector("#edit-cat-id").value = row.dataset.id;
         document.querySelector("#edit-category-name").value =
             row.querySelector(".cat-nombre").textContent.trim();
 
@@ -70,18 +71,46 @@ document.querySelectorAll(".btn-open-edit-product").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
 
-        document.querySelector("#edit-product-name").value =
-            row.querySelector(".producto-nombre").textContent;
-
-        document.querySelector("#edit-product-price").value =
-            row.querySelector(".producto-precio").textContent.replace("$", "");
-
-        document.querySelector("#edit-product-category").value =
-            row.querySelector(".producto-categoria").textContent.toLowerCase();
-
-        document.querySelector("#edit-product-description").value =
-            row.querySelector(".producto-descripcion").textContent;
+        document.querySelector("#edit-product-id").value = row.dataset.id;
+        document.querySelector("#edit-product-name").value = row.querySelector(".producto-nombre").textContent;
+        document.querySelector("#edit-product-price").value = row.querySelector(".producto-precio").textContent.replace("$", "");
+        document.querySelector("#edit-product-description").value = row.querySelector(".producto-descripcion").textContent;
+        document.querySelector("#edit-product-category").value = row.dataset.catId;
 
         editProductModal.open();
+    });
+});
+
+const formDelete = document.getElementById('form-delete-menu');
+const inputTipo = document.getElementById('delete-tipo');
+const inputId = document.getElementById('delete-id');
+
+const handleDelete = (tipo, id) => {
+    if (confirm(`¿Estás seguro de que deseas eliminar este ${tipo}?`)) {
+        inputTipo.value = tipo;
+        inputId.value = id;
+        formDelete.submit();
+    }
+};
+
+document.querySelectorAll('.btn-delete-trigger, .btn-delete-product').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+        const modal = event.currentTarget.closest('.modal-overlay');
+        const tipo = event.currentTarget.dataset.tipo;
+        
+        const idInput = modal.querySelector('input[name="id"]');
+        
+        if (idInput && tipo) {
+            handleDelete(tipo, idInput.value);
+        }
+    });
+});
+
+document.querySelectorAll('.btn-delete-category').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+        const row = event.currentTarget.closest("tr");
+        const id = row.dataset.id;
+        
+        handleDelete('categoria', id);
     });
 });

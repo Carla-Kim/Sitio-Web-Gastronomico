@@ -6,17 +6,17 @@ function parseDate(str) {
 
 import { createTableFilter } from "./core.js";
 
-const rows = document.querySelectorAll(".reseña-fila");
+const rows = document.querySelectorAll(".resena-fila");
 const form = document.querySelector(".form-filter");
 
 const inputs = {
-    reseña_id: form.querySelector("#filter-reseña-id"),
-    reserva_id: form.querySelector("#filter-reseña-reserva-id"),
+    resena_id: form.querySelector("#filter-resena-id"),
+    reserva_id: form.querySelector("#filter-resena-reserva-id"),
     fecha_desde: form.querySelector("#filter-fecha-desde"),
     fecha_hasta: form.querySelector("#filter-fecha-hasta"),
-    ambiente: form.querySelector("#filter-reseña-ambiente"),
-    servicio: form.querySelector("#filter-reseña-servicio"),
-    comida: form.querySelector("#filter-reseña-comida")
+    ambiente: form.querySelector("#filter-resena-ambiente"),
+    servicio: form.querySelector("#filter-resena-servicio"),
+    comida: form.querySelector("#filter-resena-comida")
 };
 
 createTableFilter({
@@ -24,20 +24,20 @@ createTableFilter({
     rows,
 
     getRowData: (row) => {
-        const raw = row.querySelector(".reseña-fecha").textContent;
+        const raw = row.querySelector(".resena-fecha").textContent;
 
         return {
-            reseña_id: row.querySelector(".reseña-id").textContent,
-            reserva_id: row.querySelector(".reseña-reserva-id").textContent,
+            resena_id: row.querySelector(".resena-id").textContent,
+            reserva_id: row.querySelector(".resena-reserva-id").textContent,
             fecha: parseDate(raw),
-            ambiente: row.querySelector(".reseña-ambiente").textContent,
-            servicio: row.querySelector(".reseña-servicio").textContent,
-            comida: row.querySelector(".reseña-comida").textContent
+            ambiente: row.querySelector(".resena-ambiente").textContent,
+            servicio: row.querySelector(".resena-servicio").textContent,
+            comida: row.querySelector(".resena-comida").textContent
         };
     },
 
     matchRow: (data) => {
-        const reseña_id = inputs.reseña_id.value.trim();
+        const resena_id = inputs.resena_id.value.trim();
         const reserva_id = inputs.reserva_id.value.trim();
         const fecha_desde = inputs.fecha_desde.value ? new Date(inputs.fecha_desde.value).getTime() : null;
         const fecha_hasta = inputs.fecha_hasta.value ? new Date(inputs.fecha_hasta.value).getTime() : null;
@@ -47,7 +47,7 @@ createTableFilter({
         const rowDate = data.fecha.getTime();
 
         return (
-            (!reseña_id || data.reseña_id.includes(reseña_id)) &&
+            (!resena_id || data.resena_id.includes(resena_id)) &&
             (!reserva_id || data.reserva_id.includes(reserva_id)) &&
             (!fecha_desde || rowDate >= fecha_desde) &&
             (!fecha_hasta || rowDate <= fecha_hasta) &&
@@ -71,18 +71,21 @@ document.querySelectorAll(".btn-open-view-review").forEach(btn => {
         const row = event.currentTarget.closest("tr");
         const data = row.dataset;
 
-        currentReviewId = data.reseñaId;
+        currentReviewId = data.resenaId;
 
-        document.querySelector("#delete-review-form").action = `/dashboard/reseñas/eliminar/${currentReviewId}`;
+        const inputHidden = document.querySelector("#input-delete-id-resena");
+        if (inputHidden) {
+            inputHidden.value = currentReviewId;
+        }
 
-        document.querySelector("#modal-reseña-id").textContent = data.reseñaId;
-        document.querySelector("#modal-reseña-nombre-apellido").textContent = data.nombreApellido;
-        document.querySelector("#modal-reseña-reserva-id").textContent = data.reservaId;
-        document.querySelector("#modal-reseña-fecha").textContent = data.fecha;
-        document.querySelector("#modal-reseña-ambiente").textContent = data.ambiente;
-        document.querySelector("#modal-reseña-servicio").textContent = data.servicio;
-        document.querySelector("#modal-reseña-comida").textContent = data.comida;
-        document.querySelector("#modal-reseña-comentario").textContent = data.comentario;
+        document.querySelector("#modal-resena-id").textContent = data.resenaId;
+        document.querySelector("#modal-resena-nombre-apellido").textContent = data.nombreApellido;
+        document.querySelector("#modal-resena-reserva-id").textContent = data.reservaId;
+        document.querySelector("#modal-resena-fecha").textContent = data.fecha;
+        document.querySelector("#modal-resena-ambiente").textContent = data.ambiente;
+        document.querySelector("#modal-resena-servicio").textContent = data.servicio;
+        document.querySelector("#modal-resena-comida").textContent = data.comida;
+        document.querySelector("#modal-resena-comentario").textContent = data.comentario;
 
         viewReviewModal.open();
     });

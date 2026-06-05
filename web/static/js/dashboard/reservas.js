@@ -4,7 +4,7 @@ const rows = document.querySelectorAll(".reserva-fila");
 const form = document.querySelector(".form-filter");
 
 const inputs = {
-    reserva_id: form.querySelector("#filter-reserva-id"),
+    id: form.querySelector("#filter-reserva-id"),
     estado: form.querySelector("#filter-estado"),
     fecha: form.querySelector("#filter-fecha"),
 };
@@ -20,7 +20,7 @@ createTableFilter({
     }),
 
     matchRow: (data) => {
-        const id = inputs.reserva_id.value.trim();
+        const id = inputs.id.value.trim();
         const estado = inputs.estado.value.trim().toLowerCase();
         const fecha = inputs.fecha.value;
 
@@ -51,9 +51,11 @@ document
 document.querySelectorAll(".btn-open-edit-service").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
+        const id = row.dataset.id;
+        const nombre = row.querySelector(".serv-nombre").textContent.trim();
 
-        document.querySelector("#edit-service-name").value =
-            row.querySelector(".serv-nombre").textContent.trim();
+        document.querySelector("#edit-service-id").value = id;
+        document.querySelector("#edit-service-name").value = nombre;
 
         editServiceModal.open();
     });
@@ -67,12 +69,14 @@ document.querySelectorAll(".btn-open-view-reservation").forEach(btn => {
         document.querySelector("#modal-reserva-id").textContent = data.id;
         document.querySelector("#modal-reserva-fecha").textContent = data.fecha;
         document.querySelector("#modal-reserva-email").textContent = data.email;
-        document.querySelector("#modal-reserva-nombre-apellido").textContent = data.nombreApellido;
+        document.querySelector("#modal-reserva-nombre-apellido").textContent = data.nombrecompleto;
         document.querySelector("#modal-reserva-dni").textContent = data.dni;
         document.querySelector("#modal-reserva-telefono").textContent = data.telefono;
         document.querySelector("#modal-reserva-servicios").textContent = data.servicios;
         document.querySelector("#modal-reserva-cantidad").textContent = data.cantidad;
         document.querySelector("#modal-reserva-estado").textContent = data.estado;
+        document.querySelector("#hidden-id-reserva").value = data.id;
+        document.querySelector("#hidden-id-reserva-ingreso").value = data.id; 
 
         viewReservationModal.open();
     });

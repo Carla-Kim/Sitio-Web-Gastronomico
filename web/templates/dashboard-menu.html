@@ -54,8 +54,6 @@ Menú | Dashboard
                 </div>
             </div>
 
-            </div>
-
             <div class="filter-actions">
                 <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/menu'">
                     Limpiar
@@ -120,7 +118,13 @@ Menú | Dashboard
 
                 <tbody>
                     {% for producto in productos %}
-                    <tr class="producto-fila">
+                    <tr class="producto-fila"
+                        data-id="{{ producto.id }}" 
+                        data-nombre="{{ producto.nombre }}"
+                        data-cat-id="{{ producto.id_categoria }}"
+                        data-categoria="{{ producto.categoria }}" 
+                        data-precio="{{ producto.precio }}" 
+                        data-descripcion="{{ producto.descripcion }}">
                         <td class="producto-nombre">{{ producto.nombre }}</td>
                         <td class="producto-id">{{ producto.id }}</td>
                         <td class="producto-categoria">{{ producto.categoria }}</td>
@@ -151,7 +155,7 @@ Menú | Dashboard
                 Agregar del menú
             </h2>
 
-            <form id="form-add-product" action="/api/menu" method="POST" class="form form-modal">
+            <form id="form-add-product" action="/dashboard/menu/crear" method="POST" class="form form-modal">
 
                 <div class="form-group">
                     <label for="add-product-name">Nombre del producto</label>
@@ -159,9 +163,9 @@ Menú | Dashboard
                 </div>
                 <div class="form-group">
                     <label for="add-product-category">Categoría</label>
-                    <select id="add-product-category" name="categoria">
+                    <select id="add-product-category" name="categorias_id">
                         {% for categoria in categorias %}
-                        <option value="{{ categoria.nombre | lower }}">{{ categoria.nombre }}</option>
+                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -215,7 +219,7 @@ Menú | Dashboard
 
                     <tbody>
                         {% for categoria in categorias %}
-                        <tr class="table-row">
+                        <tr class="table-row" data-id="{{ categoria.id }}">
                             <td class="cat-nombre">
                                 {{ categoria.nombre }}
                             </td>
@@ -256,10 +260,10 @@ Menú | Dashboard
                 Agregar categoría
             </h2>
 
-            <form id="form-add-category" action="/api/categorias" method="POST" class="form form-modal">
+            <form id="form-add-category" action="/dashboard/categorias/crear" method="POST" class="form form-modal">
                 <div class="form-group">
                     <label for="add-category-name">Nombre de la categoría</label>
-                    <input type="text" id="add-category-name" name="nombre" placeholder="Nombre de la categoría">
+                    <input type="text" id="add-category-name" name="nombre_categoria" placeholder="Nombre de la categoría">
                 </div>
             </form>
 
@@ -286,7 +290,8 @@ Menú | Dashboard
                 Edición de categoría
             </h2>
 
-            <form class="form form-modal">
+            <form action="/dashboard/categorias/editar" method="POST" class="form form-modal" id="form-edit-category">
+                <input type="hidden" id="edit-cat-id" name="id"> 
                 <div class="form-group">
                     <label for="edit-category-name">Nombre de la categoría</label>
                     <input type="text" id="edit-category-name" name="nombre" placeholder="Nombre de la categoría">
@@ -297,7 +302,10 @@ Menú | Dashboard
                 <button class="btn btn-secondary btn-small btn-close-modal">
                     Cancelar
                 </button>
-                <button class="btn btn-primary btn-small btn-save-category">
+                <button type="button" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="categoria">
+                    Borrar
+                </button>
+                <button type="submit" form="form-edit-category" class="btn btn-primary btn-small btn-save-category">
                     Guardar
                 </button>
             </div>
@@ -316,17 +324,17 @@ Menú | Dashboard
                 Editar del menú
             </h2>
 
-            <form class="form form-modal">
-
+            <form class="form form-modal" id="form-edit-product" action="/dashboard/menu/editar" method="POST">
+                <input type="hidden" id="edit-product-id" name="id"> 
                 <div class="form-group">
                     <label for="edit-product-name">Nombre del producto</label>
                     <input type="text" id="edit-product-name" name="nombre" placeholder="Nombre del producto">
                 </div>
                 <div class="form-group">
                     <label for="edit-product-category">Categoría</label>
-                    <select id="edit-product-category" name="categoria">
+                    <select id="edit-product-category" name="categorias_id">
                         {% for categoria in categorias %}
-                        <option value="{{ categoria.nombre | lower }}">{{ categoria.nombre }}</option>
+                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -348,18 +356,20 @@ Menú | Dashboard
             </form>
 
             <div class="modal-actions">
-                <button class="btn btn-secondary btn-small btn-delete-product">
+                <button type="button" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="producto">
                     Borrar
                 </button>
-
-                <button class="btn btn-primary btn-small btn-update-product">
+                <button type="submit" form="form-edit-product" class="btn btn-primary btn-small btn-update-product">
                     Guardar
                 </button>
             </div>
-
+            
         </div>
     </div>
-
+    <form id="form-delete-menu" action="/dashboard/menu" method="POST" class="hidden">
+        <input type="hidden" name="tipo" id="delete-tipo">
+        <input type="hidden" name="id" id="delete-id">
+    </form>
 </section>
 {% endblock %}
 

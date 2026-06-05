@@ -29,47 +29,49 @@ Reseñas | Dashboard
 
     <div class="card">
 
-        <form class="form form-filter">
+        <form action="/dashboard/resenas" method="GET" class="form form-filter">
+            <input type="hidden" name="_limit" value="{{ limit }}">
+            <input type="hidden" name="_offset" value="{{ offset }}">
 
             <div class="filter-row">
                 <div class="form-group">
-                    <label for="filter-reseña-id">ID</label>
-                    <input type="text" id="filter-reseña-id" name="reseña-id" placeholder="ID de la reseña">
+                    <label for="filter-resena-id">ID</label>
+                    <input type="text" id="filter-resena-id" name="resena-id" placeholder="ID de la resena">
                 </div>
                 <div class="form-group">
-                    <label for="filter-reseña-reserva-id">ID de la Reserva</label>
-                    <input type="text" id="filter-reseña-reserva-id" name="reseña-reserva-id" placeholder="ID de la reserva">
+                    <label for="filter-resena-reserva-id">ID de la Reserva</label>
+                    <input type="text" id="filter-resena-reserva-id" name="resena-reserva-id" placeholder="ID de la reserva">
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-fecha-desde">Desde:</label>
-                    <input type="date" id="filter-fecha-desde" name="reseña-fecha-desde" placeholder="Desde">
+                    <input type="date" id="filter-fecha-desde" name="resena-fecha-desde" placeholder="Desde">
                 </div>
                 <div class="form-group">
                     <label for="filter-fecha-hasta">Hasta:</label>
-                    <input type="date" id="filter-fecha-hasta" name="reseña-fecha-hasta" placeholder="Hasta">
+                    <input type="date" id="filter-fecha-hasta" name="resena-fecha-hasta" placeholder="Hasta">
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="form-group">
-                    <label for="filter-reseña-ambiente">Ambiente</label>
-                    <input type="text" id="filter-reseña-ambiente" name="reseña-ambiente" placeholder="Puntuación del ambiente">
+                    <label for="filter-resena-ambiente">Ambiente</label>
+                    <input type="text" id="filter-resena-ambiente" name="resena-ambiente" placeholder="Puntuación del ambiente">
                 </div>
                 <div class="form-group">
-                    <label for="filter-reseña-servicio">Servicio</label>
-                    <input type="text" id="filter-reseña-servicio" name="reseña-servicio" placeholder="Puntuación del servicio">
+                    <label for="filter-resena-servicio">Servicio</label>
+                    <input type="text" id="filter-resena-servicio" name="resena-servicio" placeholder="Puntuación del servicio">
                 </div>
                 <div class="form-group">
-                    <label for="filter-reseña-comida">Comida</label>
-                    <input type="text" id="filter-reseña-comida" name="reseña-comida" placeholder="Puntuación de la comida">
+                    <label for="filter-resena-comida">Comida</label>
+                    <input type="text" id="filter-resena-comida" name="resena-comida" placeholder="Puntuación de la comida">
                 </div>
             </div>
 
             <div class="filter-actions">
-                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/reseñas'">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/resenas'">
                     Limpiar
                 </button>
                 <button type="submit" class="btn btn-primary btn-small">
@@ -133,23 +135,23 @@ Reseñas | Dashboard
                 </thead>
 
                 <tbody>
-                    {% for reseña in reseñas %}
-                    <tr class="reseña-fila"
-                        data-reseña-id="{{ reseña.id }}"
-                        data-nombre-apellido="{{ reseña.nombre }} {{ reseña.apellido }}"
-                        data-reserva-id="{{ reseña.id_reserva }}"
-                        data-ambiente="{{ reseña.ambiente }}"
-                        data-servicio="{{ reseña.servicio }}"
-                        data-comida="{{ reseña.comida }}"
-                        data-comentario="{{ reseña.comentario }}">
+                    {% for resena in resenas %}
+                    <tr class="resena-fila"
+                        data-resena-id="{{ resena.id }}"
+                        data-nombre-apellido="{{ resena.nombre }} {{ resena.apellido }}"
+                        data-reserva-id="{{ resena.id_reserva }}"
+                        data-ambiente="{{ resena.ambiente }}"
+                        data-servicio="{{ resena.servicio }}"
+                        data-comida="{{ resena.comida }}"
+                        data-comentario="{{ resena.comentario }}">
 
-                        <td class="reseña-id">{{ reseña.id }}</td>
-                        <td class="reseña-nombre-apellido">{{ reseña.nombre }} {{ reseña.apellido }}</td>
-                        <td class="reseña-reserva-id">{{ reseña.id_reserva }}</td>
-                        <td class="reseña-ambiente">{{ reseña.ambiente }}</td>
-                        <td class="reseña-servicio">{{ reseña.servicio }}</td>
-                        <td class="reseña-comida">{{ reseña.comida }}</td>
-                        <td class="reseña-fecha">{{ reseña.fecha }}</td>
+                        <td class="resena-id">{{ resena.id }}</td>
+                        <td class="resena-nombre-apellido">{{ resena.nombre }} {{ resena.apellido }}</td>
+                        <td class="resena-reserva-id">{{ resena.id_reserva }}</td>
+                        <td class="resena-ambiente">{{ resena.ambiente }}</td>
+                        <td class="resena-servicio">{{ resena.servicio }}</td>
+                        <td class="resena-comida">{{ resena.comida }}</td>
+                        <td class="resena-fecha">{{ resena.fecha }}</td>
                         <td>
                             <button class="btn btn-primary btn-small btn-open-view-review">
                                 Ver
@@ -180,35 +182,35 @@ Reseñas | Dashboard
                     <tbody>
                         <tr>
                             <th>ID</th>
-                            <td id="modal-reseña-id"></td>
+                            <td id="modal-resena-id"></td>
                         </tr>
                         <tr>
                             <th>Nombre y apellido</th>
-                            <td id="modal-reseña-nombre-apellido"></td>
+                            <td id="modal-resena-nombre-apellido"></td>
                         </tr>
                         <tr>
                             <th>ID de reserva</th>
-                            <td id="modal-reseña-reserva-id"></td>
+                            <td id="modal-resena-reserva-id"></td>
                         </tr>
                         <tr>
                             <th>Fecha de reserva</th>
-                            <td id="modal-reseña-fecha"></td>
+                            <td id="modal-resena-fecha"></td>
                         </tr>
                         <tr>
                             <th>Ambiente</th>
-                            <td id="modal-reseña-ambiente"></td>
+                            <td id="modal-resena-ambiente"></td>
                         </tr>
                         <tr>
                             <th>Servicio</th>
-                            <td id="modal-reseña-servicio"></td>
+                            <td id="modal-resena-servicio"></td>
                         </tr>
                         <tr>
                             <th>Comida</th>
-                            <td id="modal-reseña-comida"></td>
+                            <td id="modal-resena-comida"></td>
                         </tr>
                         <tr>
                             <th>Comentario</th>
-                            <td id="modal-reseña-comentario"></td>
+                            <td id="modal-resena-comentario"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -240,8 +242,9 @@ Reseñas | Dashboard
                     Cancelar
                 </button>
 
-                <form id="delete-review-form" method="POST">
-                    <button id="btn-confirm-delete-review" type="submit" class="btn btn-primary btn-small">
+                <form id="delete-review-form" action="/dashboard/resenas" method="POST">
+                    <input type="hidden" name="id_resena" id="input-delete-id-resena">
+                    <button id="btn-confirm-delete-review" type="submit" class="btn btn-primary btn-small" form="delete-review-form">
                         Confirmar
                     </button>
                 </form>
