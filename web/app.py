@@ -1,33 +1,119 @@
-import requests
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+import requests
+from functools import wraps
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    request,
+    session,
+    g
+)
+
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+API_URL = os.getenv("API_URL", "http://localhost:5000/api")
+SECRET_KEY = os.getenv("SECRET_KEY", "basheros123")
+
 
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'templates'),
     static_folder=os.path.join(BASE_DIR, 'static')
 )
-app.secret_key = 'basheros123'
+app.secret_key = SECRET_KEY
+
+
+def login_requerido(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if usuario_actual() is None:
+            return redirect('/dashboard/login')
+
+        return view(*args, **kwargs)
+
+    return wrapper
+
+def admin_requerido(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        usuario = usuario_actual()
+
+        if usuario is None:
+            return redirect('/dashboard/login')
+
+        if usuario["rol"] != "admin":
+            return redirect('/dashboard')
+
+        return view(*args, **kwargs)
+
+    return wrapper
+
+
+def usuario_actual():
+    if hasattr(g, "usuario"):
+        return g.usuario
+
+    usuario_id = session.get("usuario_id")
+
+    if usuario_id is None:
+        return None
+    
+    respuesta = requests.get(
+        f'{API_URL}/usuarios/{usuario_id}'
+    )
+
+    if respuesta.status_code != 200:
+        return None
+
+    g.usuario = respuesta.json()
+    return g.usuario
+
 
 @app.route('/')
 def index():
     return render_template('inicio.html')
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
 
 @app.route('/dashboard')
-def dashboard_landing():
-    return render_template('dashboard-inicio.html')
+@login_requerido
+def dashboard_home():
+    return render_template("dashboard-home.html")
 
-@app.route('/dashboard/login')
+@app.route('/dashboard/login', methods=['GET', 'POST'])
 def dashboard_login():
-    return render_template('dashboard-login.html')
+    if request.method == 'GET':
+        return render_template('dashboard-login.html')
+
+    email = request.form.get('email')
+    contraseña = request.form.get('contraseña')
+
+    respuesta = requests.post(
+        f'{API_URL}/login',
+        json={
+            'email': email,
+            'contraseña': contraseña
+        }
+    )
+
+    if respuesta.status_code != 200:
+        return redirect(url_for('dashboard_login'))
+
+    datos = respuesta.json()
+    session['usuario_id'] = datos['usuario_id']
+
+    return redirect('/dashboard')
+
+@app.route('/dashboard/logout')
+def logout():
+    session.clear()
+    return redirect('/dashboard/login')
+
 
 @app.route('/dashboard/reservas', methods=['GET', 'POST'])
+# @login_requerido
 def dashboard_reservas():  
     if request.method == 'POST':
        tipo = request.form.get('tipo')
@@ -172,7 +258,9 @@ def eliminar_servicio():
         flash("Error al eliminar el servicio")
     return redirect(url_for('dashboard_reservas'))
 
+
 @app.route('/dashboard/resenas', methods=['GET', 'POST'])
+# @login_requerido
 def dashboard_resenas():
     if request.method == 'POST':
        resena_a_eliminar = request.form.get('id_resena')
@@ -227,7 +315,9 @@ def dashboard_resenas():
            print(f"Error crítico al conectar con la API: {e}")
            return render_template('error-conexion.html'),500
 
+
 @app.route('/dashboard/menu', methods=['GET', 'POST'])
+# @login_requerido
 def dashboard_menu():
     if request.method == 'POST':
        tipo = request.form.get('tipo')
@@ -357,6 +447,7 @@ def editar_categoria():
 
        
 @app.route('/dashboard/usuarios', methods=['GET', 'POST'])
+# @login_requerido
 def dashboard_usuarios():
     if request.method == 'POST':
        usuario_a_eliminar = request.form.get('id_usuario')
@@ -472,7 +563,6 @@ def editar_usuario_completo():
 def page_not_found(error):
     return render_template('error-not-found.html'),404
 
+
 if __name__ == '__main__':
-
-    app.run(host='0.0.0.0', port=5000, debug=True) 
-
+    app.run(host='0.0.0.0', port=5000, debug=True)
