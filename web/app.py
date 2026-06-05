@@ -1,35 +1,61 @@
-import requests
 import os
-from functools import wraps
-from flask import Flask, render_template, session, redirect, request, url_for, flash
 import requests
+from functools import wraps
+from flask import (
+    Flask,
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    request,
+    session,
+    g
+)
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-API_URL = "http://localhost:5000/api"
+API_URL = os.getenv("API_URL", "http://localhost:5000/api")
+SECRET_KEY = os.getenv("SECRET_KEY", "basheros123")
+
 
 app = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'templates'),
     static_folder=os.path.join(BASE_DIR, 'static')
 )
-app.secret_key = os.getenv("SECRET_KEY")
+app.secret_key = SECRET_KEY
 
 
-# Función de testeo (sin endpoints del backend)
-def obtener_json(url, valor_default):
-    try:
-        respuesta = requests.get(url)
+def login_requerido(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if usuario_actual() is None:
+            return redirect('/dashboard/login')
 
-        if respuesta.status_code != 200:
-            return valor_default
+        return view(*args, **kwargs)
 
-        return respuesta.json()
+    return wrapper
 
-    except:
-        return valor_default
+def admin_requerido(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        usuario = usuario_actual()
+
+        if usuario is None:
+            return redirect('/dashboard/login')
+
+        if usuario["rol"] != "admin":
+            return redirect('/dashboard')
+
+        return view(*args, **kwargs)
+
+    return wrapper
+
 
 def usuario_actual():
+    if hasattr(g, "usuario"):
+        return g.usuario
+
     usuario_id = session.get("usuario_id")
 
     if usuario_id is None:
@@ -42,37 +68,14 @@ def usuario_actual():
     if respuesta.status_code != 200:
         return None
 
-    return respuesta.json()
-
-def login_requerido(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if usuario_actual() is None:
-            return redirect('/dashboard/login')
-
-        return f(*args, **kwargs)
-
-    return wrapper
-
-def admin_requerido(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        usuario = usuario_actual()
-
-        if usuario is None:
-            return redirect('/dashboard/login')
-
-        if usuario["rol"] != "admin":
-            return redirect('/dashboard')
-
-        return f(*args, **kwargs)
-
-    return wrapper
+    g.usuario = respuesta.json()
+    return g.usuario
 
 
 @app.route('/')
 def index():
     return render_template('inicio.html')
+
 
 @app.route('/dashboard')
 # @login_requerido
@@ -84,8 +87,8 @@ def dashboard_login():
     if request.method == 'GET':
         return render_template('dashboard-login.html')
 
-    email = request.form['email']
-    contraseña = request.form['contraseña']
+    email = request.form.get('email')
+    contraseña = request.form.get('contraseña')
 
     respuesta = requests.post(
         f'{API_URL}/login',
@@ -96,14 +99,10 @@ def dashboard_login():
     )
 
     if respuesta.status_code != 200:
-        return render_template(
-            'dashboard-login.html',
-            error='Credenciales inválidas'
-        )
+        return redirect('/dashboard/login')
 
     datos = respuesta.json()
-
-    session['usuario_id'] = datos['id']
+    session['usuario_id'] = datos['usuario_id']
 
     return redirect('/dashboard')
 
@@ -111,6 +110,7 @@ def dashboard_login():
 def logout():
     session.clear()
     return redirect('/dashboard/login')
+
 
 @app.route('/dashboard/reservas', methods=['GET', 'POST'])
 # @login_requerido
@@ -163,6 +163,7 @@ def dashboard_reservas():
         reservas=lista_reservas,
         servicios=lista_servicios
     )
+
 
 @app.route('/dashboard/reseñas', methods=['GET', 'POST'])
 # @login_requerido
@@ -220,6 +221,7 @@ def dashboard_reseñas():
         'dashboard-resenas.html',
         reseñas=lista_reseñas
     )
+
 
 @app.route('/dashboard/menu', methods=['GET', 'POST'])
 # @login_requerido
@@ -286,6 +288,7 @@ def dashboard_menu():
         productos=lista_productos,
         categorias=lista_categorias
     )
+
 
 @app.route('/dashboard/usuarios', methods=['GET', 'POST'])
 # @login_requerido
