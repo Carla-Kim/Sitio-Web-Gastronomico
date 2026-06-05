@@ -2,6 +2,11 @@ import re
 from api.database.reserva import *
 from api.utils.pagination import build_links
 from api.utils.qrcode_generator import generar_qr_reserva
+import re
+import logging
+from api.services.email import enviar_confirmacion_reserva
+
+logger = logging.getLogger(__name__)
 
 def crear_reserva(data):
     campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas"]
@@ -41,6 +46,21 @@ def crear_reserva(data):
         if resultado == 'servicio_no_existe':
             return 'servicio_no_encontrado'
         
+        try:
+            usuario_datos = {
+                "nombre": f"{nombre} {apellido}",
+                "email": email
+            }
+            reserva_datos = {
+                "fecha": fecha,
+                "cantidad_personas": cantidad_personas,
+                "telefono": telefono
+            }
+            #Acá le mandamos la reserva al usuario por gmail. Falta todavía el QR
+            enviar_confirmacion_reserva(usuario=usuario_datos, reserva=reserva_datos)
+        except Exception as email_error:
+            logger.error(f"La reserva se creó pero falló el envío del mail: {email_error}")
+
         return 'exito', resultado
         
     except Exception as e:

@@ -5,3 +5,4 @@ mysql-connector-python==9.1.0
 python-dotenv==1.2.2
 requests
 qrcode[pil]
+flask-mailman==0.3.0
