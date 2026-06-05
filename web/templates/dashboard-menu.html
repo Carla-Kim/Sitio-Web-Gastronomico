@@ -1,0 +1,378 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Menú | Dashboard
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<section class="page">
+
+    <div class="page-header">
+
+        <h1 class="page-title">
+            Administración: Menú
+        </h1>
+
+        <div class="page-actions">
+            <button id="btn-open-add-product" class="btn btn-primary btn-small">Agregar producto</button>
+            <button id="btn-open-view-categories" class="btn btn-secondary btn-small">Ver categorías</button>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <form class="form form-filter">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-nombre">Nombre</label>
+                    <input type="text" id="filter-nombre" name="nombre" placeholder="Nombre">
+                </div>
+                <div class="form-group">
+                    <label for="filter-categoria">Categoría</label>
+                    <select id="filter-categoria">
+                        <option value="all">Todas</option>
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.nombre | lower }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-precio-min">Precio Min</label>
+                    <input type="number" id="filter-precio-min" name="precio_min" placeholder="$0">
+                </div>
+                <div class="form-group">
+                    <label for="filter-precio-max">Precio Max</label>
+                    <input type="number" id="filter-precio-max" name="precio_max" placeholder="$0">
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/menu'">
+                    Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary btn-small">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2 class="card-title">
+                Productos
+            </h2>
+
+            <div class="pagination">
+                <button class="btn btn-page">
+                    Previous
+                </button>
+                <button class="btn btn-page active">
+                    1
+                </button>
+                <button class="btn btn-page">
+                    2
+                </button>
+                <button class="btn btn-page">
+                    3
+                </button>
+                <span class="page-dots">...</span>
+                <button class="btn btn-page">
+                    67
+                </button>
+                <button class="btn btn-page">
+                    68
+                </button>
+                <button class="btn btn-page">
+                    Next
+                </button>
+            </div>
+
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>ID</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Descripción</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for producto in productos %}
+                    <tr class="producto-fila"
+                        data-id="{{ producto.id }}" 
+                        data-nombre="{{ producto.nombre }}"
+                        data-cat-id="{{ producto.id_categoria }}"
+                        data-categoria="{{ producto.categoria }}" 
+                        data-precio="{{ producto.precio }}" 
+                        data-descripcion="{{ producto.descripcion }}">
+                        <td class="producto-nombre">{{ producto.nombre }}</td>
+                        <td class="producto-id">{{ producto.id }}</td>
+                        <td class="producto-categoria">{{ producto.categoria }}</td>
+                        <td class="producto-precio">${{ producto.precio }}</td>
+                        <td class="producto-descripcion">{{ producto.descripcion }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-small btn-open-edit-product">
+                                Editar
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <div id="modal-add-product" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Agregar del menú
+            </h2>
+
+            <form id="form-add-product" action="/dashboard/menu/crear" method="POST" class="form form-modal">
+
+                <div class="form-group">
+                    <label for="add-product-name">Nombre del producto</label>
+                    <input type="text" id="add-product-name" name="nombre" placeholder="Nombre del producto">
+                </div>
+                <div class="form-group">
+                    <label for="add-product-category">Categoría</label>
+                    <select id="add-product-category" name="categorias_id">
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="add-product-price">Precio</label>
+                    <input type="text" id="add-product-price" name="precio" placeholder="Precio">
+                </div>
+                <div class="form-group">
+                    <label for="add-product-description">Descripción</label>
+                    <textarea id="add-product-description" name="descripcion" placeholder="Descripción..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Agregar imagen</label>
+                    <select class="select-image">
+                        <option value="any">Ninguna</option>
+                    </select>
+                </div>
+
+            </form>
+
+            <div class="modal-actions">
+                <button type="submit" form="form-add-product" class="btn btn-primary btn-small btn-save-product">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-view-categories" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de categorías
+            </h2>
+
+            <div class="table-container">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th class="table-actions"></th>
+                            <th class="table-actions"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr class="table-row" data-id="{{ categoria.id }}">
+                            <td class="cat-nombre">
+                                {{ categoria.nombre }}
+                            </td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary btn-small btn-open-edit-category">
+                                    Editar
+                                </button>
+                            </td>
+                            <td class="table-actions">
+                                <button class="btn btn-secondary btn-small btn-delete-category">
+                                    Borrar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-open-add-category" class="btn btn-primary btn-small">
+                    Agregar categoría
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-add-category" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Agregar categoría
+            </h2>
+
+            <form id="form-add-category" action="/dashboard/categorias/crear" method="POST" class="form form-modal">
+                <div class="form-group">
+                    <label for="add-category-name">Nombre de la categoría</label>
+                    <input type="text" id="add-category-name" name="nombre_categoria" placeholder="Nombre de la categoría">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button type="submit" form="form-add-category" class="btn btn-primary btn-small btn-save-category">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-category" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Edición de categoría
+            </h2>
+
+            <form action="/dashboard/categorias/editar" method="POST" class="form form-modal" id="form-edit-category">
+                <input type="hidden" id="edit-cat-id" name="id"> 
+                <div class="form-group">
+                    <label for="edit-category-name">Nombre de la categoría</label>
+                    <input type="text" id="edit-category-name" name="nombre" placeholder="Nombre de la categoría">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="categoria">
+                    Borrar
+                </button>
+                <button type="submit" form="form-edit-category" class="btn btn-primary btn-small btn-save-category">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-product" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Editar del menú
+            </h2>
+
+            <form class="form form-modal" id="form-edit-product" action="/dashboard/menu/editar" method="POST">
+                <input type="hidden" id="edit-product-id" name="id"> 
+                <div class="form-group">
+                    <label for="edit-product-name">Nombre del producto</label>
+                    <input type="text" id="edit-product-name" name="nombre" placeholder="Nombre del producto">
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-category">Categoría</label>
+                    <select id="edit-product-category" name="categorias_id">
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-price">Precio</label>
+                    <input type="text" id="edit-product-price" name="precio" placeholder="Precio">
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-description">Descripción</label>
+                    <textarea id="edit-product-description" name="descripcion" placeholder="Descripción..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Agregar imagen</label>
+                    <select class="select-image">
+                        <option value="any">Ninguna</option>
+                    </select>
+                </div>
+
+            </form>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="producto">
+                    Borrar
+                </button>
+                <button type="submit" form="form-edit-product" class="btn btn-primary btn-small btn-update-product">
+                    Guardar
+                </button>
+            </div>
+            
+        </div>
+    </div>
+    <form id="form-delete-menu" action="/dashboard/menu" method="POST" class="hidden">
+        <input type="hidden" name="tipo" id="delete-tipo">
+        <input type="hidden" name="id" id="delete-id">
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{{ url_for('static', filename='js/dashboard/menu.js') }}"></script>
+{% endblock %}
