@@ -80,7 +80,13 @@ def index():
 @app.route('/dashboard')
 @login_requerido
 def dashboard_home():
-    return render_template("dashboard-home.html")
+    response = requests.get(f"{API_URL}/stats")
+    stats = response.json()
+
+    return render_template(
+        "dashboard-home.html",
+        stats=stats
+    )
 
 @app.route('/dashboard/login', methods=['GET', 'POST'])
 def dashboard_login():

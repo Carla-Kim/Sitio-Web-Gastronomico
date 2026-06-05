@@ -65,6 +65,92 @@ def verificar_usuario():
 
     return jsonify(usuario), 200
 
+@test_bp.route('/stats', methods=['GET'])
+def create_stats():
+    conn = mysql.connector.connect(database=DB_NAME, **DB_CONFIG)
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("""
+            SELECT
+                MONTH(fecha) AS mes,
+                COUNT(*) AS cantidad
+            FROM Reservas
+            GROUP BY MONTH(fecha)
+            ORDER BY MONTH(fecha);
+        """)
+        reservas_db = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                rol,
+                COUNT(*) AS cantidad
+            FROM Usuarios
+            GROUP BY rol;
+        """)
+        usuarios_db = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT
+                AVG(puntuacion_ambiente) AS ambiente,
+                AVG(puntuacion_servicio) AS servicio,
+                AVG(puntuacion_comida) AS comida
+            FROM Resenas;
+        """)
+        reseñas_db = cursor.fetchone()
+
+        cursor.execute("""
+            SELECT
+                c.nombre,
+                COUNT(*) AS cantidad
+            FROM Productos p
+            JOIN Categorias c
+                ON p.categorias_id = c.categorias_id
+            GROUP BY c.categorias_id;
+        """)
+        menu_db = cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conn.close()
+
+    meses = [
+        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+    ]
+
+    result = {
+        "reservas": {
+            "meses": [meses[r["mes"]] for r in reservas_db],
+            "cantidades": [r["cantidad"] for r in reservas_db]
+        },
+
+        "usuarios": {
+            "roles": [r["rol"] for r in usuarios_db],
+            "cantidades": [r["cantidad"] for r in usuarios_db]
+        },
+
+        "reseñas": {
+            "aspectos": [
+                "Ambiente",
+                "Servicio",
+                "Comida"
+            ],
+            "promedios": [
+                float(reseñas_db["ambiente"] or 0),
+                float(reseñas_db["servicio"] or 0),
+                float(reseñas_db["comida"] or 0)
+            ]
+        },
+
+        "menu": {
+            "categorias": [r["nombre"] for r in menu_db],
+            "cantidades": [r["cantidad"] for r in menu_db]
+        }
+    }
+
+    return jsonify(result), 200
+
 app.register_blueprint(test_bp)
 
 if __name__ == '__main__':
