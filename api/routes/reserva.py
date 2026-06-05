@@ -81,8 +81,7 @@ def buscar_reserva(id):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, reserva = result
-        return jsonify(reserva), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/estado/<string:estado>', methods=['GET'])
 def listar_reservas_por_estado(estado):
@@ -103,8 +102,7 @@ def listar_reservas_por_estado(estado):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/fecha/<string:fecha>', methods=['GET'])
 def listar_reservas_por_fecha(fecha):
@@ -126,8 +124,7 @@ def listar_reservas_por_fecha(fecha):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/<int:id>/cancelar', methods=['PATCH'])
 def cancelar_reserva_endpoint(id):
@@ -140,8 +137,7 @@ def cancelar_reserva_endpoint(id):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify({"message": f"Reserva {id} cancelada correctamente"}), 200
 
 @reservas_bp.route('/reservas/<int:id>/escanear', methods=['PATCH'])
 def escanear_reserva_endpoint(id):
@@ -152,10 +148,9 @@ def escanear_reserva_endpoint(id):
     elif result == 'reserva_no_encontrada':
         return jsonify(ReturnErrors(404)), 404
     elif result == 'reserva_ya_finalizada' or result == 'reserva_cancelada':
-        # Da un 409 Conflict porque la reserva no está en estado "reservada"
         return jsonify(ReturnErrors(409)), 409
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify({"message": f"Reserva {id} procesada correctamente"}), 200
+    

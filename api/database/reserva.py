@@ -95,13 +95,24 @@ def cambiar_estado_cancelado(id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)    
     try:
-        query = "UPDATE Reservas SET estado = 'cancelada' WHERE reserva_id = %s"
-        cursor.execute(query, (id,))
+        query_datos = "SELECT nombre, email, fecha FROM Reservas WHERE reserva_id = %s"
+        cursor.execute(query_datos, (id,))
+        datos_reserva = cursor.fetchone()
+
+        if not datos_reserva:
+            return 0, None
+
+        query_update = "UPDATE Reservas SET estado = 'cancelada' WHERE reserva_id = %s"
+        cursor.execute(query_update, (id,))
         conn.commit()
-        return cursor.rowcount
+        
+        return cursor.rowcount, datos_reserva
     except Exception as e:
         print(f"Error en DB al cancelar: {e}")
         raise e
+    finally:
+        cursor.close()
+        conn.close()
 
 def seleccionar_reservas_por_fecha(fecha, limit, offset):#Misma lógica que la anterior, tal vez optimizable.
     conn = get_connection()

@@ -4,7 +4,7 @@ from api.utils.pagination import build_links
 from api.utils.qrcode_generator import generar_qr_reserva
 import re
 import logging
-from api.services.email import enviar_confirmacion_reserva
+from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_reserva
 
 logger = logging.getLogger(__name__)
 
@@ -166,12 +166,27 @@ def cancelar_reserva(id):
     if id is None or id <= 0:
         return 'id_invalido'
     try:
-        rows = cambiar_estado_cancelado(id)
+        rows, datos_reserva = cambiar_estado_cancelado(id)
         if not rows:
             return 'reserva_no_encontrada'
+            
+        try:
+            usuario_datos = {
+                "nombre": datos_reserva["nombre"],
+                "email": datos_reserva["email"]
+            }
+            reserva_datos = {
+                "fecha": datos_reserva["fecha"]
+            }
+            enviar_cancelacion_reserva(usuario=usuario_datos, reserva=reserva_datos)
+        except Exception as email_error:
+            logger.error(f"La reserva se canceló pero falló el envío del mail: {email_error}")
+
         return 'exito', {"message": f"Reserva {id} cancelada correctamente"}
     except Exception:
         return 'error_db'
+
+
     
 def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
     if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(fecha)) is None:
