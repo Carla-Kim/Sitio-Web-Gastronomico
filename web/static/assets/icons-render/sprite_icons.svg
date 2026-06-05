@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id= "cancel" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6"/>
+    </symbol>
+
+    <symbol id= "confirm" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M21.03 6.28a.75.75 0 0 0-1.06 0l-10.5 10.5-4.22-4.22a.75.75 0 0 0-1.06 1.06l4.75 4.75a.75.75 0 0 0 1.06 0l11-11a.75.75 0 0 0 0-1.06"/>    <path fill="currentColor" d="M21.03 6.28a.75.75 0 0 0-1.06 0l-10.5 10.5-4.22-4.22a.75.75 0 0 0-1.06 1.06l4.75 4.75a.75.75 0 0 0 1.06 0l11-11a.75.75 0 0 0 0-1.06"/>        
+    </symbol>
+
+    <symbol id= "quote" viewBox="0 0 36 36">
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M24 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3 1.5 1.5 0 0 1 1.5 1.5v1.5a3 3 0 0 1-3 3A1.5 1.5 0 0 0 21 27v3a1.5 1.5 0 0 0 1.5 1.5 9 9 0 0 0 9-9v-15a3 3 0 0 0-3-3zM7.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3A1.5 1.5 0 0 1 9 21v1.5a3 3 0 0 1-3 3A1.5 1.5 0 0 0 4.5 27v3A1.5 1.5 0 0 0 6 31.5a9 9 0 0 0 9-9v-15a3 3 0 0 0-3-3z"/>
+    </symbol>
+
+    <symbol id= "tuturial-1" viewBox="0 0 64 64">
+        <mask id="a" fill="#fff">
+        <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        </mask>
+        <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1A31 31 0 0 1 1 32h-2a33 33 0 0 0 33 33zm32-32h-1a31 31 0 0 1-31 31v2a33 33 0 0 0 33-33zM32 0v1a31 31 0 0 1 31 31h2A33 33 0 0 0 32-1zm0 0v-1A33 33 0 0 0-1 32h2A31 31 0 0 1 32 1z" mask="url(#a)"/>
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M34.75 22.83h-5.5c-.5 0-.92.41-.92.92v1.83c0 .51.41.92.92.92h5.5c.5 0 .92-.41.92-.92v-1.83c0-.5-.41-.92-.92-.92"/>
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M35.67 24.67h1.83a1.83 1.83 0 0 1 1.83 1.83v12.83a1.83 1.83 0 0 1-1.83 1.84h-11a1.83 1.83 0 0 1-1.83-1.84V26.5a1.83 1.83 0 0 1 1.83-1.83h1.83M32 31.08h3.67M32 35.67h3.67M28.33 31.08h.01M28.33 35.67h.01"/>
+    </symbol>
+
+    <symbol id= "tuturial-2" viewBox="0 0 64 64">
+        <mask id="a" fill="#fff">
+        <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        </mask>
+        <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1A31 31 0 0 1 1 32h-2a33 33 0 0 0 33 33zm32-32h-1a31 31 0 0 1-31 31v2a33 33 0 0 0 33-33zM32 0v1a31 31 0 0 1 31 31h2A33 33 0 0 0 32-1zm0 0v-1A33 33 0 0 0-1 32h2A31 31 0 0 1 32 1z" mask="url(#a)"/>
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M27.42 23.75h-2.75c-.51 0-.92.41-.92.92v2.75c0 .5.41.91.92.91h2.75c.5 0 .91-.4.91-.91v-2.75c0-.51-.4-.92-.91-.92M39.33 23.75h-2.75c-.5 0-.91.41-.91.92v2.75c0 .5.4.91.91.91h2.75c.5 0 .92-.4.92-.91v-2.75c0-.51-.41-.92-.92-.92M27.42 35.67h-2.75c-.51 0-.92.4-.92.91v2.75c0 .51.41.92.92.92h2.75c.5 0 .91-.41.91-.92v-2.75c0-.5-.4-.91-.91-.91M40.25 35.67H37.5a1.83 1.83 0 0 0-1.83 1.83v2.75M40.25 40.25zM32 27.42v2.75A1.83 1.83 0 0 1 30.17 32h-2.75M23.75 32h.01M32 23.75zM32 35.67zM35.67 32h.91M40.25 32zM32 40.25v-.92"/>
+    </symbol>
+
+    <symbol id= "tuturial-3" viewBox="0 0 64 64">
+        <mask id="a" fill="#fff">
+            <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        </mask>
+        <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1A31 31 0 0 1 1 32h-2a33 33 0 0 0 33 33zm32-32h-1a31 31 0 0 1-31 31v2a33 33 0 0 0 33-33zM32 0v1a31 31 0 0 1 31 31h2A33 33 0 0 0 32-1zm0 0v-1A33 33 0 0 0-1 32h2A31 31 0 0 1 32 1z" mask="url(#a)"/>
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M32.55 40.98c1.7-1.47 6.78-6.24 6.78-10.81a7.33 7.33 0 0 0-14.66 0c0 4.57 5.07 9.34 6.78 10.81a.9.9 0 0 0 1.1 0"/>
+        <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M32 32.92a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5"/>
+    </symbol>
+
+    <symbol id= "tuturial-4" viewBox="0 0 64 64">
+        <mask id="a" fill="#fff">
+            <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+        </mask>
+            <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
+            <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1A31 31 0 0 1 1 32h-2a33 33 0 0 0 33 33zm32-32h-1a31 31 0 0 1-31 31v2a33 33 0 0 0 33-33zM32 0v1a31 31 0 0 1 31 31h2A33 33 0 0 0 32-1zm0 0v-1A33 33 0 0 0-1 32h2A31 31 0 0 1 32 1z" mask="url(#a)"/>
+            <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M23.75 27.42v-1.84a1.83 1.83 0 0 1 1.83-1.83h1.84M36.58 23.75h1.84a1.83 1.83 0 0 1 1.83 1.83v1.84M40.25 36.58v1.84a1.83 1.83 0 0 1-1.83 1.83h-1.84M27.42 40.25h-1.84a1.83 1.83 0 0 1-1.83-1.83v-1.84"/>
+    </symbol>
+
+    <symbol id= "tuturial-5" viewBox="0 0 64 64">
+        <mask id="a" fill="#fff">
+            <path d="M0 32C0 14.327 14.327 0 32 0s32 14.327 32 32-14.327 32-32 32S0 49.673 0 32"/>
+        </mask>
+            <path fill="#141414" d="M0 32C0 14.327 14.327 0 32 0s32 14.327 32 32-14.327 32-32 32S0 49.673 0 32"/>
+            <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1C14.88 63 1 49.12 1 32h-2c0 18.225 14.775 33 33 33zm32-32h-1c0 17.12-13.88 31-31 31v2c18.225 0 33-14.775 33-33zM32 0v1c17.12 0 31 13.88 31 31h2C65 13.775 50.225-1 32-1zm0 0v-1C13.775-1-1 13.775-1 32h2C1 14.88 14.88 1 32 1z" mask="url(#a)"/>
+            <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.833" d="M23.75 22.833v6.417c0 1.008.825 1.833 1.833 1.833h3.667a1.833 1.833 0 0 0 1.833-1.833v-6.417M27.417 22.833v18.334M40.25 34.75V22.833a4.584 4.584 0 0 0-4.584 4.584v5.5c0 1.008.826 1.833 1.834 1.833zm0 0v6.417"/>
+    </symbol>
+</svg>

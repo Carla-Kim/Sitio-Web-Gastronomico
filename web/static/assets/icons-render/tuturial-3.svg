@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none">
-     <mask id="a" fill="#fff">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+    <mask id="a" fill="#fff">
         <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
     </mask>
     <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>

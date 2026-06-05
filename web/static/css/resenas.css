@@ -163,9 +163,16 @@
 
 .quote-icon {
     width: 2rem;
+    height: 2rem; /*opcional*/
+    display: inline-block; /*opcional*/
     border-radius: 0.5rem;
     opacity: 0.55;
     padding: 0.2rem;
+    transition: opacity 0.2s ease; /*opcional*/
+    
+}
+.quote-icon:hover {   
+    opacity: 1;         /*opcional*/
 }
 
 .review-nombre {
