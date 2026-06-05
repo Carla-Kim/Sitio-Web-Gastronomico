@@ -82,7 +82,9 @@
     <div class="nosotros-grid">
         <div class="nosotros-card">
             <div class="nosotros-avatar">
-                <img src="{{ url_for('static', filename='assets/images/myAvatarFlor.svg') }}" alt="Flor Avatar">
+                <svg class="avatar-svg">
+                     <use src="{{ url_for('static', filename='assets/images-render/sprite.svg') }}#avatar-flor"></use>
+                </svg>
             </div>
             <h4>Florencia Avila</h4>
             <span class="nosotros-divider"></span>

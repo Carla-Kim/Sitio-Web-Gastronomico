@@ -218,7 +218,8 @@
      border-color: rgba(201, 168, 76, 0.3);
 }
 
-.nosotros-avatar img{
+.nosotros-avatar img, 
+.nosotros-avatar svg {
     width: 6rem;
     height: 6rem;
     border-radius: 50%;
