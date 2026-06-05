@@ -4,7 +4,7 @@ from api.utils.pagination import build_links
 from api.utils.qrcode_generator import generar_qr_reserva
 import re
 import logging
-from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_reserva
+from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_reserva, enviar_mensaje_agradecimiento
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +229,15 @@ def escanear_y_finalizar_reserva(id):
         rows = cambiar_estado_finalizado(id)
         if not rows:
             return 'reserva_no_encontrada'
+            
+        try:
+            usuario_datos = {
+                "nombre": reserva["nombre"],
+                "email": reserva["email"]
+            }
+            enviar_mensaje_agradecimiento(usuario=usuario_datos, reserva=reserva)
+        except Exception as email_error:
+            logger.error(f"La reserva se finalizó pero falló el envío del mail: {email_error}")
             
         return 'exito', {"message": f"Reserva {id} verificada correctamente. ¡Disfrute su visita!"}
     except Exception:

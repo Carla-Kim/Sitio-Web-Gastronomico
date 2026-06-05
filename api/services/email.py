@@ -48,3 +48,25 @@ def enviar_cancelacion_reserva(usuario: dict, reserva: dict) -> None:
     )
     
     logger.info(f"Email de cancelación enviado con éxito a {usuario['email']}")
+
+def enviar_mensaje_agradecimiento(usuario: dict, reserva: dict) -> None:
+    asunto = 'Muchas gracias por venir a nuestro local - Sitio Gastronómico'
+    
+    cuerpo = (
+        f"¡Hola {usuario['nombre']}!\n\n"
+        f"Muchisimas gracias por disfrutar de nuestra comida en Sitio Gastronómico.\n\n"
+        f"Tu opinión es importante para mejorar nuestro local. Por favor, completa el siguiente form dejando tu reseña.\n\n"
+        f"Saludos cordiales."
+    )
+
+    app_activa = current_app._get_current_object()
+    mail = app_activa.extensions['mailman']
+
+    mail.send_mail(
+        subject=asunto,
+        message=cuerpo,
+        from_email=app_activa.config['MAIL_USERNAME'],
+        recipient_list=[usuario['email']]
+    )
+    
+    logger.info(f"Email de reserva enviado con éxito a {usuario['email']}")
