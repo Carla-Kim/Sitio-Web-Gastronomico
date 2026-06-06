@@ -199,6 +199,55 @@ def resenas():
                           pagina_actual=pagina_actual)
 
 
+@app.route('/calificar', methods=['GET', 'POST'])
+def calificar():
+    if request.method == 'GET':
+        reserva_id = request.args.get('reserva_id', type=int)
+
+        if reserva_id is None:
+            flash('El enlace no es válido', 'error')
+            return render_template('dejar-resena.html', reserva_id=None)
+        
+        response = requests.get(f'http://localhost:5000/api/resenas/reserva/{reserva_id}')
+
+        if response.status_code == 200:
+            return render_template('resena-enviada.html')
+        return render_template('dejar-resena.html', reserva_id=reserva_id)
+    
+    reserva_id= request.form.get('reserva_id', type=int)
+
+    data = {
+        'reserva_id':       reserva_id,
+        'puntaje_ambiente': request.form.get('ambiente', type=int),
+        'puntaje_servicio': request.form.get('servicio', type=int),
+        'puntaje_comida':   request.form.get('comida', type=int),
+        'comentario':       request.form.get('comentarios', '').strip() or None,
+    }
+
+    try:
+        response = requests.post('http://localhost:5000/api/resenas', json=data)
+        if response.status_code == 201:
+            return redirect(url_for('resena_enviada', reserva_id=reserva_id))
+        
+        if response.status_code == 409:
+            flash('Ya existe una reseña para esta reserva.', 'error')
+        elif response.status_code == 404:
+            flash('No se encontró la reserva.', 'error')
+        else:
+            flash('Ha ocurrido un error', 'error')
+    except Exception as e:
+        flash(f'Error: {e}', 'error')
+    return redirect(url_for('calificar', reserva_id=reserva_id))
+
+@app.route('/resena-enviada')
+def resena_enviada():
+    reserva_id = request.args.get('reserva_id', type=int)
+
+    if reserva_id is None:
+        return redirect(url_for('index'))
+    
+    return render_template('resena-enviada.html', reserva_id=reserva_id)
+
 @app.route('/dashboard')
 @login_requerido
 def dashboard_home():
