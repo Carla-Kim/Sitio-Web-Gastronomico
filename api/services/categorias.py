@@ -1,5 +1,5 @@
 import re
-from ..database.categorias import *
+from ..database.categorias import update_categoria, insert_categoria, seleccionar_categorias
 from ..utils.errors import *
 from ..utils.pagination import build_links
 from ..database.connection import get_connection, get_cursor
@@ -11,16 +11,15 @@ def actualizar_categoria(id, data):
 
     nombre = data["nombre"]
 
-    if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
+    if re.fullmatch(r'[A-Za-z0-9 áéíóúÁÉÍÓÚñÑüÜ]+', nombre) is None or len(nombre) > 100:
         return 'nombre_invalido'
 
     try:
         rows = update_categoria(id, nombre)
-    
     except Exception:
         return 'error_db'
 
-    if not rows:
+    if rows == 0:
         return 'categoria_no_encontrada'
     
     return 'exito'
@@ -33,7 +32,7 @@ def crear_categoria(data):
 
     nombre = data["nombre"]
 
-    if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
+    if re.fullmatch(r'[A-Za-z0-9 áéíóúÁÉÍÓÚñÑüÜ]+', nombre) is None or len(nombre) > 100:
         return 'nombre_invalido' 
 
     try:
@@ -54,7 +53,8 @@ def obtener_categorias(base_url, query_params, limit, offset):
     args_for_links = query_params.copy()
     args_for_links.pop("_limit", None)
     args_for_links.pop("_offset", None)
-
+    args_for_links.pop("limit", None)
+    args_for_links.pop("offset", None)
     links = build_links(base_url, args_for_links, limit, offset, total)
 
     response_body = {
