@@ -12,7 +12,7 @@ def editar_producto(id):
         return "", code
     return jsonify(updated), code
 
-@menu_bp.route('/productos', methods=['GET'])
+@menu_bp.route('/productos/obtener', methods=['GET'])
 def obtener_productos():
     base_url = request.base_url
     limit = request.args.get('limit', default=10, type=int)
@@ -39,5 +39,17 @@ def ingresar_producto():
         
     data = request.get_json()
     resultado, code = menu_service.ingresar_producto(data)
+    
+    return jsonify(resultado), code
+
+@menu_bp.route('/productos', methods=['GET'])
+def obtener_producto_por_nombre_route():
+    nombre = request.args.get('nombre')
+    if not nombre:
+        return jsonify(ReturnErrors(400)), 400 
+    resultado, code = menu_service.obtener_producto(nombre)
+    if code != 200:
+        return jsonify(resultado), code
+
     
     return jsonify(resultado), code

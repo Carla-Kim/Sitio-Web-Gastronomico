@@ -79,6 +79,19 @@ def check_by_nombre(nombre):
         cursor.close()
         conn.close()
 
+def obtener_producto_por_nombre(nombre):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT producto_id, nombre, precio, descripcion FROM Productos WHERE nombre = %s"
+        cursor.execute(query, (nombre,))
+        return cursor.fetchone() 
+    except Exception as err:
+        raise err
+    finally:
+        cursor.close()
+        conn.close()
+
 def ingresar_producto(categoria_id, nombre,descripcion ,precio):
     conn = get_connection()
     cursor = conn.cursor()

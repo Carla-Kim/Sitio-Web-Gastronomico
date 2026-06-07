@@ -83,3 +83,14 @@ def elimina_producto(id_producto):
         return {"message": "Se elimino correctamente"}, 200
     except Exception:
         return ReturnErrors(500), 500
+
+def obtener_producto(nombre):
+    if not nombre or nombre.isspace():
+        return ReturnErrors(400), 400
+    try:
+        producto = menu_db.obtener_producto_por_nombre(nombre)
+        if producto is None:
+            return ReturnErrors(404), 404
+        return {"producto": producto}, 200
+    except Exception:
+        return ReturnErrors(500), 500

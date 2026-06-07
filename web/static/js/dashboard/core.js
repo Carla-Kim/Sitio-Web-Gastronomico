@@ -1,6 +1,3 @@
-/* =========================
-    TABLES
-========================= */
 export function createTableFilter(config) {
     const {
         inputs,
@@ -33,9 +30,7 @@ export function createTableFilter(config) {
     return { apply };
 }
 
-/* =========================
-    MODALS
-========================= */
+
 export function createModal(modalId, config = {}) {
     const modal = document.getElementById(modalId);
     if (!modal) return null;
