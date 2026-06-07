@@ -139,3 +139,21 @@ def borrar_usuario(id):
     except Exception as e:
         print(f"No fue posible eliminar el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+@usuarios_bp.route('/usuarios/email', methods=['GET'])
+def obtener_usuario_por_email_route():
+    email = request.args.get('email')
+    
+    if not email or email.isspace():
+        return jsonify(ReturnErrors(400)), 400
+        
+    try:
+        usuario = user.obtener_usuario_por_email_servicio(email)
+        return jsonify({"usuario": usuario}), 200
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+        return jsonify(ReturnErrors(400)), 400
+    except Exception as e:
+        print(f"No fue posible obtener el usuario por email. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500

@@ -246,3 +246,16 @@ def eliminar_usuario_db(id):
     finally:
         cursor.close()
         conn.close()
+
+def obtener_usuario_por_email(email):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT usuario_id, nombre, apellido, nombre_usuario, email, rol FROM Usuarios WHERE email = %s"
+        cursor.execute(query, (email,))
+        return cursor.fetchone()
+    except Exception as err:
+        raise err
+    finally:
+        cursor.close()
+        conn.close()
