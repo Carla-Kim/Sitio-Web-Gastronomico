@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: flask_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: gastronomia_db
+      MYSQL_USER: flask_user
+      MYSQL_PASSWORD: flask_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./data/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+  app:
+    build: .
+    container_name: flask_app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: flask_user
+      DB_PASSWORD: flask_password
+      DB_NAME: gastronomia_db
+      DB_PORT: 3306
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+
+volumes:
+  mysql_data:

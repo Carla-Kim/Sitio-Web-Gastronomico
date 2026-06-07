@@ -1,0 +1,244 @@
+import re
+from api.database.reserva import *
+from api.utils.pagination import build_links
+from api.utils.qrcode_generator import generar_qr_reserva
+import re
+import logging
+from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_reserva, enviar_mensaje_agradecimiento
+
+logger = logging.getLogger(__name__)
+
+def crear_reserva(data):
+    campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas"]
+    if not data or not all(i in data for i in campos):
+        return 'body_invalido'
+    
+    fecha = data["fecha"]
+    email = data["email"]
+    nombre = data["nombre"]
+    apellido = data["apellido"]
+    dni = data["DNI"]
+    servicio_id = data["servicio_ID"]
+    telefono = data["telefono"]
+    cantidad_personas = data["cantidad_personas"]
+    estado = data.get("estado", "reservada")
+
+    if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
+        return 'nombre_invalido'
+    if re.fullmatch(r'[A-Za-z0-9 ]+', apellido) is None or len(apellido) > 100:
+        return 'nombre_invalido'
+    if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is None or len(email) > 100:
+        return 'email_invalido'
+    if re.fullmatch(r'\d{7,12}', str(dni)) is None:
+        return 'dni_invalido'
+    
+    try:
+        cantidad_personas = int(cantidad_personas)
+        if cantidad_personas <= 0:
+            return 'cantidad_invalida'
+    except (ValueError, TypeError):
+        return 'cantidad_invalida'
+
+    try:
+        resultado = insert_reserva(fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
+        if resultado == 'duplicado':
+            return 'reserva_duplicada'
+        if resultado == 'servicio_no_existe':
+            return 'servicio_no_encontrado'
+        
+        try:
+            usuario_datos = {
+                "nombre": f"{nombre} {apellido}",
+                "email": email
+            }
+            reserva_datos = {
+                "fecha": fecha,
+                "cantidad_personas": cantidad_personas,
+                "telefono": telefono
+            }
+            #Acá le mandamos la reserva al usuario por gmail. Falta todavía el QR
+            enviar_confirmacion_reserva(usuario=usuario_datos, reserva=reserva_datos)
+        except Exception as email_error:
+            logger.error(f"La reserva se creó pero falló el envío del mail: {email_error}")
+
+        return 'exito', resultado
+        
+    except Exception as e:
+        print(f"Error real en la base de datos: {e}")
+        return 'error_db'
+
+def actualizar_reserva(id, data):
+    campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas", "estado"]
+    if not data or not all(k in data for k in campos):
+        return 'body_invalido'
+
+    fecha = data["fecha"]
+    email = data["email"]
+    nombre = data["nombre"]
+    apellido = data["apellido"]
+    dni = data["DNI"]
+    servicio_id = data["servicio_ID"]
+    telefono = data["telefono"]
+    cantidad_personas = data["cantidad_personas"]
+    estado = data["estado"]
+
+    if re.fullmatch(r'[A-Za-z0-9 ]+', nombre) is None or len(nombre) > 100:
+        return 'nombre_invalido'
+    if re.fullmatch(r'[A-Za-z0-9 ]+', apellido) is None or len(apellido) > 100:
+        return 'nombre_invalido'
+    if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is None or len(email) > 100:
+        return 'email_invalido'
+    if re.fullmatch(r'\d{7,12}', str(dni)) is None:
+        return 'dni_invalido'
+    if estado not in ['reservada', 'cancelada', 'finalizada']:
+        return 'estado_invalido'
+
+    try:
+        cantidad_personas = int(cantidad_personas)
+        if cantidad_personas <= 0:
+            return 'cantidad_invalida'
+    except (ValueError, TypeError):
+        return 'cantidad_invalida'
+
+    try:
+        rows = update_reserva(id, fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
+        if rows == 'servicio_no_existe':
+            return 'servicio_no_encontrado'
+        if not rows:
+            return 'reserva_no_encontrada'
+        return 'exito'
+    except Exception:
+        return 'error_db'
+
+
+def obtener_reservas(base_url, query_params, limit, offset):
+    reservas, total = seleccionar_reservas(limit, offset)
+    if total == 0:
+        raise ValueError("NOT_FOUND")
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+    
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": reservas
+    }
+    return response_body
+
+def obtener_reserva_por_id(id):
+    try:
+        reserva = seleccionar_unica_reserva(id)
+        if not reserva:
+            return 'reserva_no_encontrada'
+        return 'exito', reserva
+    except Exception:
+        return 'error_db'
+
+def filtrar_por_estado(base_url, query_params, estado, limit, offset):
+    if estado not in ['reservada', 'cancelada', 'finalizada']: #Son los estados que definimos en la bdd
+        return 'estado_invalido'
+    
+    try:
+        reservas, total = seleccionar_reservas_por_estado(estado, limit, offset)
+        if total == 0:
+            return 'no_encontrado'
+    except Exception:
+        return 'error_db'
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)#Chequear si funciona bien. Hacer pruebas unitarias
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+    
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": reservas
+    }
+    return 'exito', response_body
+    
+def cancelar_reserva(id):
+    if id is None or id <= 0:
+        return 'id_invalido'
+    try:
+        rows, datos_reserva = cambiar_estado_cancelado(id)
+        if not rows:
+            return 'reserva_no_encontrada'
+            
+        try:
+            usuario_datos = {
+                "nombre": datos_reserva["nombre"],
+                "email": datos_reserva["email"]
+            }
+            reserva_datos = {
+                "fecha": datos_reserva["fecha"]
+            }
+            enviar_cancelacion_reserva(usuario=usuario_datos, reserva=reserva_datos)
+        except Exception as email_error:
+            logger.error(f"La reserva se canceló pero falló el envío del mail: {email_error}")
+
+        return 'exito', {"message": f"Reserva {id} cancelada correctamente"}
+    except Exception:
+        return 'error_db'
+
+
+    
+def obtener_reservas_por_fecha(base_url, query_params, fecha, limit, offset):
+    if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(fecha)) is None:
+        return 'fecha_invalida'
+
+    try:
+        reservas, total = seleccionar_reservas_por_fecha(fecha, limit, offset)
+        if total == 0:
+            return 'no_encontrado'
+    except Exception:
+        return 'error_db'
+
+    args_for_links = query_params.copy()
+    args_for_links.pop("_limit", None)
+    args_for_links.pop("_offset", None)
+
+    links = build_links(base_url, args_for_links, limit, offset, total)
+    
+    response_body = {
+        "_links": links,
+        "count": total,
+        "data": reservas
+    }
+    return 'exito', response_body
+
+def escanear_y_finalizar_reserva(id):
+    if id is None or id <= 0:
+        return 'id_invalido'
+    try:
+        reserva = seleccionar_unica_reserva(id)
+        if not reserva:
+            return 'reserva_no_encontrada'
+            
+        estado_actual = reserva.get('estado')
+        if estado_actual == 'finalizada':
+            return 'reserva_ya_finalizada'
+        if estado_actual == 'cancelada':
+            return 'reserva_cancelada'
+            
+        rows = cambiar_estado_finalizado(id)
+        if not rows:
+            return 'reserva_no_encontrada'
+            
+        try:
+            usuario_datos = {
+                "nombre": reserva["nombre"],
+                "email": reserva["email"]
+            }
+            enviar_mensaje_agradecimiento(usuario=usuario_datos, reserva=reserva)
+        except Exception as email_error:
+            logger.error(f"La reserva se finalizó pero falló el envío del mail: {email_error}")
+            
+        return 'exito', {"message": f"Reserva {id} verificada correctamente. ¡Disfrute su visita!"}
+    except Exception:
+        return 'error_db'

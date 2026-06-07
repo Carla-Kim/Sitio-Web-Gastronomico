@@ -1,0 +1,261 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Reseñas | Dashboard
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="card">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<section class="page">
+
+    <div class="page-header">
+        <h1 class="page-title">
+            Administración: Reseñas
+        </h1>
+    </div>
+
+    <div class="card">
+
+        <form action="/dashboard/resenas" method="GET" class="form form-filter">
+            <input type="hidden" name="_limit" value="{{ limit }}">
+            <input type="hidden" name="_offset" value="{{ offset }}">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-resena-id">ID</label>
+                    <input type="text" id="filter-resena-id" name="resena-id" placeholder="ID de la resena">
+                </div>
+                <div class="form-group">
+                    <label for="filter-resena-reserva-id">ID de la Reserva</label>
+                    <input type="text" id="filter-resena-reserva-id" name="resena-reserva-id" placeholder="ID de la reserva">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-fecha-desde">Desde:</label>
+                    <input type="date" id="filter-fecha-desde" name="resena-fecha-desde" placeholder="Desde">
+                </div>
+                <div class="form-group">
+                    <label for="filter-fecha-hasta">Hasta:</label>
+                    <input type="date" id="filter-fecha-hasta" name="resena-fecha-hasta" placeholder="Hasta">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-resena-ambiente">Ambiente</label>
+                    <input type="text" id="filter-resena-ambiente" name="resena-ambiente" placeholder="Puntuación del ambiente">
+                </div>
+                <div class="form-group">
+                    <label for="filter-resena-servicio">Servicio</label>
+                    <input type="text" id="filter-resena-servicio" name="resena-servicio" placeholder="Puntuación del servicio">
+                </div>
+                <div class="form-group">
+                    <label for="filter-resena-comida">Comida</label>
+                    <input type="text" id="filter-resena-comida" name="resena-comida" placeholder="Puntuación de la comida">
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/resenas'">
+                    Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary btn-small">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2 class="card-title">
+                Reseñas
+            </h2>
+
+            <div class="pagination">
+                <button class="btn btn-page">
+                    Previous
+                </button>
+                <button class="btn btn-page active">
+                    1
+                </button>
+                <button class="btn btn-page">
+                    2
+                </button>
+                <button class="btn btn-page">
+                    3
+                </button>
+                <span class="page-dots">...</span>
+                <button class="btn btn-page">
+                    67
+                </button>
+                <button class="btn btn-page">
+                    68
+                </button>
+                <button class="btn btn-page">
+                    Next
+                </button>
+            </div>
+
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre y apellido</th>
+                        <th>ID de reserva</th>
+                        <th>Ambiente</th>
+                        <th>Servicio</th>
+                        <th>Comida</th>
+                        <th>Fecha</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for resena in resenas %}
+                    <tr class="resena-fila"
+                        data-resena-id="{{ resena.id }}"
+                        data-nombre-apellido="{{ resena.nombre }} {{ resena.apellido }}"
+                        data-reserva-id="{{ resena.id_reserva }}"
+                        data-ambiente="{{ resena.ambiente }}"
+                        data-servicio="{{ resena.servicio }}"
+                        data-comida="{{ resena.comida }}"
+                        data-comentario="{{ resena.comentario }}">
+
+                        <td class="resena-id">{{ resena.id }}</td>
+                        <td class="resena-nombre-apellido">{{ resena.nombre }} {{ resena.apellido }}</td>
+                        <td class="resena-reserva-id">{{ resena.id_reserva }}</td>
+                        <td class="resena-ambiente">{{ resena.ambiente }}</td>
+                        <td class="resena-servicio">{{ resena.servicio }}</td>
+                        <td class="resena-comida">{{ resena.comida }}</td>
+                        <td class="resena-fecha">{{ resena.fecha }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-small btn-open-view-review">
+                                Ver
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <div id="modal-view-review" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de la reseña
+            </h2>
+
+            <div class="table-container">
+                <table class="detail-table">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td id="modal-resena-id"></td>
+                        </tr>
+                        <tr>
+                            <th>Nombre y apellido</th>
+                            <td id="modal-resena-nombre-apellido"></td>
+                        </tr>
+                        <tr>
+                            <th>ID de reserva</th>
+                            <td id="modal-resena-reserva-id"></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha de reserva</th>
+                            <td id="modal-resena-fecha"></td>
+                        </tr>
+                        <tr>
+                            <th>Ambiente</th>
+                            <td id="modal-resena-ambiente"></td>
+                        </tr>
+                        <tr>
+                            <th>Servicio</th>
+                            <td id="modal-resena-servicio"></td>
+                        </tr>
+                        <tr>
+                            <th>Comida</th>
+                            <td id="modal-resena-comida"></td>
+                        </tr>
+                        <tr>
+                            <th>Comentario</th>
+                            <td id="modal-resena-comentario"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-open-delete-review" class="btn btn-primary btn-small">
+                    Borrar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-delete-review" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <h2 class="modal-title">
+                Confirmar eliminación
+            </h2>
+
+            <p>
+                ¿Estás seguro de que deseas eliminar esta reseña?
+            </p>
+
+            <div class="modal-actions">
+
+                <button id="btn-cancel-delete-review" class="btn btn-secondary btn-small">
+                    Cancelar
+                </button>
+
+                <form id="delete-review-form" action="/dashboard/resenas" method="POST">
+                    <input type="hidden" name="id_resena" id="input-delete-id-resena">
+                    <button id="btn-confirm-delete-review" type="submit" class="btn btn-primary btn-small" form="delete-review-form">
+                        Confirmar
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{{ url_for('static', filename='js/dashboard/resenas.js') }}"></script>
+{% endblock %}
