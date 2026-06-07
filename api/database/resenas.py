@@ -1,6 +1,6 @@
 from .connection import get_connection
 
-def obtener_resenas(limit, offset, sql_where, params_fechas):
+def obtener_resenas(limit, offset, sql_where, params_filtros):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -11,7 +11,7 @@ def obtener_resenas(limit, offset, sql_where, params_fechas):
             {sql_where}
             LIMIT %s OFFSET %s
         """
-        cursor.execute(sql_count, tuple(params_fechas))
+        cursor.execute(sql_count, tuple(params_filtros))
         res_count = cursor.fetchone()
 
         # count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
@@ -23,7 +23,7 @@ def obtener_resenas(limit, offset, sql_where, params_fechas):
         else:
             count = res_count
 
-        params_elems = list(params_fechas) + [limit, offset]
+        params_elems = list(params_filtros) + [limit, offset]
 
         cursor.execute(sql_elems, tuple(params_elems))
         rows = cursor.fetchall()
