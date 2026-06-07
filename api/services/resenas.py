@@ -1,9 +1,25 @@
 from api.database import resenas as resenas_db
 from api.utils.pagination import build_links
 
-def listar_resenas(base_url, limit, offset):
-    resenas_data = resenas_db.obtener_resenas(limit, offset)
+def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None):
+    where_clauses = []
+    params_fechas = []
 
+    if fecha_desde:
+        where_clauses.append("fecha >= %s")
+        params_fechas.append(fecha_desde)
+        
+    if fecha_hasta:
+        where_clauses.append("fecha <= %s")
+        params_fechas.append(fecha_hasta)
+
+    #"fecha_creacion >= %s AND fecha_creacion <= %s"
+    
+    sql_where= " WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+    try:
+         resenas_data = resenas_db.obtener_resenas(limit, offset, sql_where, params_fechas)
+    except Exception :
+        raise ValueError("BAD_REQUEST")
     if not resenas_data or resenas_data.get("data") is None or len(resenas_data["data"]) == 0:
         raise ValueError("NOT_FOUND")
 
@@ -18,11 +34,14 @@ def listar_resenas(base_url, limit, offset):
         
         count = resenas_data["count"]
         
-        query_params = {"limit": limit, "offset": offset}
-        
+        filtros_actuales = {}
+        if fecha_desde: 
+            filtros_actuales["fecha_desde"] = fecha_desde
+        if fecha_hasta: 
+            filtros_actuales["fecha_hasta"] = fecha_hasta        
         return {
             "resenas": resenas_formateadas,
-            "_links": build_links(base_url, {}, limit, offset, count)
+            "_links": build_links(base_url, filtros_actuales, limit, offset, count)
         }
     except KeyError as e:
         print(f"Error de mapeo de llaves en la base de datos: {e}")

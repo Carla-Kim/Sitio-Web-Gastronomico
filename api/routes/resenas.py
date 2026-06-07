@@ -10,11 +10,14 @@ def obtener_resenas():
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
+    fecha_desde = request.args.get('fecha_desde', default=None, type=str)
+    fecha_hasta = request.args.get('fecha_hasta', default=None, type=str)
+
     if limit <= 0 or offset < 0:
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        resultado = resenas_service.listar_resenas(base_url, limit, offset)
+        resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta)
         return jsonify(resultado), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
