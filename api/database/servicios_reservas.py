@@ -1,5 +1,11 @@
 from .connection import get_connection
-# Listar todos
+import mysql.connector
+
+# =====================================================
+# LISTAR TODAS LAS ASOCIACIONES
+# Obtiene todos los registros de la tabla Servicios_reserva ordenados por reserva.
+# =====================================================
+
 def seleccionar_servicios_reserva():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -13,7 +19,12 @@ def seleccionar_servicios_reserva():
         cursor.close()
         conn.close()
 
-# Listar por reserva
+
+# =====================================================
+# LISTAR SERVICIOS DE UNA RESERVA
+# Obtiene todos los servicios asociados a una reserva específica.
+# =====================================================
+
 def seleccionar_servicios_por_reserva(reserva_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -28,10 +39,10 @@ def seleccionar_servicios_por_reserva(reserva_id):
         cursor.close()
         conn.close()
 
-# Asociar servicios
-import mysql.connector
-
-import mysql.connector
+# =====================================================
+# ASOCIAR SERVICIOS A UNA RESERVA
+# Verifica previamente si la asociación existe y, en caso contrario, inserta los registros.
+# =====================================================
 
 def insertar_servicios_reserva(reserva_id, servicios_ids):
     conn = get_connection()
@@ -63,6 +74,7 @@ def insertar_servicios_reserva(reserva_id, servicios_ids):
             INSERT INTO Servicios_reserva (reserva_id, servicio_id)
             VALUES (%s, %s)
         """
+
         for servicio_id in servicios_ids:
             try:
                 cursor.execute(insert_query, [reserva_id, servicio_id])
@@ -75,24 +87,32 @@ def insertar_servicios_reserva(reserva_id, servicios_ids):
                     cursor.execute(insert_query_alt, [reserva_id, servicio_id])
                 else:
                     raise e
-            
+
         conn.commit()
         return "OK"
 
     except mysql.connector.Error as err:
         conn.rollback()
+
         if err.errno == 1452:
             return "NOT_FOUND"
+
         raise err
+
     except Exception as err:
         conn.rollback()
         raise err
+
     finally:
         cursor.close()
         conn.close()
 
 
-# Eliminar servicios
+# =====================================================
+# ELIMINAR SERVICIOS DE UNA RESERVA
+# Elimina todas las asociaciones vinculadas a una reserva específica.
+# =====================================================
+
 def eliminar_servicios_reserva_db(reserva_id):
     conn = get_connection()
     cursor = conn.cursor()
