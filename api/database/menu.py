@@ -47,8 +47,8 @@ def obtener_productos(limit, offset):
     cursor = conn.cursor(dictionary=True)
     try:
         sql_count = "SELECT COUNT(*) as count FROM Productos"
-        sql_elems = "SELECT producto_id, categorias_id, nombre, precio FROM Productos LIMIT %s OFFSET %s"
-
+        sql_elems = "SELECT producto_id, categorias_id, nombre, descripcion, precio FROM Productos LIMIT %s OFFSET %s"
+        
         cursor.execute(sql_count)
         res_count = cursor.fetchone()
         count = res_count["count"] if isinstance(res_count, dict) else res_count[0]

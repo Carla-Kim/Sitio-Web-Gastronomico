@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Reseñas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/resenas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+
+    <div class="hero-fondo">
+        <img src="{{ url_for('static', filename='assets/images/fondo-resena.jpg') }}" alt="img_fondo">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+        <p class="hero-info">Lo que dicen nuestros comensales</p>
+        <h1 class="hero-title">Reseñas</h1>
+    </div>
+    
+</section>
+
+<section class="review-stats">
+    <div class="review-ambiente">
+        <span class="review-value">{{ "%.1f"|format(promedio_ambiente) }}</span>
+        <span class="review-label">Ambiente</span>
+    </div>
+    <div class="review-comida">
+        <span class="review-value">{{ "%.1f"|format(promedio_comida) }}</span>
+        <span class="review-label">Comida</span>
+    </div>
+    <div class="review-servicio">
+        <span class="review-value">{{ "%.1f"|format(promedio_servicio) }}</span>
+        <span class="review-label">Servicio</span>
+    </div>
+</section>
+
+<section class="reviews-content">
+    {% for r in resenas %}
+        <div class="review-card">
+            <div class="review-body">
+                <div class="review-title">
+                    <h2 class="review-nombre">{{ r.nombre_usuario or 'Anónimo' }}</h2>
+                    <img src="{{ url_for('static', filename='assets/icons/quote.svg') }}" alt="Quote" class="quote-icon">
+                </div>
+                <p class="review-text">{{ r.comentario }}</p>
+            </div>
+
+            <div class="separador"></div>
+
+            <div class="review-user-rating">
+                <div class="review-stars">
+                    <span class="review-text">Ambiente: <b>{{ r.puntuacion_ambiente }} ★</b></span>
+                </div>
+                <div class="review-stars">
+                    <span class="review-text">Comida: <b>{{ r.puntuacion_comida }} ★</b></span>
+                </div>
+                <div class="review-stars">
+                    <span class="review-text">Servicio: <b>{{ r.puntuacion_servicio }} ★</b></span> 
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="review-empty">No hay reseñas en esta página.</p>
+    {% endfor %}
+</section>
+
+<section class="pagination">
+    <div class="pagination-buttons">
+        
+        {% if offset > 0 %}
+            <a href="/resenas?limit={{ limit }}&offset={{ offset - limit }}" class="pagination-btn">«</a>
+        {% else %}
+            <button class="pagination-btn disabled-btn" disabled>«</button>
+        {% endif %}
+
+        {% if pagina_actual > 3 %}
+            <a href="/resenas?limit={{ limit }}&offset=0" class="pagination-btn">1</a>
+            {% if pagina_actual > 4 %}
+                <span class="pagination-dots">...</span>
+            {% endif %}
+        {% endif %}
+
+        {% for num in range(1, total_paginas + 1) %}
+            {% if num >= pagina_actual - 2 and num <= pagina_actual + 2 %}
+                {% set numero_offset = (num - 1) * limit %}
+                {% if num == pagina_actual %}
+                    <button class="pagination-btn active-page">{{ num }}</button>
+                {% else %}
+                    <a href="/resenas?limit={{ limit }}&offset={{ numero_offset }}" class="pagination-btn">{{ num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if pagina_actual < total_paginas - 2 %}
+            {% if pagina_actual < total_paginas - 3 %}
+                <span class="pagination-dots">...</span>
+            {% endif %}
+            {% set ultimo_offset = (total_paginas - 1) * limit %}
+            <a href="/resenas?limit={{ limit }}&offset={{ ultimo_offset }}" class="pagination-btn">{{ total_paginas }}</a>
+        {% endif %}
+
+        {% if pagina_actual < total_paginas %}
+            <a href="/resenas?limit={{ limit }}&offset={{ offset + limit }}" class="pagination-btn">»</a>
+        {% else %}
+            <button class="pagination-btn disabled-btn" disabled>»</button>
+        {% endif %}
+
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/reviews.js') }}"></script>
+{% endblock %}

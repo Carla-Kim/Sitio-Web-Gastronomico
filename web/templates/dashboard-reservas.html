@@ -1,0 +1,338 @@
+{% extends 'dashboard.html' %}
+
+{% block title %}
+Reservas | Dashboard
+{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<section class="page">
+
+    <div class="page-header">
+
+        <h1 class="page-title">
+            Administración: Reservas
+        </h1>
+
+        <div class="page-actions">
+            <button id="btn-open-view-services" class="btn btn-secondary btn-small">Ver servicios</button>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <form action="/dashboard/reservas" method="GET" class="form form-filter">
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-reserva-id">ID de la reserva</label>
+                    <input type="text" id="filter-reserva-id" name="id" placeholder="ID de la reserva">
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="form-group">
+                    <label for="filter-estado">Estado</label>
+                    <input type="text" id="filter-estado" name="estado" placeholder="Estado">
+                </div>
+                <div class="form-group">
+                    <label for="filter-fecha">Fecha</label>
+                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha">
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="button" class="btn btn-secondary btn-small" onclick="window.location.href='/dashboard/reservas'">
+                    Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary btn-small">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2 class="card-title">
+                Reservas
+            </h2>
+
+            <div class="pagination">
+                <button class="btn btn-page">
+                    Previous
+                </button>
+                <button class="btn btn-page active">
+                    1
+                </button>
+                <button class="btn btn-page">
+                    2
+                </button>
+                <button class="btn btn-page">
+                    3
+                </button>
+                <span class="page-dots">...</span>
+                <button class="btn btn-page">
+                    67
+                </button>
+                <button class="btn btn-page">
+                    68
+                </button>
+                <button class="btn btn-page">
+                    Next
+                </button>
+            </div>
+
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>DNI</th>
+                        <th>Estado</th>
+                        <th>Cantidad de Personas</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for reserva in reservas %}
+                    <tr class="reserva-fila"
+                        data-id="{{ reserva.id }}"
+                        data-fecha="{{ reserva.fecha }}"
+                        data-email="{{ reserva.email }}"
+                        data-nombrecompleto="{{ reserva.nombre }} {{ reserva.apellido }}"
+                        data-dni="{{ reserva.dni }}"
+                        data-telefono="{{ reserva.telefono or '' }}"
+                        data-servicios="{{ reserva.servicio }}"
+                        data-estado="{{ reserva.estado }}"
+                        data-cantidad="{{ reserva.cantidad }}">
+
+                        <td class="reserva-id">{{ reserva.id }}</td>
+                        <td class="reserva-fecha">{{ reserva.fecha }}</td>
+                        <td class="reserva-dni">{{ reserva.dni }}</td>
+                        <td class="reserva-estado">{{ reserva.estado }}</td>
+                        <td class="reserva-cantidad">{{ reserva.cantidad }}</td>
+
+                        <td>
+                            <button class="btn btn-primary btn-small btn-open-view-reservation">
+                                Ver
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    <div id="modal-view-services" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de servicios
+            </h2>
+
+            <div class="table-container">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th>Servicio</th>
+                            <th class="table-actions"></th>
+                            <th class="table-actions"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for servicio in servicios %}
+                        <tr class="table-row" data-id="{{ servicio.id }}">
+                            <td class="serv-nombre">
+                                {{ servicio.nombre }}
+                            </td>
+                            <td class="table-actions">
+                                <button class="btn btn-primary btn-small btn-open-edit-service">
+                                    Editar
+                                </button>
+                            </td>
+                            <td class="table-actions">
+                                <form action="/dashboard/servicios/eliminar" method="POST">
+                                    <input type="hidden" name="id_servicio" value="{{ servicio.id }}">
+                                    <button type="submit" class="btn btn-secondary btn-small btn-delete-service">Borrar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-open-add-service" class="btn btn-primary btn-small">
+                    Agregar servicio
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-add-service" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Agregar servicio
+            </h2>
+
+            <form id="form-add-service" action="/dashboard/servicios/crear" method="POST" class="form form-modal">
+                <div class="form-group">
+                    <label for="add-service-name">Nombre del servicio</label>
+                    <input type="text" id="add-service-name" name="nombre" placeholder="Nombre del servicio">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button type="submit" form="form-add-service" class="btn btn-primary btn-small btn-save-service">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-edit-service" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Edición de servicio
+            </h2>
+
+            <form id="form-edit-service" action="/dashboard/servicios/editar" method="POST" class="form form-modal">
+                <input type="hidden" name="id_servicio" id="edit-service-id">
+            
+                <div class="form-group">
+                    <label for="edit-service-name">Nombre del servicio</label>
+                    <input type="text" id="edit-service-name" name="nombre" placeholder="Nombre del servicio">
+                </div>
+            </form>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-small btn-close-modal">
+                    Cancelar
+                </button>
+                <button type="submit" form="form-edit-service" class="btn btn-primary btn-small btn-save-service">
+                    Guardar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal-view-reservation" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Registro de la reserva
+            </h2>
+
+            <div class="table-container">
+                <table class="detail-table">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td id="modal-reserva-id"></td>
+                        </tr>
+                        <tr>
+                            <th>Fecha</th>
+                            <td id="modal-reserva-fecha"></td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td id="modal-reserva-email"></td>
+                        </tr>
+                        <tr>
+                            <th>Nombre y apellido</th>
+                            <td id="modal-reserva-nombre-apellido"></td>
+                        </tr>
+                        <tr>
+                            <th>DNI</th>
+                            <td id="modal-reserva-dni"></td>
+                        </tr>
+                        <tr>
+                            <th>Teléfono</th>
+                            <td id="modal-reserva-telefono"></td>
+                        </tr>
+                        <tr>
+                            <th>Servicios</th>
+                            <td id="modal-reserva-servicios"></td>
+                        </tr><tr>
+                            <th>Cantidad de personas</th>
+                            <td id="modal-reserva-cantidad"></td>
+                        </tr>
+                        <tr>
+                            <th>Estado</th>
+                            <td id="modal-reserva-estado"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-actions">
+                <form action="/dashboard/reservas/registrar_ingreso" method="POST">
+                    <input type="hidden" name="id_reserva" id="hidden-id-reserva-ingreso">
+                    <button type="submit" id="btn-open-register-income" class="btn btn-primary btn-small">
+                        Registrar ingreso
+                    </button>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <form action="/dashboard/reservas" method="POST">
+                    <input type="hidden" name="tipo" value="reserva">
+                    <input type="hidden" name="id_reserva" id="hidden-id-reserva">
+                    <button type="submit" class="btn btn-danger btn-small">
+                       Cancelar Reserva
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{{ url_for('static', filename='js/dashboard/reservas.js') }}"></script>
+{% endblock %}

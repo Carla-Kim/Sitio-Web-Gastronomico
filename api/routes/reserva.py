@@ -9,7 +9,9 @@ def agregar_reserva():
     data = request.get_json()
     result = reservas_service.crear_reserva(data)
     
-    if result == 'body_invalido':
+    if isinstance(result, tuple) and result[0] == 'exito':
+        return jsonify({'message': 'Reserva creada con éxito'}), 201
+    elif result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':
         return jsonify(ReturnErrors(400)), 400
@@ -26,7 +28,7 @@ def agregar_reserva():
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        return jsonify({'message': 'Reserva creada con éxito'}), 201
+        return jsonify(ReturnErrors(500)), 500
 
 @reservas_bp.route('/reservas/<int:id>', methods=['PUT'])
 def formatear_reserva(id):
@@ -79,8 +81,7 @@ def buscar_reserva(id):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, reserva = result
-        return jsonify(reserva), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/estado/<string:estado>', methods=['GET'])
 def listar_reservas_por_estado(estado):
@@ -101,8 +102,7 @@ def listar_reservas_por_estado(estado):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/fecha/<string:fecha>', methods=['GET'])
 def listar_reservas_por_fecha(fecha):
@@ -124,8 +124,7 @@ def listar_reservas_por_fecha(fecha):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        status, response_body = result
-        return jsonify(response_body), 200
+        return jsonify(result), 200
     
 @reservas_bp.route('/reservas/<int:id>/cancelar', methods=['PATCH'])
 def cancelar_reserva_endpoint(id):
