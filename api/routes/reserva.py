@@ -137,20 +137,5 @@ def cancelar_reserva_endpoint(id):
     elif result == 'error_db':
         return jsonify(ReturnErrors(500)), 500
     else:
-        return jsonify({"message": f"Reserva {id} cancelada correctamente"}), 200
-
-@reservas_bp.route('/reservas/<int:id>/escanear', methods=['PATCH'])
-def escanear_reserva_endpoint(id):
-    result = reservas_service.escanear_y_finalizar_reserva(id)
-
-    if result == 'id_invalido':
-        return jsonify(ReturnErrors(400)), 400
-    elif result == 'reserva_no_encontrada':
-        return jsonify(ReturnErrors(404)), 404
-    elif result == 'reserva_ya_finalizada' or result == 'reserva_cancelada':
-        return jsonify(ReturnErrors(409)), 409
-    elif result == 'error_db':
-        return jsonify(ReturnErrors(500)), 500
-    else:
-        return jsonify({"message": f"Reserva {id} procesada correctamente"}), 200
-    
+        status, response_body = result
+        return jsonify(response_body), 200

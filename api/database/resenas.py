@@ -1,22 +1,31 @@
 from .connection import get_connection
 
-def obtener_resenas(limit, offset):
+def obtener_resenas(limit, offset, sql_where, params_filtros):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        sql_count = "SELECT COUNT(*) as count FROM Resenas"
-        sql_elems = """
-            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario,
-            CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
-            FROM Resenas res
-            JOIN Reservas r ON res.reserva_id = r.reserva_id
+        sql_count = f"SELECT COUNT(*) as count FROM Resenas {sql_where}"
+        sql_elems = f"""
+            SELECT resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida 
+            FROM Resenas 
+            {sql_where}
             LIMIT %s OFFSET %s
         """
-        cursor.execute(sql_count)
+        cursor.execute(sql_count, tuple(params_filtros))
         res_count = cursor.fetchone()
-        count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
 
-        cursor.execute(sql_elems, (limit, offset))
+        # count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
+        # error si devuelve un numero, no se puede acceder a count
+        if isinstance(res_count, dict):
+            count = res_count["count"]
+        elif isinstance(res_count, (tuple, list)):
+            count = res_count
+        else:
+            count = res_count
+
+        params_elems = list(params_filtros) + [limit, offset]
+
+        cursor.execute(sql_elems, tuple(params_elems))
         rows = cursor.fetchall()
 
         return {

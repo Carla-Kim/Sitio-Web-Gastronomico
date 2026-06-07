@@ -1,9 +1,40 @@
 from api.database import resenas as resenas_db
 from api.utils.pagination import build_links
 
-def listar_resenas(base_url, limit, offset):
-    resenas_data = resenas_db.obtener_resenas(limit, offset)
 
+def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, p_ambiente=None, p_servicio=None, p_comida=None):
+    where_clauses = []
+    params_filtros = []
+
+    if fecha_desde:
+        where_clauses.append("fecha >= %s")
+        params_filtros.append(fecha_desde)
+        
+    if fecha_hasta:
+        where_clauses.append("fecha <= %s")
+        params_filtros.append(fecha_hasta)
+    if p_ambiente is not None:
+        if not (1 <= p_ambiente <= 5):
+            raise ValueError("BAD_REQUEST")
+        where_clauses.append("puntuacion_ambiente = %s")
+        params_filtros.append(p_ambiente)
+    if p_servicio is not None:
+        if not (1 <= p_servicio <= 5):
+            raise ValueError("BAD_REQUEST")
+        where_clauses.append("puntuacion_servicio = %s")
+        params_filtros.append(p_servicio)
+    if p_comida is not None:
+        if not (1 <= p_comida <= 5):
+            raise ValueError("BAD_REQUEST")
+        where_clauses.append("puntuacion_comida = %s")
+        params_filtros.append(p_comida)
+
+    #"fecha_creacion >= %s AND fecha_creacion <= %s"
+    sql_where= " WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+    try:
+         resenas_data = resenas_db.obtener_resenas(limit, offset, sql_where, params_filtros)
+    except Exception :
+        raise ValueError("BAD_REQUEST")
     if not resenas_data or resenas_data.get("data") is None or len(resenas_data["data"]) == 0:
         raise ValueError("NOT_FOUND")
 
@@ -20,11 +51,21 @@ def listar_resenas(base_url, limit, offset):
         
         count = resenas_data["count"]
         
-        query_params = {"limit": limit, "offset": offset}
-        
+        filtros_actuales = {}
+        if fecha_desde: 
+            filtros_actuales["fecha_desde"] = fecha_desde
+        if fecha_hasta: 
+            filtros_actuales["fecha_hasta"] = fecha_hasta 
+        if p_ambiente is not None:
+            filtros_actuales["puntaje_ambiente"] = p_ambiente
+        if p_servicio is not None:
+            filtros_actuales["puntaje_servicio"] = p_servicio
+        if p_comida is not None:
+            filtros_actuales["puntaje_comida"] = p_comida
+
         return {
             "resenas": resenas_formateadas,
-            "_links": build_links(base_url, {}, limit, offset, count)
+            "_links": build_links(base_url, filtros_actuales, limit, offset, count)
         }
     except KeyError as e:
         print(f"Error de mapeo de llaves en la base de datos: {e}")
