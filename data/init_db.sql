@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS Reservas (
     DNI VARCHAR(12) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
-    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada')),
+    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'))
 );
 
 
