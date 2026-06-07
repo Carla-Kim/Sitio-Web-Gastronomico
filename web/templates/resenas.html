@@ -41,7 +41,9 @@
             <div class="review-body">
                 <div class="review-title">
                     <h2 class="review-nombre">{{ r.nombre_usuario or 'Anónimo' }}</h2>
-                    <img src="{{ url_for('static', filename='assets/icons/quote.svg') }}" alt="Quote" class="quote-icon">
+                    <svg class="quote-icon">
+                        <use href="{{ url_for('static', filename='assets/images-render/sprite.svg') }}#quote"></use>
+                    </svg>
                 </div>
                 <p class="review-text">{{ r.comentario }}</p>
             </div>

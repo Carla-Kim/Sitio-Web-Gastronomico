@@ -374,10 +374,14 @@
     transform: translate(0px, -2px) scale(1.02);
 }
 
-.boton-accion img.icono-boton {
+.boton-accion .icono-boton {
     width: 18px;
     height: 18px;
+    stroke: currentColor; 
+    stroke-width: 2.5; 
+    stroke-linecap: round;
 }
+
 
 /*Cambios chicos de diseño*/
 
