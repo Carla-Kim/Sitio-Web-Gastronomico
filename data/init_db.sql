@@ -43,14 +43,12 @@ CREATE TABLE IF NOT EXISTS Reservas (
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     DNI VARCHAR(12) NOT NULL,
-    servicio_ID INT NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
     estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada')),
-    FOREIGN KEY (servicio_ID) REFERENCES Servicios(servicio_id) ON DELETE RESTRICT
 );
-INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, servicio_ID, telefono, cantidad_personas, estado) 
-VALUES (1, '2026-06-15', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', 1, '1123456789', 4, 'reservada');
+INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
+VALUES (1, '2026-06-15', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'reservada');
 
 CREATE TABLE IF NOT EXISTS Resenas (
     resena_id INT PRIMARY KEY AUTO_INCREMENT,
