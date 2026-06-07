@@ -24,7 +24,9 @@
     <div class="contenedor-pasos">
         <div class="tarjeta-paso">
             <div class="contenedor-icono">
-                <img class="icono-paso" src="{{ url_for('static', filename='assets/icons/tutorial-1.svg') }}" alt="Icono paso 1" />
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-1"></use>
+                </svg>
             </div>
             <span class="numero-paso">01</span>
             <h3 class="titulo-paso">Completar datos</h3>
@@ -33,7 +35,9 @@
 
         <div class="tarjeta-paso">
             <div class="contenedor-icono">
-                <img class="icono-paso" src="{{ url_for('static', filename='assets/icons/tutorial-2.svg') }}" alt="Icono paso 2" />
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-2"></use>
+                </svg>
             </div>
             <span class="numero-paso">02</span>
             <h3 class="titulo-paso">Recibir QR</h3>
@@ -42,7 +46,9 @@
 
         <div class="tarjeta-paso">
             <div class="contenedor-icono">
-                <img class="icono-paso" src="{{ url_for('static', filename='assets/icons/tutorial-3.svg') }}" alt="Icono paso 3" />
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-3"></use>
+                </svg>
             </div>
             <span class="numero-paso">03</span>
             <h3 class="titulo-paso">Asistir al restaurante</h3>
@@ -51,7 +57,9 @@
 
         <div class="tarjeta-paso">
             <div class="contenedor-icono">
-                <img class="icono-paso" src="{{ url_for('static', filename='assets/icons/tutorial-4.svg') }}" alt="Icono paso 4" />
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-4"></use>
+                </svg>
             </div>
             <span class="numero-paso">04</span>
             <h3 class="titulo-paso">Mostrar el QR</h3>
@@ -60,7 +68,9 @@
 
         <div class="tarjeta-paso">
             <div class="contenedor-icono">
-                <img class="icono-paso" src="{{ url_for('static', filename='assets/icons/tutorial-5.svg') }}" alt="Icono paso 5" />
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-5"></use>
+                </svg>
             </div>
             <span class="numero-paso">05</span>
             <h3 class="titulo-paso">Disfrutar</h3>
@@ -156,11 +166,15 @@
 
             <div class="bloque-botones">
                 <button type="button" class="boton-accion boton-cancelar">
-                    <img class="icono-boton" id="icono-cancelar" src="{{ url_for('static', filename='assets/icons/cancel.svg') }}" alt="Icono cancelar" />
-                    Cancelar
+                    <svg class="icono-boton" id="icono-cancelar" >
+                        <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#cancel"></use>
+                    </svg >
+                    cancelar
                 </button>
                 <button type="submit" class="boton-accion boton-confirmar">
-                    <img class="icono-boton" src="{{ url_for('static', filename='assets/icons/confirm.svg') }}" alt="Icono confirmar" />
+                    <svg class="icono-boton" id="icono-confirmar" >
+                        <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#confirm"></use>
+                    </svg>
                     Confirmar Reserva
                 </button>
             </div>
