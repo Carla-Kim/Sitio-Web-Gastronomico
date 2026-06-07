@@ -1,5 +1,14 @@
+-- =====================================================
+-- CREACIÓN DE BASE DE DATOS
+-- =====================================================
+
 CREATE DATABASE IF NOT EXISTS gastronomia_db;
 USE gastronomia_db;
+
+
+-- =====================================================
+-- TABLA: Usuarios
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Usuarios (
     usuario_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -10,14 +19,21 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     contrasena VARCHAR(255) NOT NULL,
     rol VARCHAR(30) NOT NULL CHECK (rol IN ('cliente', 'admin'))
 );
-INSERT IGNORE INTO Usuarios (usuario_id, nombre, apellido, nombre_usuario, email, contrasena, rol) 
-VALUES (1, 'Kevin', 'La Rocca', 'kevin_dev', 'kevin@test.com', 'hashed_password_123', 'admin');
+
+
+-- =====================================================
+-- TABLA: Categorias
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Categorias (
     categorias_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
-INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES (1, 'Platos Principales');
+
+
+-- =====================================================
+-- TABLA: Productos
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Productos (
     producto_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -27,14 +43,21 @@ CREATE TABLE IF NOT EXISTS Productos (
     precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
     FOREIGN KEY (categorias_id) REFERENCES Categorias(categorias_id) ON DELETE RESTRICT
 );
-INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio) 
-VALUES (1, 1, 'Milanesa con papas fritas', 'Milanesa Clásica', 1250.00);
+
+
+-- =====================================================
+-- TABLA: Servicios
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Servicios (
     servicio_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
-INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES (1, 'Servicio de Prueba');
+
+
+-- =====================================================
+-- TABLA: Reservas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -47,8 +70,11 @@ CREATE TABLE IF NOT EXISTS Reservas (
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
     estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada')),
 );
-INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
-VALUES (1, '2026-06-15', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'reservada');
+
+
+-- =====================================================
+-- TABLA: Resenas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Resenas (
     resena_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -60,8 +86,11 @@ CREATE TABLE IF NOT EXISTS Resenas (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE
 );
-INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) 
-VALUES (1, 1, 5, 5, 5, 'Excelente servicio y comida tremenda.');
+
+
+-- =====================================================
+-- TABLA: Servicios_reserva
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Servicios_reserva (
     servicios_reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -70,11 +99,51 @@ CREATE TABLE IF NOT EXISTS Servicios_reserva (
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE,
     FOREIGN KEY (servicio_id) REFERENCES Servicios(servicio_id) ON DELETE RESTRICT
 );
-INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio_id) VALUES (1, 1, 1);
+
+
+-- =====================================================
+-- TABLA: Mesas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Mesas (
     mesa_id INT PRIMARY KEY AUTO_INCREMENT,
     estado VARCHAR(20) NOT NULL DEFAULT 'desocupada' CHECK (estado IN ('ocupada', 'desocupada')),
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0)
 );
-INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) VALUES (1, 'desocupada', 4);
+
+
+-- =====================================================
+-- DATOS INICIALES (INSERTS)
+-- =====================================================
+
+-- Usuario administrador 
+INSERT IGNORE INTO Usuarios (usuario_id, nombre, apellido, nombre_usuario, email, contrasena, rol) 
+VALUES (1, 'Kevin', 'La Rocca', 'kevin_dev', 'kevin@test.com', 'hashed_password_123', 'admin');
+
+-- Categoría 
+INSERT IGNORE INTO Categorias (categorias_id, nombre) 
+VALUES (1, 'Platos Principales');
+
+-- Producto 
+INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio) 
+VALUES (1, 1, 'Milanesa con papas fritas', 'Milanesa Clásica', 1250.00);
+
+-- Servicio 
+INSERT IGNORE INTO Servicios (servicio_id, nombre) 
+VALUES (1, 'Servicio de Prueba');
+
+-- Reserva 
+INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
+VALUES (1, '2026-06-15', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'reservada');
+
+-- Reseña 
+INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) 
+VALUES (1, 1, 5, 5, 5, 'Excelente servicio y comida tremenda.');
+
+-- Relación servicio-reserva 
+INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio_id) 
+VALUES (1, 1, 1);
+
+-- Mesa 
+INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) 
+VALUES (1, 'desocupada', 4);
