@@ -42,16 +42,24 @@ def editar_producto(id, categoria, nombre, descripcion, precio):
         cursor.close()
         conn.close()
 
-def obtener_productos(limit, offset):
+def obtener_productos(limit, offset, filtro, direccion_filtro):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
         sql_count = "SELECT COUNT(*) as count FROM Productos"
-        sql_elems = "SELECT producto_id, categorias_id, nombre, descripcion, precio FROM Productos LIMIT %s OFFSET %s"
-        
+        sql_elems = f"SELECT producto_id, categorias_id, nombre,  precio FROM Productos ORDER BY {filtro} {direccion_filtro} LIMIT %s OFFSET %s"
+
         cursor.execute(sql_count)
         res_count = cursor.fetchone()
-        count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
+        #
+        # count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
+        # error si devuelve un numero, no se puede acceder a count
+        if isinstance(res_count, dict):
+            count = res_count["count"]
+        elif isinstance(res_count, (tuple, list)):
+            count = res_count[0]
+        else:
+            count = res_count
 
         cursor.execute(sql_elems, (limit, offset))
         rows = cursor.fetchall()

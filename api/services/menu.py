@@ -52,11 +52,26 @@ def editar_producto(id, data):
     except Exception:
         return ReturnErrors(500), 500
 
-def ver_productos(base_url, limit, offset):
+def ver_productos(base_url, limit, offset, orden= None):
+    filtro= "producto_id"
+    direccion_filtro = "ASC"
+
+    if orden:
+        orden_clear = orden.lower()
+        if orden_clear == "min":
+            filtro = "precio"
+            direccion_filtro = "ASC"
+        elif orden_clear == "max":
+            filtro = "precio"
+            direccion_filtro = "DESC"
+        
     try:
-        res_db = menu_db.obtener_productos(limit, offset)
+        res_db = menu_db.obtener_productos(limit, offset, filtro, direccion_filtro)
     except Exception:
         return ReturnErrors(500), 500
+    if not res_db["rows"]:
+        return "", 204
+
     
     productos_mapeados = [{
         "id": d["producto_id"],
