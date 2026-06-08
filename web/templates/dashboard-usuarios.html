@@ -115,15 +115,15 @@ Usuarios | Dashboard
                 <tbody>
                     {% for usuario in usuarios %}
                     <tr class="usuario-fila"
-                        data-usuario-id="{{ usuario.id }}"
-                        data-usuario-usuario="{{ usuario.usuario }}"
+                        data-usuario-id="{{ usuario.usuario_id }}"
+                        data-usuario-usuario="{{ usuario.nombre_usuario }}"
                         data-nombre="{{ usuario.nombre}}"
                         data-apellido="{{ usuario.apellido }}"
                         data-email="{{ usuario.email }}"
                         data-rol="{{ usuario.rol }}">
 
-                        <td class="usuario-id">{{ usuario.id }}</td>
-                        <td class="usuario-usuario">{{ usuario.usuario }}</td>
+                        <td class="usuario-id">{{ usuario.usuario_id }}</td>
+                        <td class="usuario-usuario">{{ usuario.nombre_usuario }}</td>
                         <td class="usuario-nombre">{{ usuario.nombre }}</td>
                         <td class="usuario-apellido">{{ usuario.apellido }}</td>
                         <td class="usuario-email">{{ usuario.email }}</td>
@@ -131,11 +131,14 @@ Usuarios | Dashboard
                             {{ {
                                 'admin': 'Administrador',
                                 'usuario': 'Usuario'
-                            }[usuario.rol] }}
+                            }.get(usuario.rol, usuario.rol) }}
                         </td>
                         <td>
                             <button class="btn btn-primary btn-small btn-open-edit-user-role">
                                 Editar credenciales
+                            </button>
+                            <button class="btn btn-primary btn-small btn-view-credentials" data-email="{{ usuario.email }}">
+                                Ver Credenciales
                             </button>
                         </td>
                         <td>
@@ -284,7 +287,9 @@ Usuarios | Dashboard
     <form id="form-delete-usuario" action="/dashboard/usuarios" method="POST" class="hidden">
         <input type="hidden" name="id_usuario" id="delete-id-usuario">
     </form>
-
+    <form id="form-view-credentials" action="/dashboard/usuarios/credenciales" method="POST" class="hidden">
+        <input type="hidden" name="email" id="view-credentials-email">
+    </form>
 </section>
 {% endblock %}
 

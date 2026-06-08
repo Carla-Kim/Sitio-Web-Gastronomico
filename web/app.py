@@ -457,8 +457,8 @@ def dashboard_resenas():
        id_buscado = request.args.get('resena-id')
        id_reserva_buscada = request.args.get('resena-reserva-id')
        try:        
-            limit = int(request.args.get('_limit', 10))  
-            offset = int(request.args.get('_offset', 0))  
+            limit = int(request.args.get('limit', 10))  
+            offset = int(request.args.get('offset', 0))  
        except ValueError:
             limit, offset = 10, 0
 
@@ -524,28 +524,44 @@ def dashboard_menu():
             return render_template('error-conexion.html'), 500
        return redirect(url_for('dashboard_menu'))
     else:
-       try:
-           limit = int(request.args.get('limit', 10))
-           offset = int(request.args.get('offset', 0))
-       except ValueError:
-           limit, offset = 10, 0
-           
-       params_categorias = {'_limit': limit, '_offset': offset}
-       params_productos = {'limit': limit, 'offset': offset}
-       try:
-           url_api_categorias = f'http://localhost:5001/categorias'
-           url_api_productos = f'http://localhost:5001/productos'
-           response_categorias = requests.get(url_api_categorias, params=params_categorias, timeout=5)
-           response_categorias.raise_for_status()
-           response_productos = requests.get(url_api_productos, params=params_productos, timeout=5)
-           response_productos.raise_for_status()
+        nombre_buscado = request.args.get('nombre_buscado')
 
-           lista_categorias = response_categorias.json().get('data', [])
-           lista_productos = response_productos.json().get('productos', [])
-           return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, params_categ=params_categorias, params_prod=params_productos)
-       except requests.exceptions.RequestException as e:
-           print(f"Error crítico al conectar con la API: {e}")
-           return render_template('error-conexion.html'),500
+        try:
+            limit = int(request.args.get('limit', 10))
+            offset = int(request.args.get('offset', 0))
+        except ValueError:
+            limit, offset = 10, 0
+           
+        params_categorias = {'_limit': limit, '_offset': offset}
+        params_productos = {'limit': limit, 'offset': offset}
+        try:
+            url_api_categorias = f'http://localhost:5001/categorias'
+
+            if nombre_buscado:
+               url_api_productos = f'http://localhost:5001/productos/obtener?nombre={nombre_buscado}'
+            else:
+               url_api_productos = f'http://localhost:5001/productos'
+            response_categorias = requests.get(url_api_categorias, params=params_categorias, timeout=5)
+            response_categorias.raise_for_status()
+            response_productos = requests.get(url_api_productos, params=params_productos, timeout=5)
+
+            if response_productos.status_code == 404 and nombre_buscado:
+                lista_productos = []
+                flash(f"No se encontró el producto: {nombre_buscado}")
+            else:
+                response_productos.raise_for_status()
+                data_productos = response_productos.json()
+                if nombre_buscado:
+                    prod = data_productos.get('producto', {})
+                    lista_productos = [prod] if prod else []
+                else:
+                    lista_productos = data_productos.get('productos', [])
+
+            lista_categorias = response_categorias.json().get('data', [])
+            return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, params_categ=params_categorias, params_prod=params_productos)
+        except requests.exceptions.RequestException as e:
+            print(f"Error crítico al conectar con la API: {e}")
+            return render_template('error-conexion.html'),500
        
 @app.route('/dashboard/menu/crear', methods=['POST'])
 def crear_producto():
@@ -656,18 +672,22 @@ def dashboard_usuarios():
                 response.raise_for_status()
                 lista_usuarios = [response.json()]
            elif email_buscado:
-               url_api = f'http://localhost:5001/usuarios/{email_buscado}'
-               response = requests.get(url_api, timeout=5)
+               url_api = f'http://localhost:5001/usuarios/email'
+               response = requests.get(url_api, params={'email': email_buscado}, timeout=5)
                response.raise_for_status()
-               lista_usuarios = [response.json()]
+               lista_usuarios = [response.json().get('usuario')]
+           elif rol_buscado:
+               url_api = f'http://localhost:5001/usuarios/rol'
+               params = {'rol': rol_buscado, '_limit': limit, '_offset': offset}
+               response = requests.get(url_api, params=params, timeout=5)
+               response.raise_for_status()
+               lista_usuarios = response.json().get('data', [])
            else:
                params = {'limit': limit, 'offset': offset}
-               if rol_buscado:
-                   params['rol'] = rol_buscado
                url_api = f'http://localhost:5001/usuarios'
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
-               lista_usuarios = response.json()
+               lista_usuarios = response.json().get('data', [])
            return render_template('dashboard-usuarios.html', usuarios=lista_usuarios, limit=limit, offset=offset)
 
         except requests.exceptions.HTTPError:
@@ -725,6 +745,7 @@ def editar_usuario_completo():
         "apellido": request.form.get('apellido'),
         "rol": request.form.get('rol')
     }
+    datos_completos = {k: v for k, v in datos_completos.items() if v}
     try:
         url_api = f'http://localhost:5001/usuarios/{id_usuario}'
         response = requests.put(url_api,  json=datos_completos, timeout=5)
@@ -733,6 +754,19 @@ def editar_usuario_completo():
     except requests.exceptions.RequestException as e:
         flash("Error al actualizar el usuario")
 
+    return redirect(url_for('dashboard_usuarios'))
+
+@app.route('/dashboard/usuarios/credenciales', methods=['POST'])
+def obtener_credenciales():
+    email = request.form.get('email')
+    try:
+        url_api = 'http://localhost:5001/usuarios/credenciales'
+        response = requests.post(url_api, json={'email': email}, timeout=5)
+        response.raise_for_status()
+        credenciales = response.json()
+        flash(f"Credenciales encontradas: {credenciales}")
+    except requests.exceptions.RequestException:
+        flash("Error al obtener las credenciales")
     return redirect(url_for('dashboard_usuarios'))
   
 

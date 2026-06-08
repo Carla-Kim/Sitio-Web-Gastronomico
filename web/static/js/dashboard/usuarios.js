@@ -107,3 +107,13 @@ document.querySelectorAll('.btn-delete-user-modal').forEach(btn => {
         }
     });
 });
+
+document.querySelectorAll('.btn-view-credentials').forEach(button => {
+    button.addEventListener('click', function() {
+        const email = this.getAttribute('data-email');
+        if (email) {
+            document.getElementById('view-credentials-email').value = email;
+            document.getElementById('form-view-credentials').submit();
+        }
+    });
+});
