@@ -4,6 +4,11 @@ from ..utils.errors import ReturnErrors
 
 servicio_reserva_bp = Blueprint('servicio_reserva', __name__)
 
+# =====================================================
+# GET /servicios-reservas
+# Obtiene todas las asociaciones servicio-reserva.
+# =====================================================
+
 @servicio_reserva_bp.route('/servicios-reservas', methods=['GET'])
 def listar_servicios_reserva():
     try:
@@ -15,6 +20,12 @@ def listar_servicios_reserva():
         print(f"No fue posible listar servicios_reserva. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
+
+# =====================================================
+# GET /servicios-reservas/<reserva_id>
+# Obtiene los servicios asociados a una reserva específica.
+# =====================================================
+
 @servicio_reserva_bp.route('/servicios-reservas/<int:reserva_id>', methods=['GET'])
 def listar_servicios_por_reserva(reserva_id):
     try:
@@ -25,6 +36,12 @@ def listar_servicios_por_reserva(reserva_id):
     except Exception as e:
         print(f"No fue posible listar servicios de la reserva. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+
+# =====================================================
+# PUT /servicios-reservas/<reserva_id>
+# Asocia uno o más servicios a una reserva.
+# =====================================================
 
 @servicio_reserva_bp.route('/servicios-reservas/<int:reserva_id>', methods=['PUT'])
 def modificar_servicio_reserva(reserva_id):
@@ -45,6 +62,12 @@ def modificar_servicio_reserva(reserva_id):
     except Exception as e:
         print(f"No fue posible asociar servicios a la reserva. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+
+# =====================================================
+# DELETE /servicios-reservas/<reserva_id>
+# Elimina todos los servicios asociados a una reserva.
+# =====================================================
 
 @servicio_reserva_bp.route('/servicios-reservas/<int:reserva_id>', methods=['DELETE'])
 def borrar_servicio_reserva(reserva_id):

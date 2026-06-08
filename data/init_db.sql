@@ -1,5 +1,14 @@
+-- =====================================================
+-- CREACIÓN DE BASE DE DATOS
+-- =====================================================
+
 CREATE DATABASE IF NOT EXISTS gastronomia_db;
 USE gastronomia_db;
+
+
+-- =====================================================
+-- TABLA: Usuarios
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Usuarios (
     usuario_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -11,10 +20,20 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     rol VARCHAR(30) NOT NULL CHECK (rol IN ('cliente', 'admin'))
 );
 
+
+-- =====================================================
+-- TABLA: Categorias
+-- =====================================================
+
 CREATE TABLE IF NOT EXISTS Categorias (
     categorias_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
+
+
+-- =====================================================
+-- TABLA: Productos
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Productos (
     producto_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -25,10 +44,20 @@ CREATE TABLE IF NOT EXISTS Productos (
     FOREIGN KEY (categorias_id) REFERENCES Categorias(categorias_id) ON DELETE RESTRICT
 );
 
+
+-- =====================================================
+-- TABLA: Servicios
+-- =====================================================
+
 CREATE TABLE IF NOT EXISTS Servicios (
     servicio_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
+
+
+-- =====================================================
+-- TABLA: Reservas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -37,12 +66,15 @@ CREATE TABLE IF NOT EXISTS Reservas (
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     DNI VARCHAR(12) NOT NULL,
-    servicio_ID INT NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
-    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada')),
-    FOREIGN KEY (servicio_ID) REFERENCES Servicios(servicio_id) ON DELETE RESTRICT
+    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'))
 );
+
+
+-- =====================================================
+-- TABLA: Resenas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Resenas (
     resena_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -55,6 +87,11 @@ CREATE TABLE IF NOT EXISTS Resenas (
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE
 );
 
+
+-- =====================================================
+-- TABLA: Servicios_reserva
+-- =====================================================
+
 CREATE TABLE IF NOT EXISTS Servicios_reserva (
     servicios_reserva_id INT PRIMARY KEY AUTO_INCREMENT,
     reserva_id INT NOT NULL,
@@ -62,6 +99,11 @@ CREATE TABLE IF NOT EXISTS Servicios_reserva (
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE,
     FOREIGN KEY (servicio_id) REFERENCES Servicios(servicio_id) ON DELETE RESTRICT
 );
+
+
+-- =====================================================
+-- TABLA: Mesas
+-- =====================================================
 
 CREATE TABLE IF NOT EXISTS Mesas (
     mesa_id INT PRIMARY KEY AUTO_INCREMENT,
