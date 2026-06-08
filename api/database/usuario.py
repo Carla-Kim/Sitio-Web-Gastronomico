@@ -259,3 +259,33 @@ def obtener_usuario_por_email(email):
     finally:
         cursor.close()
         conn.close()
+
+def obtener_usuarios_por_rol_paginado(rol, limit=10, offset=0):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        sql_count = "SELECT COUNT(*) as total FROM Usuarios WHERE rol = %s"
+        cursor.execute(sql_count, (rol,))
+        res_count = cursor.fetchone()
+        
+        total_elementos = res_count["total"] if res_count else 0
+
+        sql_elems = """
+            SELECT usuario_id, nombre, apellido, nombre_usuario, email, rol 
+            FROM Usuarios 
+            WHERE rol = %s 
+            LIMIT %s OFFSET %s
+        """
+        params_elems = (rol, int(limit), int(offset))
+        cursor.execute(sql_elems, params_elems)
+        rows = cursor.fetchall()
+
+        return {
+            "data": rows, 
+            "count": total_elementos
+        }
+    except Exception as err:
+        raise err
+    finally:
+        cursor.close()
+        conn.close()

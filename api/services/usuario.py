@@ -133,3 +133,17 @@ def obtener_usuario_por_email_servicio(email):
         raise ValueError("NOT_FOUND")
         
     return usuario
+
+def listar_usuarios_por_rol_servicio(rol, limit=10, offset=0):
+    if not rol or rol.isspace() or rol not in ['cliente', 'admin']:
+        raise ValueError("BAD_REQUEST")
+        
+    try:
+        limit = int(limit)
+        offset = int(offset)
+        if limit <= 0 or offset < 0:
+            raise ValueError()
+    except ValueError:
+        raise ValueError("BAD_REQUEST")
+    resultado = us.obtener_usuarios_por_rol_paginado(rol, limit, offset)
+    return resultado
