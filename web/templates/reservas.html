@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Basheros | Reservas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reservas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-fondo">
+        <img src="{{ url_for('static', filename='assets/images/fondo-reserva.jpg') }}" alt="img_fondo">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+        <h1 class="hero-title">Reservas</h1>
+    </div>
+</section>
+
+<section class="seccion-proceso">
+    <span class="subtitulo-seccion">Proceso</span>
+    <h2 class="titulo-seccion">Cómo funciona su reserva</h2>
+
+    <div class="contenedor-pasos">
+        <div class="tarjeta-paso">
+            <div class="contenedor-icono">
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-1"></use>
+                </svg>
+            </div>
+            <span class="numero-paso">01</span>
+            <h3 class="titulo-paso">Completar datos</h3>
+            <p class="descripcion-paso">Completá el formulario con tu información y preferencias de reserva.</p>
+        </div>
+
+        <div class="tarjeta-paso">
+            <div class="contenedor-icono">
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-2"></use>
+                </svg>
+            </div>
+            <span class="numero-paso">02</span>
+            <h3 class="titulo-paso">Recibir QR</h3>
+            <p class="descripcion-paso">Recibirás un código QR único en tu email como confirmación de tu reserva.</p>
+        </div>
+
+        <div class="tarjeta-paso">
+            <div class="contenedor-icono">
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-3"></use>
+                </svg>
+            </div>
+            <span class="numero-paso">03</span>
+            <h3 class="titulo-paso">Asistir al restaurante</h3>
+            <p class="descripcion-paso">Presentate en Basheros a la hora indicada con tu código QR.</p>
+        </div>
+
+        <div class="tarjeta-paso">
+            <div class="contenedor-icono">
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-4"></use>
+                </svg>
+            </div>
+            <span class="numero-paso">04</span>
+            <h3 class="titulo-paso">Mostrar el QR</h3>
+            <p class="descripcion-paso">Nuestro equipo escaneará tu código para confirmar tu identidad.</p>
+        </div>
+
+        <div class="tarjeta-paso">
+            <div class="contenedor-icono">
+                <svg >
+                     <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#tuturial-5"></use>
+                </svg>
+            </div>
+            <span class="numero-paso">05</span>
+            <h3 class="titulo-paso">Disfrutar</h3>
+            <p class="descripcion-paso">Relajate y dejate llevar por una experiencia gastronómica sin igual.</p>
+        </div>
+    </div>
+</section>
+<div id="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-msg alerta alerta-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+</div>
+
+<section class="reserva-formulario">
+    <form action="{{ url_for('reservas') }}" method="POST" class="formulario-reserva">
+        <div class="columna-formulario">
+            <div class="encabezado-bloque">
+                <span class="numero-bloque">01</span>
+                <h2 class="titulo-bloque">Información de la reserva</h2>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="comensales" class="etiqueta-campo">Cantidad de comensales *</label>
+                <input type="number" id="comensales" name="comensales" required min="1" class="entrada-texto">
+            </div>
+
+            <div class="grupo-campo">
+                <label for="fecha" class="etiqueta-campo">Fecha *</label>
+                <input type="date" id="fecha" name="fecha" required class="entrada-texto">
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Horario *</label>
+                <div class="grilla-horarios">
+                    {% for hora in ['19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'] %} <!-- reemplazar con horarios reales  -->
+                    <label class="opcion-horario">
+                        <input type="radio" name="horario" value="{{ hora }}" required class="radio-oculto">
+                        <div class="boton-horario">{{ hora }}</div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="grupo-campo">
+                <label class="etiqueta-campo">Servicios adicionales</label>
+                <div class="lista-checkboxes">
+                    {% for servicio in servicios %}
+                    <label class="opcion-checkbox">
+                        <input type="checkbox" name="servicios" value="{{ servicio.servicio_id }}" class="checkbox-control">
+                        <span class="texto-checkbox">{{ servicio.nombre }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="grupo-campo">
+                <label for="comentarios" class="etiqueta-campo">Comentarios</label>
+                <textarea id="comentarios" name="comentarios" rows="3" placeholder="Alergias, preferencias, ocasiones especiales..." class="area-texto"></textarea>
+            </div>
+        </div>
+
+        <div class="columna-formulario columna-derecha">
+            <div class="bloque-datos-personales">
+                <div class="encabezado-bloque">
+                    <span class="numero-bloque">02</span>
+                    <h2 class="titulo-bloque">Información personal</h2>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="nombre" class="etiqueta-campo">Nombre completo *</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ej: María García" class="entrada-texto">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="email" class="etiqueta-campo">Correo electrónico *</label>
+                    <input type="email" id="email" name="email" required placeholder="ejemplo@email.com" class="entrada-texto">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="documento" class="etiqueta-campo">DNI / Pasaporte *</label>
+                    <input type="text" id="documento" name="documento" required placeholder="Ej: 35.678.901 o AA123456" class="entrada-texto">
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="telefono" class="etiqueta-campo">Número de teléfono *</label>
+                    <input type="tel" id="telefono" name="telefono" required placeholder="Ej: +54 11 4000-0000" class="entrada-texto">
+                </div>
+            </div>
+
+            <div class="bloque-botones">
+                <button type="button" class="boton-accion boton-cancelar">
+                    <svg class="icono-boton" id="icono-cancelar" >
+                        <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#cancel"></use>
+                    </svg >
+                    cancelar
+                </button>
+                <button type="submit" class="boton-accion boton-confirmar">
+                    <svg class="icono-boton" id="icono-confirmar" >
+                        <use href="{{ url_for('static', filename='assets/icons-render/sprite_icons.svg') }}#confirm"></use>
+                    </svg>
+                    Confirmar Reserva
+                </button>
+            </div>
+        </div>
+
+    </form>
+</section>
+
+{% endblock %}

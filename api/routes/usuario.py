@@ -139,3 +139,60 @@ def borrar_usuario(id):
     except Exception as e:
         print(f"No fue posible eliminar el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+@usuarios_bp.route('/usuarios/email', methods=['GET'])
+def obtener_usuario_por_email_route():
+    email = request.args.get('email')
+    
+    if not email or email.isspace():
+        return jsonify(ReturnErrors(400)), 400
+        
+    try:
+        usuario = user.obtener_usuario_por_email_servicio(email)
+        return jsonify({"usuario": usuario}), 200
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+        return jsonify(ReturnErrors(400)), 400
+    except Exception as e:
+        print(f"No fue posible obtener el usuario por email. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500
+
+@usuarios_bp.route('/usuarios/rol', methods=['GET'])
+def obtener_usuarios_por_rol_route():
+    rol = request.args.get('rol')
+    try:
+        limit = int(request.args.get('_limit', default=10))
+        offset = int(request.args.get('_offset', default=0))
+    except ValueError:
+        return jsonify(ReturnErrors(400)), 400
+    
+    try:
+        resultado = user.listar_usuarios_por_rol_servicio(rol, limit, offset)
+        base_url = f"http://127.0.0.1:5000/api/usuarios/rol?rol={rol}"
+        
+        ultimo_offset = max(0, resultado['count'] - limit)
+        
+        respuesta = {
+            "_links": {
+                "_first": {
+                    "href": f"{base_url}&_limit={limit}&_offset=0"
+                },
+                "_last": {
+                    "href": f"{base_url}&_limit={limit}&_offset={ultimo_offset}"
+                }
+            },
+            "count": resultado["count"], 
+            "data": resultado["data"]   
+        }
+        
+        return jsonify(respuesta), 200
+        
+    except ValueError as val_err:
+        if str(val_err) == "BAD_REQUEST":
+            return jsonify(ReturnErrors(400)), 400
+        return jsonify(ReturnErrors(404)), 404
+        
+    except Exception as e:
+        print(f"Error crítico en filtro por rol: {e}")
+        return jsonify(ReturnErrors(500)), 500

@@ -1,0 +1,101 @@
+/* =========================
+    LOGIN PAGE
+========================= */
+.login-section {
+    min-height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 4rem 1.5rem;
+}
+
+/* =========================
+    BRAND
+========================= */
+.login-brand {
+    text-align: center;
+}
+
+.login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+}
+
+.login-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+}
+
+/* =========================
+    LOGIN CARD
+========================= */
+.login-card {
+    width: 100%;
+    max-width: 470px;
+    background: #D9D9D9; /* override intencional del .card */
+    padding: 2.5rem;
+}
+
+/* =========================
+    HEADER
+========================= */
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.welcome-title {
+    text-align: center;
+}
+
+/* =========================
+    LOGIN FORM
+========================= */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+}
+
+.login-form .form-group {
+    width: 100%;
+}
+
+.login-button {
+    width: 50%;
+    margin-top: 0.5rem;
+    padding: 0.7rem;
+}
+
+/* =========================
+    ERROR MODAL
+========================= */
+
+.modal-error {
+    max-width: 420px;
+    text-align: center;
+    gap: 1rem;
+}
+
+.modal-message {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.close-modal-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    border: none;
+    background-color: transparent;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}

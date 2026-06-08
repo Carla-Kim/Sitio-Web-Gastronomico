@@ -77,6 +77,7 @@ def ver_productos(base_url, limit, offset, orden= None):
         "id": d["producto_id"],
         "categoria": d["categorias_id"],
         "nombre": d["nombre"],
+        "descripcion": d["descripcion"],
         "precio": d["precio"]
     } for d in res_db["rows"]]
 
@@ -95,5 +96,16 @@ def elimina_producto(id_producto):
         if resultado == 0:
             return ReturnErrors(404), 404
         return {"message": "Se elimino correctamente"}, 200
+    except Exception:
+        return ReturnErrors(500), 500
+
+def obtener_producto(nombre):
+    if not nombre or nombre.isspace():
+        return ReturnErrors(400), 400
+    try:
+        producto = menu_db.obtener_producto_por_nombre(nombre)
+        if producto is None:
+            return ReturnErrors(404), 404
+        return {"producto": producto}, 200
     except Exception:
         return ReturnErrors(500), 500

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Deja tu Reseña {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dejar-resena.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-msg alerta alerta-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="contenedor">
+
+    <p class="titulo-resena">Dejanos tu Reseña</p>
+    <p class="subtitulo-resena">COMPARTÍ TU EXPERIENCIA EN BASHEROS</p>
+
+    <div class="tarjeta-resena">
+        <p class="titulo-tarjeta">Calificá tu experiencia</p>
+
+        <form class="formulario" method="POST" action="{{ url_for('calificar') }}" novalidate>
+
+            <input type="hidden" name="reserva_id" value="{{ reserva_id }}">
+
+            <div class="grupo-calificaciones">
+
+                <div class="fila-calificacion">
+                <span class="etiqueta-calificacion">AMBIENTE</span>
+                <div class="estrellas">
+                    <input type="radio" name="ambiente" id="amb5" value="5"><label for="amb5"></label>
+                    <input type="radio" name="ambiente" id="amb4" value="4"><label for="amb4"></label>
+                    <input type="radio" name="ambiente" id="amb3" value="3"><label for="amb3"></label>
+                    <input type="radio" name="ambiente" id="amb2" value="2"><label for="amb2"></label>
+                    <input type="radio" name="ambiente" id="amb1" value="1"><label for="amb1"></label>
+                </div>
+                </div>
+
+                <div class="fila-calificacion">
+                <span class="etiqueta-calificacion">SERVICIO</span>
+                <div class="estrellas">
+                    <input type="radio" name="servicio" id="ser5" value="5"><label for="ser5"></label>
+                    <input type="radio" name="servicio" id="ser4" value="4"><label for="ser4"></label>
+                    <input type="radio" name="servicio" id="ser3" value="3"><label for="ser3"></label>
+                    <input type="radio" name="servicio" id="ser2" value="2"><label for="ser2"></label>
+                    <input type="radio" name="servicio" id="ser1" value="1"><label for="ser1"></label>
+                </div>
+                </div>
+
+                <div class="fila-calificacion">
+                <span class="etiqueta-calificacion">COMIDA</span>
+                <div class="estrellas">
+                    <input type="radio" name="comida" id="com5" value="5"><label for="com5"></label>
+                    <input type="radio" name="comida" id="com4" value="4"><label for="com4"></label>
+                    <input type="radio" name="comida" id="com3" value="3"><label for="com3"></label>
+                    <input type="radio" name="comida" id="com2" value="2"><label for="com2"></label>
+                    <input type="radio" name="comida" id="com1" value="1"><label for="com1"></label>
+                </div>
+                </div>
+
+            </div>
+
+            <div class="campo">
+                <label for="comentarios">COMENTARIOS (OPCIONAL)</label>
+                <textarea id="comentarios" name="comentarios" placeholder="Contanos más sobre tu experiencia..."></textarea>
+            </div>
+
+            <button type="submit" class="boton-enviar" id="botonEnviar" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                ENVIAR RESEÑA
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/formResena.js') }}"></script>
+{% endblock %}
