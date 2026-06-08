@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 import mysql.connector
-from config import DB_CONFIG, DB_NAME
+from api.database.config import DB_CONFIG, DB_NAME
 
 conn = None
 cursor = None
