@@ -22,7 +22,17 @@ def obtener_resenas():
 
     try:
         resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta, p_ambiente, p_servicio, p_comida)
-        return jsonify(resultado), 200
+        lista_elementos = resultado.get('data', resultado.get('resenas', []))
+
+        conteo_total = resultado.get('count', resultado.get('total', 0))
+
+        return jsonify({
+            "data": lista_elementos,
+            "resenas": lista_elementos,
+            "count": conteo_total,
+            "total": conteo_total
+        }), 200
+    
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404

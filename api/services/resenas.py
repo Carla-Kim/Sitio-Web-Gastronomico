@@ -39,7 +39,7 @@ def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, 
     except Exception:
         raise ValueError("BAD_REQUEST")
 
-    if not resenas_data or resenas_data.get("data") is None or len(resenas_data["data"]) == 0:
+    if not resenas_data or resenas_data.get("data") is None:
         raise ValueError("NOT_FOUND")
 
     try:
@@ -69,6 +69,7 @@ def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, 
 
         return {
             "resenas": resenas_formateadas,
+            "count": count,
             "_links": build_links(base_url, filtros_actuales, limit, offset, count)
         }
     except KeyError:

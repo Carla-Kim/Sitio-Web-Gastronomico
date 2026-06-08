@@ -122,7 +122,8 @@ INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, se
 (1, '2026-05-20', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', 2, '1123456789', 4, 'finalizada'),
 (2, '2026-05-28', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', 1, '1133445566', 2, 'finalizada'),
 (3, '2026-06-02', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', 2, '1166778899', 3, 'finalizada'),
-
+(8, '2026-06-03', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', 2, '1198765432', 2, 'finalizada'),
+(9, '2026-06-04', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', 1, '1155443322', 4, 'finalizada'),
 -- Reservas Pendientes / Activas (Futuras)
 (4, '2026-06-15', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', 1, '1198765432', 2, 'reservada'),
 (5, '2026-06-20', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', 3, '1155443322', 10, 'reservada'),
@@ -134,8 +135,9 @@ INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, se
 INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) VALUES 
 (1, 1, 4, 5, 4, 'Muy buena atención por parte del personal y los platos llegaron a tiempo. Recomendable.'),
 (2, 2, 5, 4, 5, 'El ambiente es muy agradable y tranquilo para almuerzos de trabajo. Excelente calidad en los ingredientes.'),
-(3, 3, 3, 4, 4, 'La comida estuvo muy bien lograda, aunque la música del salón estaba un poco alta. Volvería.');
-
+(3, 3, 3, 4, 4, 'La comida estuvo muy bien lograda, aunque la música del salón estaba un poco alta. Volvería.'),
+(4, 8, 5, 5, 5, 'Una experiencia gastronómica impecable. El bife de chorizo estaba en el punto exacto solicitado y la atención fue de primer nivel.'),
+(5, 9, 4, 3, 5, 'Las empanadas de carne y las pastas caseras son exquisitas. Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.');
 INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio_id) VALUES 
 (1, 1, 2),
 (2, 2, 1),
@@ -144,6 +146,9 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 (5, 5, 3),
 (6, 6, 3),
 (7, 7, 2);
+(7, 7, 2),
+(8, 8, 2),
+(9, 9, 1);
 
 INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) VALUES 
 (1, 'ocupada', 4),
