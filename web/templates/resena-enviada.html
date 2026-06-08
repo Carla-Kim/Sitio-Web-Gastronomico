@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Reseña enviada {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dejar-resena.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="contenedor">
+    <h1 class="titulo-resena">¡Gracias por tu reseña!</h1>
+    <p>Ya enviaste tu reseña de esta reserva</p>
+    <a href="{{ url_for('index') }}" class="btn-volver">VOLVER AL INICIO</a>
+</div>
+{% endblock %}

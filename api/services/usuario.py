@@ -122,3 +122,28 @@ def eliminar_usuario(id):
 
     if deleted_rows == 0:
         raise ValueError("NOT_FOUND")
+    
+def obtener_usuario_por_email_servicio(email):
+    if not email or email.isspace():
+        raise ValueError("BAD_REQUEST")
+        
+    usuario = us.obtener_usuario_por_email(email)
+    
+    if usuario is None:
+        raise ValueError("NOT_FOUND")
+        
+    return usuario
+
+def listar_usuarios_por_rol_servicio(rol, limit=10, offset=0):
+    if not rol or rol.isspace() or rol not in ['cliente', 'admin']:
+        raise ValueError("BAD_REQUEST")
+        
+    try:
+        limit = int(limit)
+        offset = int(offset)
+        if limit <= 0 or offset < 0:
+            raise ValueError()
+    except ValueError:
+        raise ValueError("BAD_REQUEST")
+    resultado = us.obtener_usuarios_por_rol_paginado(rol, limit, offset)
+    return resultado

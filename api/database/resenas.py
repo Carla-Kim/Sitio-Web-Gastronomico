@@ -1,20 +1,26 @@
 from .connection import get_connection
 
-def obtener_resenas(limit, offset):
+def obtener_resenas(limit, offset, sql_where, params_filtros):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        sql_count = "SELECT COUNT(*) as count FROM Resenas"
-        sql_elems = """
-            SELECT resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida 
-            FROM Resenas 
-            LIMIT %s OFFSET %s
-        """
-        cursor.execute(sql_count)
+        sql_count = f"SELECT COUNT(*) as count FROM Resenas res JOIN Reservas r ON res.reserva_id = r.reserva_id {sql_where}"
+        cursor.execute(sql_count, tuple(params_filtros))
         res_count = cursor.fetchone()
-        count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
+        
+        count = res_count["count"] if res_count else 0
 
-        cursor.execute(sql_elems, (limit, offset))
+        sql_elems = f"""
+            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario,
+            CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
+            FROM Resenas res
+            JOIN Reservas r ON res.reserva_id = r.reserva_id
+            {sql_where}
+            LIMIT %s OFFSET %s"""
+        
+        params_elems = list(params_filtros) + [limit, offset]
+
+        cursor.execute(sql_elems, tuple(params_elems))
         rows = cursor.fetchall()
 
         return {

@@ -47,8 +47,8 @@ def obtener_productos(limit, offset):
     cursor = conn.cursor(dictionary=True)
     try:
         sql_count = "SELECT COUNT(*) as count FROM Productos"
-        sql_elems = "SELECT producto_id, categorias_id, nombre, precio FROM Productos LIMIT %s OFFSET %s"
-
+        sql_elems = "SELECT producto_id, categorias_id, nombre, descripcion, precio FROM Productos LIMIT %s OFFSET %s"
+        
         cursor.execute(sql_count)
         res_count = cursor.fetchone()
         count = res_count["count"] if isinstance(res_count, dict) else res_count[0]
@@ -73,6 +73,19 @@ def check_by_nombre(nombre):
         query = "SELECT 1 FROM Productos WHERE nombre = %s"
         cursor.execute(query, (nombre,))
         return cursor.fetchone() is not None
+    except Exception as err:
+        raise err
+    finally:
+        cursor.close()
+        conn.close()
+
+def obtener_producto_por_nombre(nombre):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT producto_id, nombre, precio, descripcion FROM Productos WHERE nombre = %s"
+        cursor.execute(query, (nombre,))
+        return cursor.fetchone() 
     except Exception as err:
         raise err
     finally:

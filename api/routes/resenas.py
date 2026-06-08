@@ -10,12 +10,29 @@ def obtener_resenas():
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
+    fecha_desde = request.args.get('fecha_desde', default=None, type=str)
+    fecha_hasta = request.args.get('fecha_hasta', default=None, type=str)
+
+    p_ambiente = request.args.get('puntaje_ambiente', default=None, type=int)
+    p_servicio = request.args.get('puntaje_servicio', default=None, type=int)
+    p_comida = request.args.get('puntaje_comida', default=None, type=int)
+
     if limit <= 0 or offset < 0:
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        resultado = resenas_service.listar_resenas(base_url, limit, offset)
-        return jsonify(resultado), 200
+        resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta, p_ambiente, p_servicio, p_comida)
+        lista_elementos = resultado.get('data', resultado.get('resenas', []))
+
+        conteo_total = resultado.get('count', resultado.get('total', 0))
+
+        return jsonify({
+            "data": lista_elementos,
+            "resenas": lista_elementos,
+            "count": conteo_total,
+            "total": conteo_total
+        }), 200
+    
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404

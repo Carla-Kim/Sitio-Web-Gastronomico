@@ -41,3 +41,15 @@ def ingresar_producto():
     resultado, code = menu_service.ingresar_producto(data)
     
     return jsonify(resultado), code
+
+@menu_bp.route('/productos/obtener', methods=['GET'])
+def obtener_producto_por_nombre_route():
+    nombre = request.args.get('nombre')
+    if not nombre:
+        return jsonify(ReturnErrors(400)), 400 
+    resultado, code = menu_service.obtener_producto(nombre)
+    if code != 200:
+        return jsonify(resultado), code
+
+    
+    return jsonify(resultado), code

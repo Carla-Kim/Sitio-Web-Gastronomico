@@ -1,5 +1,5 @@
 import mysql.connector
-from config import DB_CONFIG, DB_NAME
+from .config import DB_CONFIG, DB_NAME
 from .connection import get_connection
 
 #Update categoría
