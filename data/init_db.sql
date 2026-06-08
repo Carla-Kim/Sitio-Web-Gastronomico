@@ -187,7 +187,7 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 (4, 4, 1),
 (5, 5, 3),
 (6, 6, 3),
-(7, 7, 2);
+(7, 7, 2),
 (7, 7, 2),
 (8, 8, 2),
 (9, 9, 1);
