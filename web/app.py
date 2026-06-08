@@ -10,8 +10,7 @@ from flask import (
     url_for,
     flash,
     request,
-    session,
-    g
+    session
 )
 
 
@@ -35,47 +34,12 @@ app.secret_key = SECRET_KEY
 def login_requerido(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
-        if usuario_actual() is None:
+        if session.get("usuario_id") is None:
             return redirect('/dashboard/login')
 
         return view(*args, **kwargs)
 
     return wrapper
-
-def admin_requerido(view):
-    @wraps(view)
-    def wrapper(*args, **kwargs):
-        usuario = usuario_actual()
-
-        if usuario is None:
-            return redirect('/dashboard/login')
-
-        if usuario["rol"] != "admin":
-            return redirect('/dashboard')
-
-        return view(*args, **kwargs)
-
-    return wrapper
-
-
-def usuario_actual():
-    if hasattr(g, "usuario"):
-        return g.usuario
-
-    usuario_id = session.get("usuario_id")
-
-    if usuario_id is None:
-        return None
-    
-    respuesta = requests.get(
-        f'{API_URL}/usuarios/{usuario_id}'
-    )
-
-    if respuesta.status_code != 200:
-        return None
-
-    g.usuario = respuesta.json()
-    return g.usuario
 
 
 @app.route('/')

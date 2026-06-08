@@ -11,81 +11,116 @@ const reservas = dashboard.reservas
 const reseñas = dashboard.reseñas
 const usuarios = dashboard.usuarios
 
-function createChart({
-    canvasId,
-    type,
-    labels,
-    data,
-    datasetLabel,
-    title,
-    options = {}
-}) {
-    return new Chart(
-        document.getElementById(canvasId),
-        {
-            type,
+new Chart(
+    menu_chart,
+    {
+        type: "polarArea",
 
-            data: {
-                labels,
+        data: {
+            labels: menu.categorias,
 
-                datasets: [{
-                    label: datasetLabel,
-                    data
-                }]
-            },
+            datasets: [{
+                label: "Menús",
+                data: menu.cantidades
+            }]
+        },
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
 
-                plugins: {
-                    title: {
-                        display: !!title,
-                        text: title
-                    }
-                },
-
-                ...options
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Productos por categoría"
+                }
             }
         }
-    );
-}
-
-createChart({
-    canvasId: "menu-chart",
-    type: "polarArea",
-    labels: menu.categorias,
-    data: menu.cantidades,
-    datasetLabel: "Menús",
-    title: "Productos por categoría"
-});
-
-createChart({
-    canvasId: "reseñas-chart",
-    type: "bar",
-    labels: reseñas.aspectos,
-    data: reseñas.promedios,
-    datasetLabel: "Reseñas",
-    title: "Promedio de Reseñas"
-});
-
-createChart({
-    canvasId: "reservas-chart",
-    type: "line",
-    labels: reservas.meses,
-    data: reservas.cantidades,
-    datasetLabel: "Reservas",
-    title: "Reservas por mes"
-});
-
-createChart({
-    canvasId: "usuarios-chart",
-    type: "bar",
-    labels: usuarios.roles,
-    data: usuarios.cantidades,
-    datasetLabel: "Usuarios",
-    title: "Usuarios por rol",
-    options: {
-        indexAxis: "y"
     }
-});
+);
+
+new Chart(
+    reseñas_chart,
+    {
+        type: "bar",
+
+        data: {
+            labels: reseñas.aspectos,
+
+            datasets: [{
+                label: "Reseñas",
+                data: reseñas.promedios
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Promedio de Reseñas"
+                }
+            }
+        }
+    }
+);
+
+new Chart(
+    reservas_chart,
+    {
+        type: "line",
+
+        data: {
+            labels: reservas.meses,
+
+            datasets: [{
+                label: "Reservas",
+                data: reservas.cantidades
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Reservas por mes"
+                }
+            }
+        }
+    }
+);
+
+new Chart(
+    usuarios_chart,
+    {
+        type: "bar",
+
+        data: {
+            labels: usuarios.roles,
+
+            datasets: [{
+                label: "Usuarios",
+                data: usuarios.cantidades
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            indexAxis: "y",
+
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Usuarios por rol"
+                }
+            }
+        }
+    }
+);
