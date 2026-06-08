@@ -64,18 +64,7 @@ def ver_productos(base_url, limit, offset, orden= None):
         elif orden_clear == "max":
             filtro = "precio"
             direccion_filtro = "DESC"
-        elif orden_clear == "nombre_az":
-            filtro = "nombre"
-            direccion_filtro = "ASC"
-        elif orden_clear == "nombre_za":
-            filtro = "nombre"
-            direccion_filtro = "DESC"
-        elif orden_clear == "descripcion_az":
-            filtro = "descripcion"
-            direccion_filtro = "ASC"
-        elif orden_clear == "descripcion_za":
-            filtro = "descripcion"
-            direccion_filtro = "DESC"
+        
     try:
         res_db = menu_db.obtener_productos(limit, offset, filtro, direccion_filtro)
     except Exception:
