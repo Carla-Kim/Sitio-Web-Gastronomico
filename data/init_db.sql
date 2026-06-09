@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS Servicios_reserva (
 CREATE TABLE IF NOT EXISTS Mesas (
     mesa_id INT PRIMARY KEY AUTO_INCREMENT,
     estado VARCHAR(20) NOT NULL DEFAULT 'desocupada' CHECK (estado IN ('ocupada', 'desocupada')),
-    cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0)
+    cantidad_mesas INT NOT NULL CHECK (cantidad_mesas > 0)
 );
 
 
@@ -187,5 +187,4 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 --Mesas
 INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) VALUES 
 (1, 'ocupada', 14),
-(2, 'desocupada', 200);
-
+(2, 'desocupada', 50);
