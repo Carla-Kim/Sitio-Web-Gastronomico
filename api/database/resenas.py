@@ -11,7 +11,7 @@ def obtener_resenas(limit, offset, sql_where, params_filtros):
         count = res_count["count"] if res_count else 0
 
         sql_elems = f"""
-            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario,
+            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario, res.fecha,
             CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
             FROM Resenas res
             JOIN Reservas r ON res.reserva_id = r.reserva_id
@@ -37,7 +37,10 @@ def obtener_por_id(resena_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        query = "SELECT * FROM Resenas WHERE resena_id = %s"
+        query = """SELECT res.*, CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
+            FROM Resenas res
+            JOIN Reservas r ON res.reserva_id = r.reserva_id
+            WHERE res.resena_id = %s"""
         cursor.execute(query, (resena_id,))
         return cursor.fetchone()
     except Exception as err:
@@ -50,7 +53,10 @@ def obtener_por_reserva(reserva_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        query = "SELECT * FROM Resenas WHERE reserva_id = %s"
+        query = """SELECT res.*, CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
+            FROM Resenas res
+            JOIN Reservas r ON res.reserva_id = r.reserva_id
+            WHERE res.reserva_id = %s"""
         cursor.execute(query, (reserva_id,))
         return cursor.fetchone()
     except Exception as err:
