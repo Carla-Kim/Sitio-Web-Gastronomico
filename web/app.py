@@ -257,21 +257,21 @@ def logout():
 # @login_requerido
 def dashboard_reservas():  
     if request.method == 'POST':
-       tipo = request.form.get('tipo')
-       id_reserva = request.form.get('id_reserva')
-       if not id_reserva:
+        tipo = request.form.get('tipo')
+        id_reserva = request.form.get('id_reserva')
+        if not id_reserva:
            flash("No se pudo completar la acción: ID inexistente")
            return redirect(url_for('dashboard_reservas'))
-       try:
+        try:
             if tipo == 'reserva':
-                url_api = f'http://localhost:5001/reservas/{id_reserva}/cancelar'
+                url_api = f'http://localhost:5000/api/reservas/{id_reserva}/cancelar'
                 response = requests.patch(url_api, timeout=5)
                 response.raise_for_status()
                 flash("Reserva cancelada con éxito")
             elif tipo == 'servicio-res':
                 servicios_ids = request.form.getlist('servicios_seleccionados')
                 try:
-                    url_api = f'http://localhost:5001/servicios-reservas/{id_reserva}'
+                    url_api = f'http://localhost:5000/api/servicios-reservas/{id_reserva}'
                     response = requests.put(url_api, json={"servicios_id": [int(i) for i in servicios_ids]}, timeout=5)
                     response.raise_for_status()
                     flash("Servicios asociados con éxito")
@@ -279,68 +279,67 @@ def dashboard_reservas():
                     flash("Error al asociar servicios")
             elif tipo == 'eliminar_servicio':
                 try:
-                    url_api = f'http://localhost:5001/servicios-reservas/{id_reserva}'
+                    url_api = f'http://localhost:5000/api/servicios-reservas/{id_reserva}'
                     response = requests.delete(url_api, timeout=5)
                     response.raise_for_status()
                     flash("Servicios de la reserva eliminados con éxito")
                 except Exception as e:
                     flash("Error al eliminar los servicios de la reserva")
             return redirect(url_for('dashboard_reservas'))
-       except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException as e:
             print(f"Error al cancelar en API: {e}")
             return render_template('error-conexion.html'), 500
-    else:
-        estado = request.args.get('estado')
-        fecha = request.args.get('fecha')
-        id_buscado = request.args.get('id')
+       
+    estado = request.args.get('estado')
+    fecha = request.args.get('fecha')
+    id_buscado = request.args.get('id')
 
-        try:
-            limit = int(request.args.get('_limit', 10))
-            offset = int(request.args.get('_offset', 0))
-        except ValueError:
-            limit, offset = 10, 0
+    try:
+        limit = int(request.args.get('_limit', 10))
+        offset = int(request.args.get('_offset', 0))
+    except ValueError:
+        limit, offset = 10, 0
 
-        try:
-            if id_buscado:
-                url_api = f'http://localhost:5001/reservas/{id_buscado}'
-                response = requests.get(url_api, timeout=5)
-                response.raise_for_status()
-                lista_reservas = [response.json()]
-            elif estado:
-               url_api = f'http://localhost:5001/reservas/estado/{estado}'
-               response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
-               response.raise_for_status()
-               lista_reservas = response.json().get('data', [])
-            elif fecha:
-               url_api = f'http://localhost:5001/reservas/fecha/{fecha}'
-               response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
-               response.raise_for_status()
-               lista_reservas = response.json().get('data', [])
-            else:
-               url_api = 'http://localhost:5001/reservas'
-               response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
-               response.raise_for_status()
-               lista_reservas = response.json().get('data', [])
-            lista_servicios_reserva = []
-            url_api_serv = f'http://localhost:5001/servicios-reservas'
+    try:
+        lista_servicios = []
+        lista_servicios_reserva = []
+        if id_buscado:
+            url_api = f'http://localhost:5000/api/reservas/{id_buscado}'
+            response = requests.get(url_api, timeout=5)
+            response.raise_for_status()
+            lista_reservas = [response.json()]
+        elif estado:
+            url_api = f'http://localhost:5000/api/reservas/estado/{estado}'
+            response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
+            response.raise_for_status()
+            lista_reservas = response.json().get('data', [])
+        elif fecha:
+            url_api = f'http://localhost:5000/api/reservas/fecha/{fecha}'
+            response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
+            response.raise_for_status()
+            lista_reservas = response.json().get('data', [])
+        else:
+            url_api = 'http://localhost:5000/api/reservas'
+            response = requests.get(url_api, params={'_limit': limit, '_offset': offset}, timeout=5)
+            response.raise_for_status()
+            lista_reservas = response.json().get('data', [])
+            url_api_serv = f'http://localhost:5000/api/servicios-reservas'
             response_servicios = requests.get(url_api_serv, timeout=5)
             response_servicios.raise_for_status()
-            lista_servicios = response_servicios.json().get('data', [])
-            try:
-                if id_buscado:
-                    url_api_serv_relacion = f'http://localhost:5001/servicios-reservas/{id_buscado}'
-                    response_relacion = requests.get(url_api_serv_relacion, timeout=5)
-                    lista_servicios_reserva = response_relacion.json() if response_relacion.status_code == 200 else []
-            except:
-                lista_servicios_reserva = []
-            return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios = lista_servicios, servicios_reserva = lista_servicios_reserva)
-
+            lista_servicios = response_servicios.json()
+        try:
+            if id_buscado:
+                url_api_serv_relacion = f'http://localhost:5000/api/servicios-reservas/{id_buscado}'
+                response_relacion = requests.get(url_api_serv_relacion, timeout=5)
+                lista_servicios_reserva = response_relacion.json() if response_relacion.status_code == 200 else []
         except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los criterios seleccionados.")
             return redirect(url_for('dashboard_reservas'))
-        except requests.exceptions.RequestException as e:
-           print(f"Error crítico al conectar con la API: {e}")
-           return render_template('error-conexion.html'),500
+        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios = lista_servicios, servicios_reserva = lista_servicios_reserva)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error crítico al conectar con la API: {e}")
+        return render_template('error-conexion.html'), 500
 
 @app.route('/dashboard/servicios/crear', methods=['POST'])
 def crear_servicio():
@@ -348,7 +347,7 @@ def crear_servicio():
         "nombre": request.form.get('nombre')
     }
     try:
-        url_api = f'http://localhost:5001/servicios'
+        url_api = f'http://localhost:5000/api/servicios'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Servicio creado con éxito")
@@ -371,7 +370,7 @@ def editar_servicio():
         return redirect(url_for('dashboard_reservas'))
     
     try:
-        url_api = f'http://localhost:5001/servicios/{id_servicio}'
+        url_api = f'http://localhost:5000/api/servicios/{id_servicio}'
         response = requests.put(url_api, json={"nombre": nuevo_nombre}, timeout=5)
         response.raise_for_status()
         flash("Servicio actualizado con éxito")
@@ -391,7 +390,7 @@ def editar_servicio():
 def eliminar_servicio():
     id_servicio = request.form.get('id_servicio')
     try:
-        url_api = f'http://localhost:5001/servicios/{id_servicio}'
+        url_api = f'http://localhost:5000/api/servicios/{id_servicio}'
         response = requests.delete(url_api, timeout=5)
         response.raise_for_status()
         flash("Servicio eliminado con éxito")
@@ -409,7 +408,7 @@ def dashboard_resenas():
            flash("No se pudo completar la acción: ID inexistente")
            return redirect(url_for('dashboard_resenas'))
        try:
-            url_api = f'http://localhost:5001/resenas/{resena_a_eliminar}'
+            url_api = f'http://localhost:5000/api/resenas/{resena_a_eliminar}'
             response = requests.delete(url_api, timeout=5)
             response.raise_for_status()
             flash("Reseña eliminada con éxito")
@@ -428,20 +427,20 @@ def dashboard_resenas():
 
        try:
            if id_buscado:
-                url_api = f'http://localhost:5001/resenas/{id_buscado}'
+                url_api = f'http://localhost:5000/api/resenas/{id_buscado}'
                 response = requests.get(url_api, timeout=5)
                 response.raise_for_status()
                 lista_resenas = [response.json()]
 
            elif id_reserva_buscada:
-                url_api = f'http://localhost:5001/resenas/reserva/{id_reserva_buscada}'
+                url_api = f'http://localhost:5000/api/resenas/reserva/{id_reserva_buscada}'
                 response = requests.get(url_api, timeout=5)
                 response.raise_for_status()
                 lista_resenas = [response.json()]
 
            else:
                 params = {'limit': limit, 'offset': offset}
-                url_api = f'http://localhost:5001/resenas'
+                url_api = f'http://localhost:5000/api/resenas'
                 response = requests.get(url_api, params=params, timeout=5)
                 response.raise_for_status()
                 data = response.json()
@@ -468,7 +467,7 @@ def dashboard_menu():
            return redirect(url_for('dashboard_menu'))
        try:
             if tipo == 'producto':
-                url_api = f'http://localhost:5001/productos/{id_a_eliminar}'
+                url_api = f'http://localhost:5000/api/productos/{id_a_eliminar}'
                 response = requests.delete(url_api, timeout=5)
                 response.raise_for_status()
                 flash("Producto eliminado con éxito")
@@ -476,7 +475,7 @@ def dashboard_menu():
                
 
             else:
-                url_api = f'http://localhost:5001/categorias/{id_a_eliminar}'
+                url_api = f'http://localhost:5000/api/categorias/{id_a_eliminar}'
                 response = requests.delete(url_api, timeout=5)
                 response.raise_for_status()
                 flash("Categoria eliminada con éxito")
@@ -499,12 +498,12 @@ def dashboard_menu():
         params_categorias = {'_limit': limit, '_offset': offset}
         params_productos = {'limit': limit, 'offset': offset}
         try:
-            url_api_categorias = f'http://localhost:5001/categorias'
+            url_api_categorias = f'http://localhost:5000/api/categorias'
 
             if nombre_buscado:
-               url_api_productos = f'http://localhost:5001/productos/obtener?nombre={nombre_buscado}'
+               url_api_productos = f'http://localhost:5000/api/productos/obtener?nombre={nombre_buscado}'
             else:
-               url_api_productos = f'http://localhost:5001/productos'
+               url_api_productos = f'http://localhost:5000/api/productos'
             response_categorias = requests.get(url_api_categorias, params=params_categorias, timeout=5)
             response_categorias.raise_for_status()
             response_productos = requests.get(url_api_productos, params=params_productos, timeout=5)
@@ -542,7 +541,7 @@ def crear_producto():
         "categorias_id": categoria_id
     }
     try:
-        url_api = f'http://localhost:5001/productos'
+        url_api = f'http://localhost:5000/api/productos'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Producto creado con éxito")
@@ -567,7 +566,7 @@ def editar_producto():
     }
 
     try:
-        url_api = f'http://localhost:5001/productos/{id_producto}'
+        url_api = f'http://localhost:5000/api/productos/{id_producto}'
         response = requests.put(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Producto actualizado con éxito")
@@ -581,7 +580,7 @@ def crear_categoria():
         "nombre": request.form.get('nombre_categoria')
     }
     try:
-        url_api = f'http://localhost:5001/categorias'
+        url_api = f'http://localhost:5000/api/categorias'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Categoría creada con éxito")
@@ -594,7 +593,7 @@ def editar_categoria():
     id_categoria = request.form.get('id')
     datos = {"nombre": request.form.get('nombre')}
     try:
-        url_api = f'http://localhost:5001/categorias/{id_categoria}'
+        url_api = f'http://localhost:5000/api/categorias/{id_categoria}'
         response = requests.put(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Categoría actualizada con éxito")
@@ -612,7 +611,7 @@ def dashboard_usuarios():
            flash("No se pudo completar la acción: ID inexistente")
            return redirect(url_for('dashboard_usuarios'))
        try:
-            url_api = f'http://localhost:5001/usuarios/{usuario_a_eliminar}'
+            url_api = f'http://localhost:5000/api/usuarios/{usuario_a_eliminar}'
             response = requests.delete(url_api, timeout=5)
             response.raise_for_status()
             return redirect(url_for('dashboard_usuarios'))
@@ -631,24 +630,24 @@ def dashboard_usuarios():
 
         try:
            if id_buscado:
-                url_api = f'http://localhost:5001/usuarios/{id_buscado}'
+                url_api = f'http://localhost:5000/api/usuarios/{id_buscado}'
                 response = requests.get(url_api, timeout=5)
                 response.raise_for_status()
                 lista_usuarios = [response.json()]
            elif email_buscado:
-               url_api = f'http://localhost:5001/usuarios/email'
+               url_api = f'http://localhost:5000/api/usuarios/email'
                response = requests.get(url_api, params={'email': email_buscado}, timeout=5)
                response.raise_for_status()
                lista_usuarios = [response.json().get('usuario')]
            elif rol_buscado:
-               url_api = f'http://localhost:5001/usuarios/rol'
+               url_api = f'http://localhost:5000/api/usuarios/rol'
                params = {'rol': rol_buscado, '_limit': limit, '_offset': offset}
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
                lista_usuarios = response.json().get('data', [])
            else:
                params = {'limit': limit, 'offset': offset}
-               url_api = f'http://localhost:5001/usuarios'
+               url_api = f'http://localhost:5000/api/usuarios'
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
                lista_usuarios = response.json().get('data', [])
@@ -672,7 +671,7 @@ def crear_usuario():
         "rol": request.form.get('rol')
     }
     try:
-        url_api = f'http://localhost:5001/usuarios'
+        url_api = f'http://localhost:5000/api/usuarios'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Usuario creado con éxito")
@@ -689,7 +688,7 @@ def editar_usuario_parcial():
     }
     datos = {k: v for k, v in datos.items() if v}
     try:
-        url_api = f'http://localhost:5001/usuarios/{id_usuario}'
+        url_api = f'http://localhost:5000/api/usuarios/{id_usuario}'
         response = requests.patch(url_api, json=datos, timeout=5)
         response.raise_for_status()
         flash("Email y contraseña actualizados con éxito")
@@ -711,7 +710,7 @@ def editar_usuario_completo():
     }
     datos_completos = {k: v for k, v in datos_completos.items() if v}
     try:
-        url_api = f'http://localhost:5001/usuarios/{id_usuario}'
+        url_api = f'http://localhost:5000/api/usuarios/{id_usuario}'
         response = requests.put(url_api,  json=datos_completos, timeout=5)
         response.raise_for_status()
         flash("Usuario actualizado con éxito")
@@ -724,7 +723,7 @@ def editar_usuario_completo():
 def obtener_credenciales():
     email = request.form.get('email')
     try:
-        url_api = 'http://localhost:5001/usuarios/credenciales'
+        url_api = 'http://localhost:5000/api/usuarios/credenciales'
         response = requests.post(url_api, json={'email': email}, timeout=5)
         response.raise_for_status()
         credenciales = response.json()
