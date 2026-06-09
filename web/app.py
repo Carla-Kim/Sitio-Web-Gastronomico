@@ -64,7 +64,6 @@ def reservas():
         data = {
             "cantidad_personas": int(comensales_form),
             "fecha": request.form.get('fecha'),
-            "servicio_ID": 1, 
             "nombre": nombre,
             "apellido": apellido,
             "email": request.form.get('email'),
@@ -97,7 +96,7 @@ def reservas():
 def mostrar_menu():
     with api_app.test_client() as client:
         categorias_resp = client.get('/categorias', query_string={'_limit': 1000, '_offset': 0})
-        productos_resp = client.get('/productos', query_string={'_limit': 1000, '_offset': 0})
+        productos_resp = client.get('/productos', query_string={'limit': 1000, 'offset': 0})
 
     if categorias_resp.status_code != 200 or productos_resp.status_code != 200:
         return render_template('menu.html', menu_agrupado=[])
@@ -107,7 +106,13 @@ def mostrar_menu():
 
     menu_agrupado = []
     for categoria in categorias_data:
-        productos_filtrados = [p for p in productos_data if p['categoria'] == categoria['categorias_id']]
+        cat_id = categoria.get('categorias_id', categoria.get('id'))
+        
+        productos_filtrados = [
+            p for p in productos_data 
+            if p.get('categoria') == cat_id
+        ]
+        
         menu_agrupado.append({
             'categoria': categoria,
             'productos': productos_filtrados
@@ -117,13 +122,11 @@ def mostrar_menu():
 
 @app.route('/resenas')
 def resenas():       
-    limit = request.args.get('limit', default=5, type=int)
+    limit = request.args.get('limit', default=3, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
     with api_app.test_client() as client:
-        # Obtener reseñas paginadas
         resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset})
-        # Obtener promedios
         promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
         promedio_comida_resp = client.get('/resenas/promedio/comida')
         promedio_servicio_resp = client.get('/resenas/promedio/servicio')
@@ -134,13 +137,27 @@ def resenas():
     promedio_comida = 0
     promedio_servicio = 0
     
-    # Procesar reseñas
     if resenas_resp.status_code == 200:
         resenas_data = resenas_resp.get_json()
         resenas_list = resenas_data.get('resenas', [])
-        total_resenas = resenas_data.get('total', 0)
-    
-    # Procesar promedios
+        
+        if 'total' in resenas_data:
+            raw_total = resenas_data['total']
+        elif 'count' in resenas_data:
+            raw_total = resenas_data['count']
+        else:
+            raw_total = 0
+
+        if isinstance(raw_total, dict):
+            total_resenas = raw_total.get('count', raw_total.get('total', 0))
+        elif isinstance(raw_total, (list, tuple)):
+            total_resenas = raw_total[0] if raw_total else 0
+        else:
+            try:
+                total_resenas = int(raw_total)
+            except (ValueError, TypeError):
+                total_resenas = len(resenas_list)
+                
     if promedio_ambiente_resp.status_code == 200:
         promedio_ambiente = promedio_ambiente_resp.get_json().get('promedio', 0)
     if promedio_comida_resp.status_code == 200:
@@ -148,7 +165,6 @@ def resenas():
     if promedio_servicio_resp.status_code == 200:
         promedio_servicio = promedio_servicio_resp.get_json().get('promedio', 0)
     
-    # Calcular paginación
     total_paginas = (total_resenas + limit - 1) // limit if total_resenas > 0 else 1
     pagina_actual = (offset // limit) + 1
     
@@ -161,7 +177,6 @@ def resenas():
                           offset=offset,
                           total_paginas=total_paginas,
                           pagina_actual=pagina_actual)
-
 
 @app.route('/calificar', methods=['GET', 'POST'])
 def calificar():
