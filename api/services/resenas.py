@@ -50,7 +50,8 @@ def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, 
                 "comentario": r["comentario"],
                 "puntuacion_ambiente": r["puntuacion_ambiente"],
                 "puntuacion_servicio": r["puntuacion_servicio"],
-                "puntuacion_comida": r["puntuacion_comida"]
+                "puntuacion_comida": r["puntuacion_comida"],
+                "fecha": r["fecha"].isoformat() if r["fecha"] else None
             } for r in resenas_data["data"]] 
         
         count = resenas_data["count"]

@@ -1,36 +1,3 @@
-import { createTableFilter } from "./core.js";
-
-const rows = document.querySelectorAll(".reserva-fila");
-const form = document.querySelector(".form-filter");
-
-const inputs = {
-    id: form.querySelector("#filter-reserva-id"),
-    estado: form.querySelector("#filter-estado"),
-    fecha: form.querySelector("#filter-fecha"),
-};
-
-createTableFilter({
-    inputs,
-    rows,
-
-    getRowData: (row) => ({
-        reserva_id: row.querySelector(".reserva-id").textContent,
-        estado: row.querySelector(".reserva-estado").textContent.toLowerCase(),
-        fecha: row.querySelector(".reserva-fecha").textContent.toLowerCase()
-    }),
-
-    matchRow: (data) => {
-        const id = inputs.id.value.trim();
-        const estado = inputs.estado.value.trim().toLowerCase();
-        const fecha = inputs.fecha.value;
-
-        return (
-            (!id || data.reserva_id.includes(id)) &&
-            (!estado || data.estado.includes(estado)) &&
-            (!fecha || data.fecha === fecha)
-        );
-    }
-});
 
 
 import { createModal } from "./core.js";

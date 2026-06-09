@@ -30,8 +30,8 @@ Reseñas | Dashboard
     <div class="card">
 
         <form action="/dashboard/resenas" method="GET" class="form form-filter">
-            <input type="hidden" name="_limit" value="{{ limit }}">
-            <input type="hidden" name="_offset" value="{{ offset }}">
+            <input type="hidden" name="_limit" value="{{ _limit }}">
+            <input type="hidden" name="_offset" value="{{ _offset }}">
 
             <div class="filter-row">
                 <div class="form-group">
@@ -137,20 +137,20 @@ Reseñas | Dashboard
                 <tbody>
                     {% for resena in resenas %}
                     <tr class="resena-fila"
-                        data-resena-id="{{ resena.id }}"
-                        data-nombre-apellido="{{ resena.nombre }} {{ resena.apellido }}"
-                        data-reserva-id="{{ resena.id_reserva }}"
-                        data-ambiente="{{ resena.ambiente }}"
-                        data-servicio="{{ resena.servicio }}"
-                        data-comida="{{ resena.comida }}"
+                        data-resena-id="{{ resena.resena_id }}"
+                        data-nombre-apellido="{{ resena.nombre_usuario }}"
+                        data-reserva-id="{{ resena.reserva_id }}"
+                        data-ambiente="{{ resena.puntuacion_ambiente }}"
+                        data-servicio="{{ resena.puntuacion_servicio }}"
+                        data-comida="{{ resena.puntuacion_comida }}"
                         data-comentario="{{ resena.comentario }}">
 
-                        <td class="resena-id">{{ resena.id }}</td>
-                        <td class="resena-nombre-apellido">{{ resena.nombre }} {{ resena.apellido }}</td>
-                        <td class="resena-reserva-id">{{ resena.id_reserva }}</td>
-                        <td class="resena-ambiente">{{ resena.ambiente }}</td>
-                        <td class="resena-servicio">{{ resena.servicio }}</td>
-                        <td class="resena-comida">{{ resena.comida }}</td>
+                        <td class="resena-id">{{ resena.resena_id }}</td>
+                        <td class="resena-nombre-apellido">{{ resena.nombre_usuario }}</td>
+                        <td class="resena-reserva-id">{{ resena.reserva_id }}</td>
+                        <td class="resena-ambiente">{{ resena.puntuacion_ambiente }}</td>
+                        <td class="resena-servicio">{{ resena.puntuacion_servicio }}</td>
+                        <td class="resena-comida">{{ resena.puntuacion_comida }}</td>
                         <td class="resena-fecha">{{ resena.fecha }}</td>
                         <td>
                             <button class="btn btn-primary btn-small btn-open-view-review">
