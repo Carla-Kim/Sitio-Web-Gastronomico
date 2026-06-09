@@ -17,7 +17,7 @@ if [ "$1" = "local" ]; then
     export DB_NAME=gastronomia_db
 
     echo "Esperando a que MySQL acepte conexiones en $DB_HOST:3306..."
-    timeout=30
+    timeout=120
     count=0
     until "$PYTHON" -c 'import mysql.connector; mysql.connector.connect(host="127.0.0.1", user="flask_user", password="flask_password", port=3306).close()' >/dev/null 2>&1; do
         count=$((count + 1))
