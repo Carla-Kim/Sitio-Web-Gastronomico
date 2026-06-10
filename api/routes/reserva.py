@@ -10,7 +10,8 @@ def agregar_reserva():
     result = reservas_service.crear_reserva(data)
     
     if isinstance(result, tuple) and result[0] == 'exito':
-        return jsonify({'message': 'Reserva creada con éxito'}), 201
+        reserva_id=result[1]
+        return jsonify({'message': 'Reserva creada con éxito', 'reserva_id': reserva_id}), 201
     elif result == 'body_invalido':
         return jsonify(ReturnErrors(400)), 400
     elif result == 'nombre_invalido':

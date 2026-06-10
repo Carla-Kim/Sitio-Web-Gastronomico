@@ -2,13 +2,13 @@ import mysql.connector
 from .config import DB_CONFIG, DB_NAME
 from .connection import get_connection
 
-def insert_reserva(fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado):
+def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado):
     conn = get_connection()
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, servicio_ID, telefono, cantidad_personas, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-            (fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
+            "INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
         )
         conn.commit()
         return cursor.lastrowid
@@ -26,13 +26,13 @@ def insert_reserva(fecha, email, nombre, apellido, dni, servicio_id, telefono, c
         cursor.close()
         conn.close()
 
-def update_reserva(id, fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado):
+def update_reserva(id, fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado):
     conn = get_connection()
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "UPDATE Reservas SET fecha = %s, email = %s, nombre = %s, apellido = %s, DNI = %s, servicio_ID = %s, telefono = %s, cantidad_personas = %s, estado = %s WHERE reserva_id = %s",
-            (fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado, id)
+            "UPDATE Reservas SET fecha = %s, email = %s, nombre = %s, apellido = %s, DNI = %s, telefono = %s, cantidad_personas = %s, estado = %s WHERE reserva_id = %s",
+            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado, id)
         )
         conn.commit()
         return cursor.rowcount
@@ -118,11 +118,11 @@ def seleccionar_reservas_por_fecha(fecha, limit, offset):#Misma lógica que la a
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        query = "SELECT COUNT(*) AS total FROM Reservas WHERE fecha = %s"
+        query = "SELECT COUNT(*) AS total FROM Reservas WHERE DATE(fecha) = %s"
         cursor.execute(query, [fecha])
         total = cursor.fetchone()['total']
         
-        query = "SELECT * FROM Reservas WHERE fecha = %s ORDER BY reserva_id LIMIT %s OFFSET %s"
+        query = "SELECT * FROM Reservas WHERE DATE(fecha) = %s ORDER BY reserva_id LIMIT %s OFFSET %s"
         cursor.execute(query, [fecha, limit, offset])
         reservas = cursor.fetchall()
         return reservas, total
