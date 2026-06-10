@@ -8,6 +8,17 @@ Menú | Dashboard
 {% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="card">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <section class="page">
 
     <div class="page-header">
@@ -121,7 +132,6 @@ Menú | Dashboard
                     <tr class="producto-fila"
                         data-id="{{ producto.id }}" 
                         data-nombre="{{ producto.nombre }}"
-                        data-cat-id="{{ producto.id_categoria }}"
                         data-categoria="{{ producto.categoria }}" 
                         data-precio="{{ producto.precio }}" 
                         data-descripcion="{{ producto.descripcion }}">
@@ -163,9 +173,9 @@ Menú | Dashboard
                 </div>
                 <div class="form-group">
                     <label for="add-product-category">Categoría</label>
-                    <select id="add-product-category" name="categoria_id">
+                    <select id="add-product-category" name="categorias_id">
                         {% for categoria in categorias %}
-                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                            <option value="{{ categoria.categorias_id }}">ID:{{ categoria.categorias_id }} - {{ categoria.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -183,14 +193,13 @@ Menú | Dashboard
                         <option value="any">Ninguna</option>
                     </select>
                 </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary btn-small btn-save-product">
+                        Guardar
+                    </button>
+                </div>
 
             </form>
-
-            <div class="modal-actions">
-                <button type="submit" form="form-add-product" class="btn btn-primary btn-small btn-save-product">
-                    Guardar
-                </button>
-            </div>
 
         </div>
     </div>
@@ -219,7 +228,7 @@ Menú | Dashboard
 
                     <tbody>
                         {% for categoria in categorias %}
-                        <tr class="table-row" data-id="{{ categoria.id }}">
+                        <tr class="table-row" data-id="{{ categoria.categorias_id }}">
                             <td class="cat-nombre">
                                 {{ categoria.nombre }}
                             </td>
@@ -332,9 +341,9 @@ Menú | Dashboard
                 </div>
                 <div class="form-group">
                     <label for="edit-product-category">Categoría</label>
-                    <select id="edit-product-category" name="categoria_id">
+                    <select id="edit-product-category" name="categorias_id">
                         {% for categoria in categorias %}
-                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        <option value="{{ categoria.categorias_id }}">{{ categoria.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>

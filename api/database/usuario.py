@@ -28,10 +28,12 @@ def seleccionar_usuarios(limit, offset, rol=None):
 
         query = f"""
             SELECT
+                usuario_id,
                 nombre_usuario,
                 email,
                 nombre,
-                apellido
+                apellido,
+                rol
             FROM Usuarios
             {where_clause}
             ORDER BY usuario_id

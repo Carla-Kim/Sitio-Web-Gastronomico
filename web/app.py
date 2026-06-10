@@ -100,7 +100,7 @@ def reservas():
 def mostrar_menu():
     with api_app.test_client() as client:
         categorias_resp = client.get('/categorias', query_string={'_limit': 1000, '_offset': 0})
-        productos_resp = client.get('/productos', query_string={'_limit': 1000, '_offset': 0})
+        productos_resp = client.get('/productos', query_string={'limit': 1000, 'offset': 0})
 
     if categorias_resp.status_code != 200 or productos_resp.status_code != 200:
         return render_template('menu.html', menu_agrupado=[])
@@ -110,7 +110,13 @@ def mostrar_menu():
 
     menu_agrupado = []
     for categoria in categorias_data:
-        productos_filtrados = [p for p in productos_data if p['categoria'] == categoria['categorias_id']]
+        cat_id = categoria.get('categorias_id', categoria.get('id'))
+        
+        productos_filtrados = [
+            p for p in productos_data 
+            if p.get('categoria') == cat_id
+        ]
+        
         menu_agrupado.append({
             'categoria': categoria,
             'productos': productos_filtrados
@@ -120,13 +126,11 @@ def mostrar_menu():
 
 @app.route('/resenas')
 def resenas():       
-    limit = request.args.get('limit', default=5, type=int)
+    limit = request.args.get('limit', default=3, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
     with api_app.test_client() as client:
-        # Obtener reseñas paginadas
         resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset})
-        # Obtener promedios
         promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
         promedio_comida_resp = client.get('/resenas/promedio/comida')
         promedio_servicio_resp = client.get('/resenas/promedio/servicio')
@@ -137,13 +141,27 @@ def resenas():
     promedio_comida = 0
     promedio_servicio = 0
     
-    # Procesar reseñas
     if resenas_resp.status_code == 200:
         resenas_data = resenas_resp.get_json()
         resenas_list = resenas_data.get('resenas', [])
-        total_resenas = resenas_data.get('total', 0)
-    
-    # Procesar promedios
+        
+        if 'total' in resenas_data:
+            raw_total = resenas_data['total']
+        elif 'count' in resenas_data:
+            raw_total = resenas_data['count']
+        else:
+            raw_total = 0
+
+        if isinstance(raw_total, dict):
+            total_resenas = raw_total.get('count', raw_total.get('total', 0))
+        elif isinstance(raw_total, (list, tuple)):
+            total_resenas = raw_total[0] if raw_total else 0
+        else:
+            try:
+                total_resenas = int(raw_total)
+            except (ValueError, TypeError):
+                total_resenas = len(resenas_list)
+                
     if promedio_ambiente_resp.status_code == 200:
         promedio_ambiente = promedio_ambiente_resp.get_json().get('promedio', 0)
     if promedio_comida_resp.status_code == 200:
@@ -151,7 +169,6 @@ def resenas():
     if promedio_servicio_resp.status_code == 200:
         promedio_servicio = promedio_servicio_resp.get_json().get('promedio', 0)
     
-    # Calcular paginación
     total_paginas = (total_resenas + limit - 1) // limit if total_resenas > 0 else 1
     pagina_actual = (offset // limit) + 1
     
@@ -164,7 +181,6 @@ def resenas():
                           offset=offset,
                           total_paginas=total_paginas,
                           pagina_actual=pagina_actual)
-
 
 @app.route('/calificar', methods=['GET', 'POST'])
 def calificar():
@@ -273,7 +289,7 @@ def dashboard_reservas():
             return redirect(url_for('dashboard_reservas'))
         
         except requests.exceptions.RequestException as e:
-            flash(f"Error en la operación: {e}")
+            flash(f"Error en la operación: Tal vez ya fue cancelada.")
             return redirect(url_for('dashboard_reservas'))
        
     estado = request.args.get('estado')
@@ -331,9 +347,31 @@ def dashboard_reservas():
             response = requests.get('http://localhost:5000/api/servicios', timeout=5)
             response.raise_for_status()
             lista_servicios = response.json().get('data', [])
+            dict_servicios = {s['servicio_id']: s['nombre'] for s in lista_servicios}
+
+            for reserva in lista_reservas:
+                reserva_id = reserva.get('reserva_id')
+                if reserva_id:
+                    try:
+                    # Llamamos a tu endpoint que trae los servicios de la reserva
+                        url_rel = f'http://localhost:5000/api/servicios-reservas/{reserva_id}'
+                        resp_rel = requests.get(url_rel, timeout=2)
+                        print(f"DEBUG: Consultando {url_rel} -> Status: {resp_rel.status_code}")
+                        if resp_rel.status_code == 200:
+                            servicios_data = resp_rel.json()
+                            nombres = []
+                            for item in servicios_data:
+                               s_id = item.get('servicio_id')
+                               nombres.append(dict_servicios.get(s_id, "Desconocido"))
+                            reserva['servicios_str'] = ", ".join(nombres)
+                        else:
+                            reserva['servicios_str'] = "Ninguno"
+                    except:
+                        reserva['servicios_str'] = "Error al cargar"
 
         except requests.exceptions.RequestException:
             flash("Error al ver servicios")
+        
         return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva)
     except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los criterios seleccionados.")
@@ -501,51 +539,57 @@ def dashboard_menu():
         except ValueError:
             limit, offset = 10, 0
            
-        params_categorias = {'_limit': limit, '_offset': offset}
-        params_productos = {'limit': limit, 'offset': offset}
         try:
-            url_api_categorias = f'http://localhost:5000/api/categorias'
-
-            if nombre_buscado:
-               url_api_productos = f'http://localhost:5000/api/productos/obtener?nombre={nombre_buscado}'
-            else:
-               url_api_productos = f'http://localhost:5000/api/productos'
-            response_categorias = requests.get(url_api_categorias, params=params_categorias, timeout=5)
+            # Petición a categorías
+            url_api_categorias = 'http://localhost:5000/api/categorias'
+            response_categorias = requests.get(url_api_categorias, timeout=5)
             response_categorias.raise_for_status()
-            response_productos = requests.get(url_api_productos, params=params_productos, timeout=5)
-
-            if response_productos.status_code == 404 and nombre_buscado:
-                lista_productos = []
-                flash(f"No se encontró el producto: {nombre_buscado}")
-            else:
-                response_productos.raise_for_status()
-                data_productos = response_productos.json()
-                if nombre_buscado:
-                    prod = data_productos.get('producto', {})
-                    lista_productos = [prod] if prod else []
-                else:
-                    lista_productos = data_productos.get('productos', [])
-
+            # Aseguramos capturar la lista de categorías correctamente
             lista_categorias = response_categorias.json().get('data', [])
-            return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, params_categ=params_categorias, params_prod=params_productos)
+
+            # Petición a productos
+            params = {'limit': limit, 'offset': offset}
+            if nombre_buscado:
+                params['nombre'] = nombre_buscado
+                url_productos = 'http://localhost:5000/api/productos/obtener'
+                response_productos = requests.get(url_productos, params=params, timeout=5)
+                response_productos.raise_for_status()
+                data = response_productos.json()
+                lista_productos = data.get('productos', [])
+            else:
+                url_productos = 'http://localhost:5000/api/productos'
+                response_productos = requests.get(url_productos, params=params, timeout=5)
+                response_productos.raise_for_status()
+                data = response_productos.json()
+                lista_productos = data.get('productos', [])
+            
+            print("DEBUG: Lista de productos recibida:", [p['nombre'] for p in lista_productos])
+            return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias)
+        
+        except requests.exceptions.HTTPError:
+            flash("No se encontraron resultados para los filtros aplicados.")
+            return redirect(url_for('dashboard_menu'))
+
         except requests.exceptions.RequestException as e:
-            print(f"Error crítico al conectar con la API: {e}")
-            return render_template('error-conexion.html'),500
+            print(f"Error crítico en dashboard_menu: {e}")
+            return render_template('error-conexion.html'), 500
        
 @app.route('/dashboard/menu/crear', methods=['POST'])
 def crear_producto():
     try:
         precio = float(request.form.get('precio', 0))
-        categoria_id = int(request.form.get('categoria_id', 0))
+        categorias_id = int(request.form.get('categorias_id', 0))
     except (ValueError, TypeError):
+        print("Datos recibidos en el form:", request.form)
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
     datos = {
         "nombre": request.form.get('nombre'),
         "descripcion": request.form.get('descripcion'),
         "precio": precio,
-        "categorias_id": categoria_id
+        "categorias_id": categorias_id
     }
+    
     try:
         url_api = f'http://localhost:5000/api/productos'
         response = requests.post(url_api, json=datos, timeout=5)
@@ -560,12 +604,12 @@ def editar_producto():
     id_producto = request.form.get('id')
     try:
         precio = float(request.form.get('precio', 0))
-        categoria_id = int(request.form.get('categoria_id', 0))
+        categorias_id = int(request.form.get('categorias_id', 0))
     except (ValueError, TypeError):
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
     datos = {
-        "categorias_id": categoria_id,
+        "categorias_id": categorias_id,
         "nombre": request.form.get('nombre'),
         "precio": precio,
         "descripcion": request.form.get('descripcion')
@@ -620,6 +664,7 @@ def dashboard_usuarios():
             url_api = f'http://localhost:5000/api/usuarios/{usuario_a_eliminar}'
             response = requests.delete(url_api, timeout=5)
             response.raise_for_status()
+            flash("Se elimino correctamente.")
             return redirect(url_for('dashboard_usuarios'))
        except requests.exceptions.RequestException as e:
             print(f"Error al eliminar en API: {e}")
@@ -657,6 +702,7 @@ def dashboard_usuarios():
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
                lista_usuarios = response.json().get('data', [])
+           print(f"{lista_usuarios}")
            return render_template('dashboard-usuarios.html', usuarios=lista_usuarios, limit=limit, offset=offset)
 
         except requests.exceptions.HTTPError:
@@ -669,8 +715,8 @@ def dashboard_usuarios():
 @app.route('/dashboard/usuarios/crear', methods=['POST'])
 def crear_usuario():
     datos = {
-        "nombre_usuario": request.form.get('usuario'),
-        "contrasena": request.form.get('password'),
+        "nombre_usuario": request.form.get('nombre_usuario'),
+        "contrasena": request.form.get('contrasena'),
         "email": request.form.get('email'),
         "nombre": request.form.get('nombre'),
         "apellido": request.form.get('apellido'),
@@ -680,7 +726,10 @@ def crear_usuario():
         url_api = f'http://localhost:5000/api/usuarios'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
+        print(f"DEBUG: Enviando datos: {datos}") # <--- Mira esto en tu terminal
         flash("Usuario creado con éxito")
+    except requests.exceptions.HTTPError as e:
+        flash(f"Error: {e.response.text}")
     except requests.exceptions.RequestException as e:
         flash("Error al crear el usuario")
     return redirect(url_for('dashboard_usuarios'))
@@ -714,6 +763,7 @@ def editar_usuario_completo():
         "apellido": request.form.get('apellido'),
         "rol": request.form.get('rol')
     }
+    
     datos_completos = {k: v for k, v in datos_completos.items() if v}
     try:
         url_api = f'http://localhost:5000/api/usuarios/{id_usuario}'

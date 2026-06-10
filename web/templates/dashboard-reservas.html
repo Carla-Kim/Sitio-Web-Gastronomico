@@ -126,7 +126,7 @@ Reservas | Dashboard
                         data-nombrecompleto="{{ reserva.nombre }} {{ reserva.apellido }}"
                         data-dni="{{ reserva.DNI }}"
                         data-telefono="{{ reserva.telefono or '' }}"
-                        data-servicios="{{ reserva.servicio }}"
+                        data-servicios="{{ reserva.servicios_str }}"
                         data-estado="{{ reserva.estado }}"
                         data-cantidad="{{ reserva.cantidad_personas }}">
 

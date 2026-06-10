@@ -43,6 +43,7 @@ import { createModal } from "./core.js";
 const addUserModal = createModal("modal-add-user");
 const editUserParcialModal = createModal("modal-edit-user-parcial");
 const editUserCompletoModal = createModal("modal-edit-user-completo");
+const viewCredentialsModal = createModal("modal-view-credentials");
 
 document
     .getElementById("btn-open-add-user")
@@ -69,7 +70,7 @@ document.querySelectorAll(".btn-open-edit-completo").forEach(btn => {
         document.querySelector("#input-full-apellido").value = row.dataset.apellido;
         document.querySelector("#input-full-rol").value = row.dataset.rol;
         document.querySelector("#input-full-email").value = row.dataset.email;
-        document.querySelector("#input-full-password").value = ""; 
+        document.querySelector("#input-full-password").value = row.dataset.password;
         
         editUserCompletoModal.open();
     });
@@ -109,11 +110,15 @@ document.querySelectorAll('.btn-delete-user-modal').forEach(btn => {
 });
 
 document.querySelectorAll('.btn-view-credentials').forEach(button => {
-    button.addEventListener('click', function() {
-        const email = this.getAttribute('data-email');
-        if (email) {
-            document.getElementById('view-credentials-email').value = email;
-            document.getElementById('form-view-credentials').submit();
-        }
+    button.addEventListener('click', function(event) {
+        const row = event.target.closest('.usuario-fila');
+        
+        const email = row.dataset.email;
+        const contrasena = row.dataset.contrasena;
+        
+        document.querySelector('.usuario-email').textContent = email;
+        document.querySelector('.usuario-contrasena').textContent = contrasena;
+        
+        viewCredentialsModal.open();
     });
 });
