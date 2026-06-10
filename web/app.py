@@ -232,13 +232,13 @@ def dashboard_login():
         return render_template('dashboard-login.html')
 
     email = request.form.get('email')
-    contraseña = request.form.get('contraseña')
+    contrasena = request.form.get('contraseña')
 
     respuesta = requests.post(
-        f'{API_URL}/login',
+        f'{API_URL}/usuarios/login',
         json={
             'email': email,
-            'contraseña': contraseña
+            'contrasena': contrasena
         }
     )
 

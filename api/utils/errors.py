@@ -14,6 +14,12 @@ def ReturnErrors(status_code):
             "level": "error",
             "message": "Solicitud inválida"
         },
+        401: {
+            "code": "UNAUTHORIZED",
+            "description": "Acceso denegado. Credenciales inválidas o inexistentes.",
+            "level": "info",
+            "message": "Credenciales inválidas"
+        },
         404: {
             "code": "NOT_FOUND",
             "description": "El recurso solicitado no existe.",

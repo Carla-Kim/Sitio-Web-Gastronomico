@@ -196,3 +196,18 @@ def obtener_usuarios_por_rol_route():
     except Exception as e:
         print(f"Error crítico en filtro por rol: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+@usuarios_bp.route('/usuarios/login', methods=['POST'])
+def verificar_usuario():
+    body = request.get_json()
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
+    try:
+        usuario_id = user.verificar_usuario(body)
+        return jsonify(usuario_id), 200
+    except ValueError as val_err:
+        if str(val_err) == "UNAUTHORIZED":
+            return jsonify(ReturnErrors(401)), 401
+    except Exception as e:
+        print(f"No fue posible verificar el usuario. Error: {e}")
+        return jsonify(ReturnErrors(500)), 500

@@ -147,3 +147,20 @@ def listar_usuarios_por_rol_servicio(rol, limit=10, offset=0):
         raise ValueError("BAD_REQUEST")
     resultado = us.obtener_usuarios_por_rol_paginado(rol, limit, offset)
     return resultado
+
+def verificar_usuario(body):
+    required_fields = [
+        "email",
+        "contrasena"
+    ]
+
+    for field in required_fields:
+        if field not in body:
+            raise ValueError("BAD_REQUEST")
+    
+    usuario_id = us.seleccionar_usuario_id_desde_login(body)
+
+    if usuario_id is None:
+        return ValueError("UNAUTHORIZED")
+
+    return usuario_id
