@@ -5,6 +5,9 @@ from web.app import app as frontend
 from flask_mailman import Mail
 import smtplib
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 orig_SMTP_SSL_init = smtplib.SMTP_SSL.__init__
 def patched_SMTP_SSL_init(self, *args, **kwargs):

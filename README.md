@@ -48,6 +48,24 @@ Para detener el modo local:
 ./scripts/stop.sh local
 ```
 
+### Configurar email
+
+El proyecto usa estas variables de entorno para el envío de correo:
+
+- `EMAIL_USER` → cuenta de email remitente
+- `EMAIL_APP_PASSWORD` → contraseña SMTP / password de aplicación
+
+Crea un archivo `.env` en la raíz del proyecto con:
+
+```env
+EMAIL_USER=tu-email@gmail.com
+EMAIL_APP_PASSWORD=tu-app-password
+```
+
+La idea es crear esto desde gmail. Van a cuenta, verificación en 2 pasos
+bajan hasta abajo de todo y les aparece contraseña de aplicaciones. Les da
+la de 16 digitos. Apliquen todo en el .env y borren todos los espacios.
+
 ### 3) Comandos manuales
 
 ```bash
