@@ -58,12 +58,15 @@ def reservas():
         nombre_completo = request.form.get('nombre', '').split(' ', 1)
         nombre = nombre_completo[0]
         apellido = nombre_completo[1] if len(nombre_completo) > 1 else ''
+        fecha_raw = request.form.get('fecha')
+        horario_raw = request.form.get('horario')
+        fecha_datetime = f"{fecha_raw} {horario_raw}:00" if fecha_raw and horario_raw else None
 
         comensales_form = request.form.get('comensales') or '0'
 
         data = {
             "cantidad_personas": int(comensales_form),
-            "fecha": request.form.get('fecha'),
+            "fecha": fecha_datetime,
             "nombre": nombre,
             "apellido": apellido,
             "email": request.form.get('email'),
@@ -80,6 +83,7 @@ def reservas():
 
                 if serv_seleccionados and reserva_id:
                     requests.put(f'http://localhost:5000/api/servicios-reservas/{reserva_id}', json ={"servicios_id": [int(s) for s in serv_seleccionados]})
+                
                 flash('Se realizó la reserva con exito.', 'success')
                 return redirect(url_for('reservas'))
             else:

@@ -9,7 +9,7 @@ from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_r
 logger = logging.getLogger(__name__)
 
 def crear_reserva(data):
-    campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas"]
+    campos = ["fecha", "email", "nombre", "apellido", "DNI", "telefono", "cantidad_personas"]
     if not data or not all(i in data for i in campos):
         return 'body_invalido'
     
@@ -18,7 +18,6 @@ def crear_reserva(data):
     nombre = data["nombre"]
     apellido = data["apellido"]
     dni = data["DNI"]
-    servicio_id = data["servicio_ID"]
     telefono = data["telefono"]
     cantidad_personas = data["cantidad_personas"]
     estado = data.get("estado", "reservada")
@@ -40,7 +39,7 @@ def crear_reserva(data):
         return 'cantidad_invalida'
 
     try:
-        resultado = insert_reserva(fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
+        resultado = insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
         if resultado == 'duplicado':
             return 'reserva_duplicada'
         if resultado == 'servicio_no_existe':
@@ -68,7 +67,7 @@ def crear_reserva(data):
         return 'error_db'
 
 def actualizar_reserva(id, data):
-    campos = ["fecha", "email", "nombre", "apellido", "DNI", "servicio_ID", "telefono", "cantidad_personas", "estado"]
+    campos = ["fecha", "email", "nombre", "apellido", "DNI", "telefono", "cantidad_personas", "estado"]
     if not data or not all(k in data for k in campos):
         return 'body_invalido'
 
@@ -77,7 +76,6 @@ def actualizar_reserva(id, data):
     nombre = data["nombre"]
     apellido = data["apellido"]
     dni = data["DNI"]
-    servicio_id = data["servicio_ID"]
     telefono = data["telefono"]
     cantidad_personas = data["cantidad_personas"]
     estado = data["estado"]
@@ -101,7 +99,7 @@ def actualizar_reserva(id, data):
         return 'cantidad_invalida'
 
     try:
-        rows = update_reserva(id, fecha, email, nombre, apellido, dni, servicio_id, telefono, cantidad_personas, estado)
+        rows = update_reserva(id, fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
         if rows == 'servicio_no_existe':
             return 'servicio_no_encontrado'
         if not rows:
