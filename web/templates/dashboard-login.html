@@ -12,6 +12,17 @@ Login | Dashboard
 {% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="card">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <section class="login-section">
 
     <div class="login-brand">

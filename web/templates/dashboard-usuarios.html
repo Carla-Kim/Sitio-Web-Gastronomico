@@ -8,6 +8,17 @@ Usuarios | Dashboard
 {% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="card">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
 <section class="page">
 
     <div class="page-header">
@@ -47,7 +58,7 @@ Usuarios | Dashboard
                     <select name="rol" id="filter-usuario-rol">
                         <option value="">Todos los roles</option>
                         <option value="admin">Administrador</option>
-                        <option value="usuario">Usuario</option>
+                        <option value="cliente">Usuario</option>
                     </select>
                 </div>
             </div>
@@ -120,7 +131,8 @@ Usuarios | Dashboard
                         data-nombre="{{ usuario.nombre}}"
                         data-apellido="{{ usuario.apellido }}"
                         data-email="{{ usuario.email }}"
-                        data-rol="{{ usuario.rol }}">
+                        data-rol="{{ usuario.rol }}"
+                        data-contrasena="{{ usuario.contrasena }}">
 
                         <td class="usuario-id">{{ usuario.usuario_id }}</td>
                         <td class="usuario-usuario">{{ usuario.nombre_usuario }}</td>
@@ -130,7 +142,7 @@ Usuarios | Dashboard
                         <td class="usuario-rol">
                             {{ {
                                 'admin': 'Administrador',
-                                'usuario': 'Usuario'
+                                'cliente': 'Usuario'
                             }.get(usuario.rol, usuario.rol) }}
                         </td>
                         <td>
@@ -178,20 +190,20 @@ Usuarios | Dashboard
                 </div>
                 <div class="form-group">
                     <label for="add-user-username">Nombre de usuario</label>
-                    <input type="text" id="add-user-username" name="usuario" placeholder="Nombre de usuario">
+                    <input type="text" id="add-user-username" name="nombre_usuario" placeholder="Nombre de usuario">
                 </div>
                 <div class="form-group">
                     <label for="add-user-email">Email</label>
-                    <input type="text" id="add-user-email" name="email" placeholder="Email">
+                    <input type="email" id="add-user-email" name="email" placeholder="Email">
                 </div>
                 <div class="form-group">
                     <label for="add-user-password">Contraseña</label>
-                    <input type="text" id="add-user-password" name="password" placeholder="Contraseña">
+                    <input type="text" id="add-user-password" name="contrasena" placeholder="Contraseña">
                 </div>
                 <div class="form-group">
                     <label for="add-user-role">Rol</label>
                     <select id="add-user-role" name="rol">
-                        <option value="usuario">Usuario</option>
+                        <option value="cliente">Usuario</option>
                         <option value="admin">Administrador</option>
                     </select>
                 </div>
@@ -240,7 +252,37 @@ Usuarios | Dashboard
         </div>
     </div>
 
-     <div id="modal-edit-user-completo" class="modal-overlay hidden">
+
+
+    <div id="modal-view-credentials" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+
+            <h2 class="modal-title">
+                Credenciales
+            </h2>
+
+            <div class="table-container">
+                <table class="detail-table">
+                  <tbody>                      
+                       <tr class="table-row">
+                          <td><strong>Email:</strong></td>
+                          <td class="usuario-email"></td>
+                       </tr>
+                       <tr class="table-row">
+                          <td><strong>Contraseña:</strong></td>
+                          <td class="usuario-contrasena"></td>
+                       </tr>
+                  </tbody>
+                </table>
+           </div>
+       </div>
+    </div>
+
+    <div id="modal-edit-user-completo" class="modal-overlay hidden">
         <div class="modal-card">
 
             <button class="btn modal-close btn-close-modal">
@@ -268,7 +310,7 @@ Usuarios | Dashboard
                 <div class="form-group">
                     <label for="input-full-rol">Rol</label>
                     <select name="rol" id="input-full-rol">
-                        <option value="usuario">Usuario</option>
+                        <option value="cliente">Usuario</option>
                         <option value="admin">Administrador</option>
                     </select>
                 </div>

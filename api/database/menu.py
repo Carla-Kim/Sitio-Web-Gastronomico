@@ -47,7 +47,7 @@ def obtener_productos(limit, offset, filtro, direccion_filtro):
     cursor = conn.cursor(dictionary=True)
     try:
         sql_count = "SELECT COUNT(*) as count FROM Productos"
-        sql_elems = f"SELECT producto_id, categorias_id, nombre,  precio FROM Productos ORDER BY {filtro} {direccion_filtro} LIMIT %s OFFSET %s"
+        sql_elems = f"SELECT producto_id, categorias_id, nombre, descripcion, precio FROM Productos ORDER BY {filtro} {direccion_filtro} LIMIT %s OFFSET %s"
 
         cursor.execute(sql_count)
         res_count = cursor.fetchone()
