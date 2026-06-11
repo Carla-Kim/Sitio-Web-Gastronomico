@@ -3,10 +3,14 @@ const toggle = document.querySelector('.menu-toggle');
 const overlay = document.querySelector('.nav-overlay');
 const close = document.querySelector('.menu-close');
 const navLinks = document.querySelectorAll('.nav-overlay ul li a');
-document.getElementById('fecha').min = new Date().toISOString().split('T')[0];
+
+const fechaInput = document.getElementById('fecha');
+if (fechaInput) {
+    fechaInput.min = new Date().toISOString().split('T')[0];
+}
 
 window.addEventListener('scroll', () => {
-    if (window.scrollY>10) {
+    if (window.scrollY > 10) {
         nav.classList.add('scrolled');
     } else {
         nav.classList.remove('scrolled');
@@ -21,7 +25,7 @@ close.addEventListener('click', () => {
 });
 
 navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    overlay.classList.remove('open');
-  });
+    link.addEventListener('click', () => {
+        overlay.classList.remove('open');
+    });
 });
