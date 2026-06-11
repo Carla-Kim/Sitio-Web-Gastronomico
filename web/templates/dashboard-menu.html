@@ -175,7 +175,7 @@ Menú | Dashboard
                     <label for="add-product-category">Categoría</label>
                     <select id="add-product-category" name="categorias_id">
                         {% for categoria in categorias %}
-                            <option value="{{ categoria.categorias_id }}">ID:{{ categoria.categorias_id }} - {{ categoria.nombre }}</option>
+                            <option value="{{ categoria.categorias_id }}">{{ categoria.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -238,7 +238,7 @@ Menú | Dashboard
                                 </button>
                             </td>
                             <td class="table-actions">
-                                <button class="btn btn-secondary btn-small btn-delete-category">
+                                <button class="btn btn-secondary btn-small btn-delete-category" data-tipo="categoria">
                                     Borrar
                                 </button>
                             </td>
