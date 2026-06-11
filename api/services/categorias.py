@@ -1,10 +1,9 @@
 import re
-from ..database.categorias import update_categoria, insert_categoria, seleccionar_categorias
+from ..database.categorias import update_categoria, insert_categoria, seleccionar_categorias, delete_categoria
 from ..utils.errors import *
 from ..utils.pagination import build_links
 from ..database.connection import get_connection, get_cursor
 
-#Función para el endpoint update categoría
 def actualizar_categoria(id, data):
     if not data or 'nombre' not in data:
         return 'body_invalido'
@@ -25,7 +24,6 @@ def actualizar_categoria(id, data):
     return 'exito'
 
 
-#Función para el endpoint de agregar categoría
 def crear_categoria(data):
     if not data or 'nombre' not in data:
         return 'body_invalido'
@@ -43,7 +41,7 @@ def crear_categoria(data):
     except Exception:
         return 'error_db'
 
-#Función para el endpoint de listar categorías
+
 def obtener_categorias(base_url, query_params, limit, offset):
     categorias, total = seleccionar_categorias(limit, offset)
 
@@ -64,4 +62,13 @@ def obtener_categorias(base_url, query_params, limit, offset):
     }
     
     return response_body
-    
+
+
+def eliminar_categoria(id):
+    try:
+        rows = delete_categoria(id)
+    except Exception:
+        return 'error_db'
+    if rows == 0:
+        return 'no_encontrada'
+    return 'exito'
