@@ -67,3 +67,17 @@ def seleccionar_categorias(limit, offset):
     finally:
         cursor.close()
         conn.close()
+
+def delete_categoria(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM Categorias WHERE categorias_id = %s", (id,))
+        conn.commit()
+        return cursor.rowcount
+    except Exception as err:
+        conn.rollback()
+        raise err
+    finally:
+        cursor.close()
+        conn.close()
