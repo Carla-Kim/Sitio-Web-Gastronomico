@@ -4,7 +4,7 @@ from api.utils.errors import ReturnErrors
 
 categorias_bp = Blueprint('categorias', __name__)
 
-#Endpoint para update categoría
+
 @categorias_bp.route('/categorias/<int:id>', methods=['PUT'])
 def formatear_categoria(id):
     data = request.get_json()
@@ -23,7 +23,6 @@ def formatear_categoria(id):
         return '', 204
     
 
-#Endpoint para agregar categoría
 @categorias_bp.route('/categorias', methods=['POST']) 
 def agregar_categoria():
     data = request.get_json()
@@ -39,7 +38,7 @@ def agregar_categoria():
     else:
         return jsonify({'message': 'Categoría creada con éxito'}), 201
 
-#Endpoint para listar categorías
+
 @categorias_bp.route('/categorias', methods=['GET'])
 def listar_categorias():
     base_url = request.base_url
@@ -63,3 +62,13 @@ def listar_categorias():
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
+
+
+@categorias_bp.route('/categorias/<int:id>', methods=['DELETE'])
+def eliminar_categoria(id):
+    result = cd.eliminar_categoria(id)
+    if result == 'no_encontrada':
+        return jsonify(ReturnErrors(404)), 404
+    elif result == 'error_db':
+        return jsonify(ReturnErrors(500)), 500
+    return '', 204
