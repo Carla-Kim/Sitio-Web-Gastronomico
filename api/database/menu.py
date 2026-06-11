@@ -18,22 +18,22 @@ def borrar_producto(id_producto):
 
 def check_by_id(id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT 1 FROM Productos WHERE producto_id = %s", (id,))
-        return cursor.fetchone() is not None
+        cursor.execute("SELECT * FROM Productos WHERE producto_id = %s", (id,))
+        return cursor.fetchone()
     except Exception as err:
         raise err
     finally:
         cursor.close()
         conn.close()
 
-def editar_producto(id, categoria, nombre, descripcion, precio):
+def editar_producto(id, categoria, nombre, descripcion, precio, imagen_url):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        query = "UPDATE Productos SET categorias_id = %s, nombre = %s, descripcion = %s, precio = %s WHERE producto_id = %s"
-        cursor.execute(query, (categoria, nombre, descripcion, precio, id))
+        query = "UPDATE Productos SET categorias_id = %s, nombre = %s, descripcion = %s, precio = %s, imagen_url = %s WHERE producto_id = %s"
+        cursor.execute(query, (categoria, nombre, descripcion, precio, imagen_url, id))
         conn.commit()
     except Exception as err:
         conn.rollback()
@@ -47,7 +47,7 @@ def obtener_productos(limit, offset, filtro, direccion_filtro):
     cursor = conn.cursor(dictionary=True)
     try:
         sql_count = "SELECT COUNT(*) as count FROM Productos"
-        sql_elems = f"SELECT producto_id, categorias_id, nombre, descripcion, precio FROM Productos ORDER BY {filtro} {direccion_filtro} LIMIT %s OFFSET %s"
+        sql_elems = f"SELECT producto_id, categorias_id, nombre, descripcion, precio, imagen_url FROM Productos ORDER BY {filtro} {direccion_filtro} LIMIT %s OFFSET %s"
 
         cursor.execute(sql_count)
         res_count = cursor.fetchone()

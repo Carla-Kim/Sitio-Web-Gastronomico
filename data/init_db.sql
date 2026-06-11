@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS Productos (
     descripcion VARCHAR(300),
     nombre VARCHAR(100) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
+    imagen_url VARCHAR(100) NULL,
     FOREIGN KEY (categorias_id) REFERENCES Categorias(categorias_id) ON DELETE RESTRICT
 );
 
@@ -100,39 +101,37 @@ INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES
 (4, 'Bebidas');
 (5, 'Especialidades Nórdicas');
 
--- Productos
-INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio) VALUES 
-
+INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio, imagen_url) VALUES 
 -- Entradas
-(1, 1, 'Empanada de carne cortada a cuchillo, frita', 'Empanada de Carne', 450.00),
-(2, 1, 'Provoleta tradicional a la chapa con orégano y oliva', 'Provoleta Clásica', 1800.00),
-(3, 1, 'Porción de papas fritas bastón crujientes', 'Papas Fritas Medianas', 1100.00),
-(4, 1, 'Bastones de muzzarella rebozados acompañados de salsa pomodoro', 'Bastones de Muzzarella', 1500.00),
+(1, 1, 'Empanada de carne cortada a cuchillo, frita', 'Empanada de Carne', 450.00, NULL),
+(2, 1, 'Provoleta tradicional a la chapa con orégano y oliva', 'Provoleta Clásica', 1800.00, NULL),
+(3, 1, 'Porción de papas fritas bastón crujientes', 'Papas Fritas Medianas', 1100.00, NULL),
+(4, 1, 'Bastones de muzzarella rebozados acompañados de salsa pomodoro', 'Bastones de Muzzarella', 1500.00, NULL),
 
 -- Platos Principales
-(5, 2, 'Milanesa de ternera acompañada de papas fritas', 'Milanesa Clásica', 1250.00),
-(6, 2, 'Bife de chorizo de 400g con guarnición a elección', 'Bife de Chorizo', 4200.00),
-(7, 2, 'Ravioles caseros de verdura y ricota con salsa tuco', 'Ravioles con Tuco', 2100.00),
-(8, 2, 'Pechuga de pollo a la grilla con vegetales salteados', 'Pollo a la Grilla', 2800.00),
-(9, 2, 'Ensalada César con pollo, lechuga romana, croutons y aderezo', 'Ensalada César', 2400.00),
+(5, 2, 'Milanesa de ternera acompañada de papas fritas', 'Milanesa Clásica', 1250.00, NULL),
+(6, 2, 'Bife de chorizo de 400g con guarnición a elección', 'Bife de Chorizo', 4200.00, NULL),
+(7, 2, 'Ravioles caseros de verdura y ricota con salsa tuco', 'Ravioles con Tuco', 2100.00, NULL),
+(8, 2, 'Pechuga de pollo a la grilla con vegetales salteados', 'Pollo a la Grilla', 2800.00, NULL),
+(9, 2, 'Ensalada César con pollo, lechuga romana, croutons y aderezo', 'Ensalada César', 2400.00, NULL),
 
 -- Postres
-(10, 3, 'Flan casero con opción de dulce de leche o crema', 'Flan Mixto', 850.00),
-(11, 3, 'Bocha de helado de crema americana con salsa de chocolate', 'Copa Helada', 900.00),
-(12, 3, 'Mousse de chocolate artesanal con hilos de chocolate amargo', 'Mousse de Chocolate', 1100.00),
-(13, 3, 'Tradicional postre vigilante con queso fresco y dulce de batata', 'Queso y Dulce', 950.00),
+(10, 3, 'Flan casero con opción de dulce de leche o crema', 'Flan Mixto', 850.00, NULL),
+(11, 3, 'Bocha de helado de crema americana con salsa de chocolate', 'Copa Helada', 900.00, NULL),
+(12, 3, 'Mousse de chocolate artesanal con hilos de chocolate amargo', 'Mousse de Chocolate', 1100.00, NULL),
+(13, 3, 'Tradicional postre vigilante con queso fresco y dulce de batata', 'Queso y Dulce', 950.00, NULL),
 
 -- Bebidas
-(14, 4, 'Agua mineral sin gas 500ml', 'Agua Mineral', 500.00),
-(15, 4, 'Cerveza artesanal tirada de la casa 500ml', 'Cerveza Pinta', 1200.00),
-(16, 4, 'Gaseosa línea Coca-Cola original de 354ml', 'Gaseosa Común', 650.00),
-(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00),
+(14, 4, 'Agua mineral sin gas 500ml', 'Agua Mineral', 500.00, NULL),
+(15, 4, 'Cerveza artesanal tirada de la casa 500ml', 'Cerveza Pinta', 1200.00, NULL),
+(16, 4, 'Gaseosa línea Coca-Cola original de 354ml', 'Gaseosa Común', 650.00, NULL),
+(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00, NULL);
 
 --Especialidades Nórdicas
-(18, 5, 'Costillas asadas con especias de Skyrim', 'Costillas de Carrera Blanca', 3200.00),
-(19, 5, 'Bebida dulce inspirada en la famosa hidromiel', 'Hidromiel Honningbrew', 950.00),
-(20, 5, 'Tarta de manzana tradicional', 'Tarta de Soledad', 1400.00),
-(21, 5, 'Estofado caliente ideal para aventureros', 'Estofado del Sangre de Dragón', 2800.00);
+(18, 5, 'Costillas asadas con especias de Skyrim', 'Costillas de Carrera Blanca', 3200.00, NULL),
+(19, 5, 'Bebida dulce inspirada en la famosa hidromiel', 'Hidromiel Honningbrew', 950.00, NULL),
+(20, 5, 'Tarta de manzana tradicional', 'Tarta de Soledad', 1400.00, NULL),
+(21, 5, 'Estofado caliente ideal para aventureros', 'Estofado del Sangre de Dragón', 2800.00, NULL);
 
 -- Servicios
 INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES 

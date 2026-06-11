@@ -2,6 +2,9 @@ import { createTableFilter } from "./core.js";
 
 const rows = document.querySelectorAll(".producto-fila");
 const form = document.querySelector(".form-filter");
+const actual_preview = document.querySelector("#edit-product-actual-preview");
+const addImageInput = document.querySelector("#add-product-image");
+const editImageInput = document.querySelector("#edit-product-image");
 
 const inputs = {
     nombre: form.querySelector("#filter-nombre"),
@@ -70,15 +73,22 @@ document.querySelectorAll(".btn-open-edit-category").forEach(btn => {
 document.querySelectorAll(".btn-open-edit-product").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
+        const data = row.dataset;
 
-        document.querySelector("#edit-product-id").value = row.dataset.id;
-        document.querySelector("#edit-product-name").value = row.querySelector(".producto-nombre").textContent;
-        document.querySelector("#edit-product-price").value = row.querySelector(".producto-precio").textContent.replace("$", "");
-        document.querySelector("#edit-product-description").value = row.querySelector(".producto-descripcion").textContent;
-        document.querySelector("#edit-product-category").value = row.dataset.catId;
+        document.querySelector("#edit-product-id").value = data.id;
+        document.querySelector("#edit-product-name").value = data.nombre;
+        document.querySelector("#edit-product-price").value = data.precio;
+        document.querySelector("#edit-product-description").value = data.descripcion;
+        document.querySelector("#edit-product-category").value = data.categoria;
+
+        actualPreview.src = data.imagen || "";
+        editImageInput.value = "";
+
+        document.querySelector("#edit-product-new-preview-group").classList.add("hidden");
+        document.querySelector("#edit-product-new-preview").src = "";
 
         editProductModal.open();
-    });
+    })
 });
 
 const formDelete = document.getElementById('form-delete-menu');
@@ -113,4 +123,81 @@ document.querySelectorAll('.btn-delete-category').forEach(btn => {
         
         handleDelete('categoria', id);
     });
+});
+
+
+const actualPreview =
+    document.querySelector(
+        "#edit-product-actual-preview"
+    );
+
+const actualPreviewGroup =
+    document.querySelector(
+        "#edit-product-actual-preview-group"
+    );
+
+actualPreview.onerror = () => {
+    actualPreviewGroup.classList.add(
+        "hidden"
+    );
+};
+
+actualPreview.onload = () => {
+    actualPreviewGroup.classList.remove(
+        "hidden"
+    );
+};
+
+
+const addPreview = document.querySelector("#add-product-new-preview");
+const addPreviewGroup = document.querySelector("#add-product-new-preview-group");
+
+let addPreviewUrl = null;
+
+addImageInput.addEventListener("change", (event) => {
+    const file =
+        event.target.files[0];
+
+    if (!file) {
+        addPreview.src = "";
+        addPreviewGroup.classList.add("hidden");
+
+        return;
+    }
+
+    if (addPreviewUrl) {
+        URL.revokeObjectURL(addPreviewUrl);
+    }
+
+    addPreviewUrl = URL.createObjectURL(file);
+
+    addPreview.src = addPreviewUrl;
+    addPreviewGroup.classList.remove("hidden");
+});
+
+
+const editPreview = document.querySelector("#edit-product-new-preview");
+const editPreviewGroup = document.querySelector("#edit-product-new-preview-group");
+
+let editPreviewUrl = null;
+
+editImageInput.addEventListener("change", (event) => {
+    const file =
+        event.target.files[0];
+
+    if (!file) {
+        editPreview.src = "";
+        editPreviewGroup.classList.add("hidden");
+
+        return;
+    }
+
+    if (editPreviewUrl) {
+        URL.revokeObjectURL(editPreviewUrl);
+    }
+
+    editPreviewUrl = URL.createObjectURL(file);
+
+    editPreview.src = editPreviewUrl;
+    editPreviewGroup.classList.remove("hidden");
 });
