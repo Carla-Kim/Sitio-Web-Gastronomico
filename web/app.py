@@ -9,6 +9,7 @@ from flask import (
     redirect,
     url_for,
     flash,
+    send_from_directory,
     request,
     session
 )
@@ -16,6 +17,7 @@ from flask import (
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, os.pardir))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 API_URL = os.getenv("API_URL", "http://localhost:5000/api")
 SECRET_KEY = os.getenv("SECRET_KEY", "basheros123")
 
@@ -40,6 +42,21 @@ def login_requerido(view):
         return view(*args, **kwargs)
 
     return wrapper
+
+@app.route("/uploads/<path:filename>")
+def uploads(filename):
+    ruta = os.path.join(
+        UPLOAD_FOLDER,
+        filename
+    )
+
+    if not os.path.exists(ruta):
+        return "", 204
+
+    return send_from_directory(
+        UPLOAD_FOLDER,
+        filename
+    )
 
 
 @app.route('/')
@@ -562,6 +579,12 @@ def dashboard_menu():
                 response_productos.raise_for_status()
                 data = response_productos.json()
                 lista_productos = data.get('productos', [])
+
+            for producto in lista_productos:
+                if producto.get("imagen_url"):
+                    producto["imagen_url"] = f"/uploads/{producto['imagen_url']}"
+                else:
+                    producto["imagen_url"] = "/uploads/productos/image.webp"
             
             print("DEBUG: Lista de productos recibida:", [p['nombre'] for p in lista_productos])
             return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias)
@@ -614,6 +637,26 @@ def editar_producto():
         "precio": precio,
         "descripcion": request.form.get('descripcion')
     }
+
+    imagen = request.files.get('imagen')
+
+    if imagen and imagen.filename:
+        if "." in imagen.filename:
+            extension = imagen.filename.rsplit(".", 1)[1].lower()
+        else:
+            flash("Archivo inválido")
+            return redirect(url_for("dashboard_menu"))
+
+        nombre_archivo = f"productos/{id_producto}.{extension}"
+
+        imagen.save(
+            os.path.join(
+                UPLOAD_FOLDER,
+                nombre_archivo
+            )
+        )
+
+        datos["imagen_url"] = nombre_archivo
 
     try:
         url_api = f'http://localhost:5000/api/productos/{id_producto}'

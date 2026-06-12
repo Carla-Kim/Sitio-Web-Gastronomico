@@ -1,9 +1,3 @@
-function parseDate(str) {
-    const [day, month, year] = str.split("-").map(Number);
-    return new Date(year, month - 1, day);
-}
-
-
 import { createModal } from "./core.js";
 
 const viewReviewModal = createModal("modal-view-review");

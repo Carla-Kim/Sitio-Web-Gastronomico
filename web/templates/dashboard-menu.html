@@ -134,7 +134,8 @@ Menú | Dashboard
                         data-nombre="{{ producto.nombre }}"
                         data-categoria="{{ producto.categoria }}" 
                         data-precio="{{ producto.precio }}" 
-                        data-descripcion="{{ producto.descripcion }}">
+                        data-descripcion="{{ producto.descripcion }}"
+                        data-imagen="{{ producto.imagen_url }}">
                         <td class="producto-nombre">{{ producto.nombre }}</td>
                         <td class="producto-id">{{ producto.id }}</td>
                         <td class="producto-categoria">{{ producto.categoria }}</td>
@@ -165,7 +166,7 @@ Menú | Dashboard
                 Agregar del menú
             </h2>
 
-            <form id="form-add-product" action="/dashboard/menu/crear" method="POST" class="form form-modal">
+            <form id="form-add-product" action="/dashboard/menu/crear" method="POST" enctype="multipart/form-data" class="form form-modal">
 
                 <div class="form-group">
                     <label for="add-product-name">Nombre del producto</label>
@@ -188,10 +189,12 @@ Menú | Dashboard
                     <textarea id="add-product-description" name="descripcion" placeholder="Descripción..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="imagen">Agregar imagen</label>
-                    <select class="select-image">
-                        <option value="any">Ninguna</option>
-                    </select>
+                    <label for="add-product-image">Agregar imagen</label>
+                    <input type="file" id="add-product-image" name="imagen" accept="image/*">
+                </div>
+                <div id="add-product-new-preview-group" class="form-group hidden">
+                    <p>Imagen nueva</p>
+                    <img id="add-product-new-preview" class="product-preview" alt="Vista previa">
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-primary btn-small btn-save-product">
@@ -333,8 +336,12 @@ Menú | Dashboard
                 Editar del menú
             </h2>
 
-            <form class="form form-modal" id="form-edit-product" action="/dashboard/menu/editar" method="POST">
+            <form id="form-edit-product" action="/dashboard/menu/editar" method="POST" enctype="multipart/form-data" class="form form-modal">
                 <input type="hidden" id="edit-product-id" name="id"> 
+                <div id="edit-product-actual-preview-group" class="form-group">
+                    <p>Imagen actual</p>
+                    <img id="edit-product-actual-preview" class="product-preview" alt="Vista previa">
+                </div>
                 <div class="form-group">
                     <label for="edit-product-name">Nombre del producto</label>
                     <input type="text" id="edit-product-name" name="nombre" placeholder="Nombre del producto">
@@ -356,10 +363,12 @@ Menú | Dashboard
                     <textarea id="edit-product-description" name="descripcion" placeholder="Descripción..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="imagen">Agregar imagen</label>
-                    <select class="select-image">
-                        <option value="any">Ninguna</option>
-                    </select>
+                    <label for="edit-product-image">Cambiar imagen</label>
+                    <input type="file" id="edit-product-image" name="imagen" accept="image/*">
+                </div>
+                <div id="edit-product-new-preview-group" class="form-group hidden">
+                    <p>Imagen nueva</p>
+                    <img id="edit-product-new-preview" class="product-preview" alt="Vista previa">
                 </div>
 
             </form>

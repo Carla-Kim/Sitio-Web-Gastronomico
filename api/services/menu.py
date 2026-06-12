@@ -37,16 +37,19 @@ def editar_producto(id, data):
     nombre = data.get('nombre')
     descripcion = data.get('descripcion')
     precio = data.get('precio')
+    imagen_url = data.get('imagen_url')
     
     if not all([categoria_id, nombre, descripcion, precio]):
         return ReturnErrors(400), 400
     
     try:
-        exists_id = menu_db.check_by_id(id)
-        if not exists_id:
+        producto = menu_db.check_by_id(id)
+        if not producto:
             return ReturnErrors(404), 404
-        
-        menu_db.editar_producto(id, categoria_id, nombre, descripcion, precio)
+
+        imagen_url = data.get("imagen_url", producto["imagen_url"])
+
+        menu_db.editar_producto(id, categoria_id, nombre, descripcion, precio, imagen_url)
         return "", 204
 
     except Exception:
@@ -78,7 +81,8 @@ def ver_productos(base_url, limit, offset, orden= None):
         "categoria": d["categorias_id"],
         "nombre": d["nombre"],
         "descripcion": d["descripcion"],
-        "precio": d["precio"]
+        "precio": d["precio"],
+        "imagen_url": d["imagen_url"]
     } for d in res_db["rows"]]
 
     count = res_db["count"]
