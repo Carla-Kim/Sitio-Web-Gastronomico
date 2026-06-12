@@ -24,6 +24,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "basheros123")
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+os.makedirs(
+    f"{UPLOAD_FOLDER}/productos",
+    exist_ok=True
+)
+
 
 app = Flask(
     __name__,
