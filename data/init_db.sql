@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS Servicios (
     servicio_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL UNIQUE
 );
-
 -- TABLA: Reservas
 CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -46,8 +45,7 @@ CREATE TABLE IF NOT EXISTS Reservas (
     DNI VARCHAR(12) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
-    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'))
-);
+    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'));
 
 -- TABLA: Resenas
 CREATE TABLE IF NOT EXISTS Resenas (
@@ -98,7 +96,7 @@ INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES
 (1, 'Entradas'),
 (2, 'Platos Principales'),
 (3, 'Postres'),
-(4, 'Bebidas');
+(4, 'Bebidas'),
 (5, 'Especialidades Nórdicas');
 
 INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio, imagen_url) VALUES 

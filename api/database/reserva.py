@@ -6,18 +6,34 @@ def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_perso
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        check_query = """
+            SELECT COUNT(*) 
+            FROM Reservas 
+            WHERE DNI = %s 
+              AND fecha = %s 
+              AND estado != 'cancelada'
+        """
+        cursor.execute(check_query, (dni, fecha))
+        (existe,) = cursor.fetchone()
+        
+        if existe > 0:
+            return 'duplicado_dni_horario'
+
+        insert_query = """
+            INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
         cursor.execute(
-            "INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            insert_query, 
             (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
         )
         conn.commit()
         return cursor.lastrowid
+
     except mysql.connector.Error as err:
         conn.rollback()
         if err.errno == 1062:
             return 'duplicado'
-        if err.errno == 1452:
-            return 'servicio_no_existe'
         raise err
     except Exception as err:
         conn.rollback()
