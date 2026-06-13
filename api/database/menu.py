@@ -100,15 +100,15 @@ def obtener_producto_por_nombre(nombre):
         cursor.close()
         conn.close()
 
-def ingresar_producto(categoria_id, nombre,descripcion ,precio):
+def ingresar_producto(categoria_id, nombre,descripcion ,precio, imagen_url):
     conn = get_connection()
     cursor = conn.cursor()
     try:
         query = """
-            INSERT INTO Productos (categorias_id, nombre, descripcion, precio) 
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO Productos (categorias_id, nombre, descripcion, precio, imagen_url) 
+            VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (categoria_id, nombre, descripcion, precio))
+        cursor.execute(query, (categoria_id, nombre, descripcion, precio, imagen_url))
         conn.commit()
         return cursor.lastrowid
     except Exception as err:

@@ -2,8 +2,14 @@ import re
 from api.database import menu as menu_db
 from api.utils.errors import ReturnErrors
 from api.utils.pagination import build_links
+from api.services.storage import subir_imagen
 
-def ingresar_producto(data):
+def ingresar_producto(data, imagen=None):
+    imagen_url = None
+
+    if imagen:
+        imagen_url = subir_imagen(imagen)
+
     if not data:
         return ReturnErrors(400), 400
     categorias_id = data.get('categorias_id')
@@ -18,7 +24,7 @@ def ingresar_producto(data):
         if menu_db.check_by_nombre(nombre):
             return ReturnErrors(409), 409
             
-        nuevo_id = menu_db.ingresar_producto(categorias_id, nombre, descripcion, precio)
+        nuevo_id = menu_db.ingresar_producto(categorias_id, nombre, descripcion, precio, imagen_url)
         
         resultado = {
             "status": "success",
@@ -29,8 +35,9 @@ def ingresar_producto(data):
 
     except Exception as e:
         print(f"Error interno en servicio menu: {e}") 
+        return ReturnErrors(500), 500
 
-def editar_producto(id, data):
+def editar_producto(id, data, imagen=None):
     if not data:
         return ReturnErrors(400), 400
     categoria_id = data.get('categorias_id')
@@ -47,7 +54,9 @@ def editar_producto(id, data):
         if not producto:
             return ReturnErrors(404), 404
 
-        imagen_url = data.get("imagen_url", producto["imagen_url"])
+        imagen_url = producto["imagen_url"]
+        if imagen:
+            imagen_url = subir_imagen(imagen)
 
         menu_db.editar_producto(id, categoria_id, nombre, descripcion, precio, imagen_url)
         return "", 204

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
-    <mask id="a" fill="#fff">
-        <path d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
-    </mask>
-    <path fill="#141414" d="M0 32a32 32 0 1 1 64 0 32 32 0 0 1-64 0"/>
-    <path fill="#c9a84c" fill-opacity=".25" d="M32 64v-1A31 31 0 0 1 1 32h-2a33 33 0 0 0 33 33zm32-32h-1a31 31 0 0 1-31 31v2a33 33 0 0 0 33-33zM32 0v1a31 31 0 0 1 31 31h2A33 33 0 0 0 32-1zm0 0v-1A33 33 0 0 0-1 32h2A31 31 0 0 1 32 1z" mask="url(#a)"/>
-    <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M32.55 40.98c1.7-1.47 6.78-6.24 6.78-10.81a7.33 7.33 0 0 0-14.66 0c0 4.57 5.07 9.34 6.78 10.81a.9.9 0 0 0 1.1 0"/>
-    <path stroke="#c9a84c" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.83" d="M32 32.92a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5"/>
-</svg>

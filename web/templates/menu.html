@@ -28,7 +28,7 @@
                             {% for producto in item.productos %}
                                 <li class="producto-item">
                                     <div class="producto-imagen">
-                                        <img src="{{ url_for('static', filename='assets/images/' ~ producto.nombre ~ '.svg') }}" alt="{{ producto.nombre }}">
+                                        <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}">
                                     </div>
 
                                     <div class="producto-info">

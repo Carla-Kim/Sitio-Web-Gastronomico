@@ -581,9 +581,7 @@ def dashboard_menu():
                 lista_productos = data.get('productos', [])
 
             for producto in lista_productos:
-                if producto.get("imagen_url"):
-                    producto["imagen_url"] = f"/uploads/{producto['imagen_url']}"
-                else:
+                if not producto.get("imagen_url"):
                     producto["imagen_url"] = "/uploads/productos/image.webp"
             
             print("DEBUG: Lista de productos recibida:", [p['nombre'] for p in lista_productos])
@@ -602,6 +600,7 @@ def crear_producto():
     try:
         precio = float(request.form.get('precio', 0))
         categorias_id = int(request.form.get('categorias_id', 0))
+        imagen = request.files.get("imagen")
     except (ValueError, TypeError):
         print("Datos recibidos en el form:", request.form)
         flash("Datos inválidos (precio o categoría)")
@@ -612,10 +611,22 @@ def crear_producto():
         "precio": precio,
         "categorias_id": categorias_id
     }
-    
+
+    files = {}
+
+    if imagen and imagen.filename:
+        files["imagen"] = (
+            imagen.filename,
+            imagen.stream,
+            imagen.mimetype
+        )
+
     try:
         url_api = f'http://localhost:5000/api/productos'
-        response = requests.post(url_api, json=datos, timeout=5)
+        response = requests.post(url_api, data=datos, files=files, timeout=5)
+        print(response.status_code)
+        print(response.text)
+
         response.raise_for_status()
         flash("Producto creado con éxito")
     except requests.exceptions.RequestException as e:
@@ -628,6 +639,7 @@ def editar_producto():
     try:
         precio = float(request.form.get('precio', 0))
         categorias_id = int(request.form.get('categorias_id', 0))
+        imagen = request.files.get('imagen')
     except (ValueError, TypeError):
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
@@ -638,29 +650,18 @@ def editar_producto():
         "descripcion": request.form.get('descripcion')
     }
 
-    imagen = request.files.get('imagen')
-
+    files = {}
+    
     if imagen and imagen.filename:
-        if "." in imagen.filename:
-            extension = imagen.filename.rsplit(".", 1)[1].lower()
-        else:
-            flash("Archivo inválido")
-            return redirect(url_for("dashboard_menu"))
-
-        nombre_archivo = f"productos/{id_producto}.{extension}"
-
-        imagen.save(
-            os.path.join(
-                UPLOAD_FOLDER,
-                nombre_archivo
-            )
+        files["imagen"] = (
+            imagen.filename,
+            imagen.stream,
+            imagen.mimetype
         )
-
-        datos["imagen_url"] = nombre_archivo
 
     try:
         url_api = f'http://localhost:5000/api/productos/{id_producto}'
-        response = requests.put(url_api, json=datos, timeout=5)
+        response = requests.put(url_api, data=datos, files=files, timeout=5)
         response.raise_for_status()
         flash("Producto actualizado con éxito")
     except requests.exceptions.RequestException:

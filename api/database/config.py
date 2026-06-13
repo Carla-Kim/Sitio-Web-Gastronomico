@@ -17,3 +17,7 @@ DB_CONFIG = {
     'port': DB_PORT
 }
 DB_NAME = "gastronomia_db"
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_BUCKET = os.environ.get("SUPABASE_BUCKET", "productos")

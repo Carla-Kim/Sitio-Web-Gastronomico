@@ -149,6 +149,13 @@
     background-color: #F6F8FA;
 }
 
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.65rem;
+    color: #777;
+}
+
 /* =========================
     TABLE
 ========================= */

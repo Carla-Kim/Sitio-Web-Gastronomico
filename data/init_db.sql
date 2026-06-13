@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Productos (
     descripcion VARCHAR(300),
     nombre VARCHAR(100) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL CHECK (precio >= 0),
-    imagen_url VARCHAR(100) NULL,
+    imagen_url VARCHAR(500) NULL,
     FOREIGN KEY (categorias_id) REFERENCES Categorias(categorias_id) ON DELETE RESTRICT
 );
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS Mesas (
 );
 
 
--------------------------------- DATOS EJEMPLO PARA BASE DE DATOS --------------------------------
+-- -------------------------------- DATOS EJEMPLO PARA BASE DE DATOS --------------------------------
 
 -- Usuarios
 INSERT IGNORE INTO Usuarios (usuario_id, nombre, apellido, nombre_usuario, email, contrasena, rol) VALUES 
@@ -125,9 +125,9 @@ INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, p
 (14, 4, 'Agua mineral sin gas 500ml', 'Agua Mineral', 500.00, NULL),
 (15, 4, 'Cerveza artesanal tirada de la casa 500ml', 'Cerveza Pinta', 1200.00, NULL),
 (16, 4, 'Gaseosa línea Coca-Cola original de 354ml', 'Gaseosa Común', 650.00, NULL),
-(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00, NULL);
+(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00, NULL),
 
---Especialidades Nórdicas
+-- Especialidades Nórdicas
 (18, 5, 'Costillas asadas con especias de Skyrim', 'Costillas de Carrera Blanca', 3200.00, NULL),
 (19, 5, 'Bebida dulce inspirada en la famosa hidromiel', 'Hidromiel Honningbrew', 950.00, NULL),
 (20, 5, 'Tarta de manzana tradicional', 'Tarta de Soledad', 1400.00, NULL),
@@ -140,7 +140,7 @@ INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES
 (3, 'Evento Privado'),
 (4, 'Asiento para bebe');
 
---Reservas
+-- Reservas
 INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) VALUES 
 
 -- Reservas Históricas (Finalizadas, habilitadas para tener reseñas)
@@ -169,7 +169,7 @@ INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, te
 (19, '2026-06-01', 'cancelado@test.com', 'Pedro', 'Mármol', '20123999', '1100001111', 2, 'cancelada'),
 (20, '2026-06-02', 'delphine@skyrim.com', 'Delphine', 'Blade', '44444444', '4444444444', 3, 'cancelada');
 
---Resenas
+-- Resenas
 INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) VALUES 
 (1, 1, 4, 5, 4, 'Muy buena atención por parte del personal y los platos llegaron a tiempo. Recomendable.'),
 (2, 2, 5, 4, 5, 'El ambiente es muy agradable y tranquilo para almuerzos de trabajo. Excelente calidad en los ingredientes.'),
@@ -184,7 +184,7 @@ INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuaci
 (11, 11, 4, 3, 5, 'Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.'),
 (12, 12, 5, 4, 5, 'El lugar estaba impecable, parecia que estaba en el palacio de Soldad.');
 
---Servicios_reserva
+-- Servicios_reserva
 INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio_id) VALUES 
 (1, 1, 2),
 (2, 2, 1),
