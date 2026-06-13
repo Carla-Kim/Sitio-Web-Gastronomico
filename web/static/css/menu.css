@@ -221,7 +221,7 @@
 
     .producto-imagen {
         width: 100%;
-        height: 150px;
+        height: 15rem;
     }
 
     .producto-header {
@@ -270,7 +270,7 @@
     }
 
     .producto-imagen {
-        height: 120px;
+        height: 15rem;
     }
 
     .producto-nombre {

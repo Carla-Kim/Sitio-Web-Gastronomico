@@ -6,8 +6,9 @@ menu_bp = Blueprint("menu", __name__)
 
 @menu_bp.route('/productos/<int:id>', methods=['PUT'])
 def editar_producto(id):
-    data = request.get_json()
-    updated, code = menu_service.editar_producto(id, data)
+    data = request.form.to_dict()
+    imagen = request.files.get("imagen")
+    updated, code = menu_service.editar_producto(id, data, imagen)
     if code == 204:
         return "", code
     return jsonify(updated), code
@@ -37,10 +38,8 @@ def eliminar_producto(id_producto):
 
 @menu_bp.route('/productos', methods=['POST'])
 def ingresar_producto():
-    if not request.is_json:
-        return jsonify(ReturnErrors(415)), 415
-        
-    data = request.get_json()
-    resultado, code = menu_service.ingresar_producto(data)
+    data = request.form.to_dict()
+    imagen = request.files.get("imagen")
+    resultado, code = menu_service.ingresar_producto(data, imagen)
     
     return jsonify(resultado), code

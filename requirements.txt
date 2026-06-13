@@ -6,3 +6,4 @@ python-dotenv==1.2.2
 requests
 qrcode[pil]
 flask-mailman==0.3.0
+supabase
