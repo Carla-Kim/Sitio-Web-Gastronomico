@@ -293,10 +293,13 @@ def logout():
 def dashboard_reservas():  
     if request.method == 'POST':
         id_reserva = request.form.get('reserva_id')
+        estado_actual = request.form.get('estado_actual')
         if not id_reserva:
             flash("No se pudo completar la acción: ID inexistente")
             return redirect(url_for('dashboard_reservas'))
-        
+        if not estado_actual or estado_actual == 'finalizada' or estado_actual == 'cancelada':
+            flash("No se puede cancelar una reserva que ya está finalizada.")
+            return redirect(url_for('dashboard_reservas'))
         try:
             url_api = f'http://localhost:5000/api/reservas/{id_reserva}/cancelar'
             response = requests.patch(url_api, timeout=5)
@@ -366,14 +369,17 @@ def dashboard_reservas():
             lista_servicios = response.json().get('data', [])
             dict_servicios = {s['servicio_id']: s['nombre'] for s in lista_servicios}
 
+            # total_reservas = len(lista_reservas)
+            # conteo_estados = {'pendiente': 0,'finalizada': 0,'cancelada': 0}
             for reserva in lista_reservas:
+                # estado = res.get('estado')
+                # if estado in conteo_estados:
+                #    conteo_estados[estado] += 1
                 reserva_id = reserva.get('reserva_id')
                 if reserva_id:
                     try:
-                    # Llamamos a tu endpoint que trae los servicios de la reserva
                         url_rel = f'http://localhost:5000/api/servicios-reservas/{reserva_id}'
                         resp_rel = requests.get(url_rel, timeout=2)
-                        print(f"DEBUG: Consultando {url_rel} -> Status: {resp_rel.status_code}")
                         if resp_rel.status_code == 200:
                             servicios_data = resp_rel.json()
                             nombres = []
@@ -387,9 +393,17 @@ def dashboard_reservas():
                         reserva['servicios_str'] = "Error al cargar"
 
         except requests.exceptions.RequestException:
-            flash("Error al ver servicios")
+            return render_template('error-conexion.html'), 500
         
-        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva)
+        datos_mesas = {'ocupadas': 0, 'desocupadas': 0, 'total': 0}
+        try:
+            resp_mesas = requests.get('http://localhost:5000/api/mesas', timeout=5)
+            if resp_mesas.status_code == 200:
+                datos_mesas = resp_mesas.json()
+                datos_mesas['total'] = datos_mesas.get('ocupadas', 0) + datos_mesas.get('desocupadas', 0)
+        except:
+            pass
+        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
     except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los criterios seleccionados.")
             return redirect(url_for('dashboard_reservas'))
@@ -400,12 +414,18 @@ def dashboard_reservas():
 
 @app.route('/dashboard/servicios/crear', methods=['POST'])
 def crear_servicio():
-    datos = {
-        "nombre": request.form.get('nombre')
+    nombre_raw = request.form.get('nombre', '')
+
+    if not nombre_raw or not nombre_raw.strip():
+        flash("El nombre del servicio es obligatorio.")
+        return redirect(url_for('dashboard_reservas'))
+    
+    nombre = {
+        "nombre": nombre_raw.strip()
     }
     try:
         url_api = f'http://localhost:5000/api/servicios'
-        response = requests.post(url_api, json=datos, timeout=5)
+        response = requests.post(url_api, json=nombre, timeout=5)
         response.raise_for_status()
         flash("Servicio creado con éxito")
     except requests.exceptions.HTTPError as e:
@@ -422,7 +442,7 @@ def editar_servicio():
     id_servicio = request.form.get('servicio_id')
     nuevo_nombre = request.form.get('nombre')
 
-    if not id_servicio or not nuevo_nombre:
+    if not id_servicio or not nuevo_nombre or not nuevo_nombre.strip():
         flash("Datos incompletos para la edición.")
         return redirect(url_for('dashboard_reservas'))
     
@@ -455,6 +475,23 @@ def eliminar_servicio():
         flash("Error al eliminar el servicio")
     return redirect(url_for('dashboard_reservas'))
 
+@app.route('/dashboard/servicios/cambiar-estado', methods=['POST'])
+def cambiar_estado_servicio():
+    servicio_id = request.form.get('servicio_id')
+    estado_actual = request.form.get('estado_actual')
+    
+    nuevo_estado = 'deshabilitado' if estado_actual == 'habilitado' else 'habilitado'
+    
+    try:
+        url_api = f'http://localhost:5000/api/servicios/{servicio_id}/nombre'
+        response = requests.patch(url_api, json={'estado': nuevo_estado}, timeout=5)
+        response.raise_for_status()
+        
+        flash(f"Servicio marcado como {nuevo_estado} correctamente")
+    except requests.exceptions.RequestException:
+        flash("Error al cambiar el estado del servicio")
+        
+    return redirect(url_for('dashboard_reservas'))
 
 @app.route('/dashboard/resenas', methods=['GET', 'POST'])
 # @login_requerido

@@ -42,9 +42,30 @@ document.querySelectorAll(".btn-open-view-reservation").forEach(btn => {
         document.querySelector("#modal-reserva-servicios").textContent = data.servicios;
         document.querySelector("#modal-reserva-cantidad").textContent = data.cantidad;
         document.querySelector("#modal-reserva-estado").textContent = data.estado;
+
         document.querySelector("#hidden-id-reserva").value = data.id;
-        document.querySelector("#hidden-id-reserva-ingreso").value = data.id; 
+        document.querySelector("#hidden-id-reserva-ingreso").value = data.id;
+        
+        document.querySelector("#hidden-estado-reserva").value = data.estado;
 
         viewReservationModal.open();
+
+        const btnCancelar = document.querySelector('#btn-cancelar-reserva'); 
+        if (data.estado === 'finalizada' || data.estado === 'cancelada') {
+            btnCancelar.style.display = 'none';
+        } else {
+            btnCancelar.style.display = 'inline-block'; 
+        }
+        const btnIngreso = document.querySelector('#btn-open-register-income');
+        if (data.estado === 'finalizada' || data.estado === 'cancelada') {
+            btnIngreso.style.display = 'none';
+        } else {
+            btnIngreso.style.display = 'inline-block';
+        }
     });
+});
+
+const modalMesas = createModal('modal-view-mesas');
+document.getElementById('btn-open-view-mesas').addEventListener('click', () => {
+    modalMesas.open();
 });

@@ -26,9 +26,28 @@ Reservas | Dashboard
         <h1 class="page-title">
             Administración: Reservas
         </h1>
+        <div class="summary-cards" style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <div class="card" style="padding: 15px; flex: 1;">
+             <h3>Total Reservas</h3>
+             <p style="font-size: 24px; font-weight: bold;">{{ total_reservas }}</p>
+          </div>
+          <div class="card" style="padding: 15px; flex: 1;">
+             <h3>Pendientes</h3>
+             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.pendiente }}</p>
+          </div>
+          <div class="card" style="padding: 15px; flex: 1;">
+             <h3>Finalizadas</h3>
+             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.finalizada }}</p>
+          </div>
+          <div class="card" style="padding: 15px; flex: 1;">
+             <h3>Canceladas</h3>
+             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.cancelada }}</p>
+          </div>
+        </div>
 
         <div class="page-actions">
             <button id="btn-open-view-services" class="btn btn-secondary btn-small">Ver servicios</button>
+            <button id="btn-open-view-mesas" class="btn btn-secondary btn-small">Ver mesas</button>
         </div>
 
     </div>
@@ -47,7 +66,12 @@ Reservas | Dashboard
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-estado">Estado</label>
-                    <input type="text" id="filter-estado" name="estado" placeholder="Estado">
+                    <select id="filter-estado" name="estado">
+                        <option value="">Todos</option>
+                        <option value="finalizada">Finalizada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="reservada">Reservada</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-fecha">Fecha</label>
@@ -118,31 +142,37 @@ Reservas | Dashboard
                 </thead>
 
                 <tbody>
-                    {% for reserva in reservas %}
-                    <tr class="reserva-fila"
-                        data-id="{{ reserva.reserva_id}}"
-                        data-fecha="{{ reserva.fecha }}"
-                        data-email="{{ reserva.email }}"
-                        data-nombrecompleto="{{ reserva.nombre }} {{ reserva.apellido }}"
-                        data-dni="{{ reserva.DNI }}"
-                        data-telefono="{{ reserva.telefono or '' }}"
-                        data-servicios="{{ reserva.servicios_str }}"
-                        data-estado="{{ reserva.estado }}"
-                        data-cantidad="{{ reserva.cantidad_personas }}">
+                    {% if reservas %}
+                        {% for reserva in reservas %}
+                        <tr class="reserva-fila"
+                            data-id="{{ reserva.reserva_id}}"
+                            data-fecha="{{ reserva.fecha }}"
+                            data-email="{{ reserva.email }}"
+                            data-nombrecompleto="{{ reserva.nombre }} {{ reserva.apellido }}"
+                            data-dni="{{ reserva.DNI }}"
+                            data-telefono="{{ reserva.telefono or '' }}"
+                            data-servicios="{{ reserva.servicios_str }}"
+                            data-estado="{{ reserva.estado }}"
+                            data-cantidad="{{ reserva.cantidad_personas }}">
 
-                        <td class="reserva-id">{{ reserva.reserva_id }}</td>
-                        <td class="reserva-fecha">{{ reserva.fecha }}</td>
-                        <td class="reserva-dni">{{ reserva.DNI }}</td>
-                        <td class="reserva-estado">{{ reserva.estado }}</td>
-                        <td class="reserva-cantidad">{{ reserva.cantidad_personas }}</td>
+                            <td class="reserva-id">{{ reserva.reserva_id }}</td>
+                            <td class="reserva-fecha">{{ reserva.fecha }}</td>
+                            <td class="reserva-dni">{{ reserva.DNI }}</td>
+                            <td class="reserva-estado">{{ reserva.estado }}</td>
+                            <td class="reserva-cantidad">{{ reserva.cantidad_personas }}</td>
 
-                        <td>
-                            <button class="btn btn-primary btn-small btn-open-view-reservation">
-                                Ver
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                            <td>
+                                <button class="btn btn-primary btn-small btn-open-view-reservation">
+                                    Ver
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No hay elementos cargados</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
 
             </table>
@@ -173,24 +203,33 @@ Reservas | Dashboard
                     </thead>
 
                     <tbody>
-                        {% for servicio in servicios %}
-                        <tr class="table-row" data-id="{{ servicio.servicio_id }}">
-                            <td class="serv-nombre">
-                                {{ servicio.nombre }}
-                            </td>
-                            <td class="table-actions">
-                                <button class="btn btn-primary btn-small btn-open-edit-service">
-                                    Editar
-                                </button>
-                            </td>
-                            <td class="table-actions">
-                                <form action="/dashboard/servicios/eliminar" method="POST">
-                                    <input type="hidden" name="servicio_id" value="{{ servicio.servicio_id }}">
-                                    <button type="submit" class="btn btn-secondary btn-small btn-delete-service">Borrar</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        {% if servicios %}
+                            {% for servicio in servicios %}
+                            <tr class="table-row" data-id="{{ servicio.servicio_id }}">
+                                <td class="serv-nombre">
+                                    {{ servicio.nombre }}
+                                </td>
+                                <td class="table-actions">
+                                    <button class="btn btn-primary btn-small btn-open-edit-service">
+                                        Editar
+                                    </button>
+                                </td>
+                                <td class="table-actions">
+                                    <form action="/dashboard/servicios/cambiar-estado" method="POST">
+                                        <input type="hidden" name="servicio_id" value="{{ servicio.servicio_id }}">
+                                        <input type="hidden" name="estado_actual" value="{{ servicio.estado }}">
+                                        <button type="submit" class="btn btn-secondary btn-small">
+                                            {{ 'Deshabilitar' if servicio.estado == 'habilitado' else 'Habilitar' }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3">No hay elementos cargados</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
 
                 </table>
@@ -202,6 +241,35 @@ Reservas | Dashboard
                 </button>
             </div>
 
+        </div>
+    </div>
+
+
+    <div id="modal-view-mesas" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="btn modal-close btn-close-modal">
+                x
+            </button>
+            <h2 class="modal-title">Gestión de Mesas</h2>
+        
+            <table class="detail-table">
+                <tbody>
+                    <tr><th>Ocupadas</th><td>{{ datos_mesas.ocupadas if datos_mesas else 0 }}</td></tr>
+                    <tr><th>Desocupadas</th><td>{{ datos_mesas.desocupadas if datos_mesas else 0 }}</td></tr>
+                    <tr><th>Total</th><td>{{ datos_mesas.total if datos_mesas else 0 }}</td></tr>
+                </tbody>
+            </table>
+
+            <div class="modal-actions">
+                <form id="form-add-mesa" action="/dashboard/mesas/accion" method="POST">
+                    <input type="hidden" name="accion" value="agregar">
+                    <button id="btn-agregar-mesa" class="btn btn-primary btn-small">Agregar mesa</button>
+                </form>
+                <form id="form-delete-mesa" action="/dashboard/mesas/accion" method="POST">
+                    <input type="hidden" name="accion" value="borrar">
+                    <input type="hidden" name="mesa_id" value="1"> <button type="submit" class="btn btn-danger btn-small">Borrar mesa</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -219,7 +287,7 @@ Reservas | Dashboard
             <form id="form-add-service" action="/dashboard/servicios/crear" method="POST" class="form form-modal">
                 <div class="form-group">
                     <label for="add-service-name">Nombre del servicio</label>
-                    <input type="text" id="add-service-name" name="nombre" placeholder="Nombre del servicio">
+                    <input type="text" id="add-service-name" name="nombre" placeholder="Nombre del servicio" required minlength="1">
                 </div>
             </form>
 
@@ -251,7 +319,7 @@ Reservas | Dashboard
             
                 <div class="form-group">
                     <label for="edit-service-name">Nombre del servicio</label>
-                    <input type="text" id="edit-service-name" name="nombre" placeholder="Nombre del servicio">
+                    <input type="text" id="edit-service-name" name="nombre" placeholder="Nombre del servicio" required minlength="1">
                 </div>
             </form>
 
@@ -331,7 +399,8 @@ Reservas | Dashboard
             <div class="modal-actions">
                 <form action="/dashboard/reservas" method="POST">
                     <input type="hidden" name="reserva_id" id="hidden-id-reserva">
-                    <button type="submit" class="btn btn-danger btn-small">
+                    <input type="hidden" name="estado_actual" id="hidden-estado-reserva">
+                    <button type="submit" id="btn-cancelar-reserva" class="btn btn-danger btn-small">
                        Cancelar Reserva
                     </button>
                 </form>
