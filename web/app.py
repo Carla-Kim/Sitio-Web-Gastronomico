@@ -372,7 +372,7 @@ def dashboard_reservas():
             # total_reservas = len(lista_reservas)
             # conteo_estados = {'pendiente': 0,'finalizada': 0,'cancelada': 0}
             for reserva in lista_reservas:
-                # estado = res.get('estado')
+                # estado = reserva.get('estado')
                 # if estado in conteo_estados:
                 #    conteo_estados[estado] += 1
                 reserva_id = reserva.get('reserva_id')
@@ -525,14 +525,12 @@ def dashboard_resenas():
                 response = requests.get(url_api, timeout=5)
                 response.raise_for_status()
                 lista_resenas = [response.json()]
-                print(lista_resenas)
 
             elif id_reserva_buscada:
                 url_api = f'http://localhost:5000/api/resenas/reserva/{id_reserva_buscada}'
                 response = requests.get(url_api, timeout=5)
                 response.raise_for_status()
                 lista_resenas = [response.json()]
-                print(lista_resenas)
 
             else:
                 params = {'_limit': _limit, '_offset': _offset}
@@ -540,9 +538,7 @@ def dashboard_resenas():
                 response = requests.get(url_api, params=params, timeout=5)
                 response.raise_for_status()
                 data = response.json()
-                print(f"DATA:  {data}")
                 lista_resenas = data if isinstance(data, list) else data.get('resenas', [])
-            print(f"RESEÑAS: {lista_resenas}")
 
             return render_template('dashboard-resenas.html', resenas=lista_resenas, _limit=int(_limit), _offset=int(_offset))
        
