@@ -23,6 +23,19 @@ def ver_servicios(base_url, query_params, limit, offset):
 
     return response_body
 
+#Ver un servicio por estado.
+def ver_servicios_estado(estado):
+
+    if estado not in ["habilitado", "deshabilitado"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicios = obtener_servicios_estado(estado)
+
+    if len(servicios) == 0:
+        raise ValueError("NOT_FOUND")
+
+    return servicios
+
 #Ver un servicio por ID
 def ver_servicio_id(servicio_id):
     servicio = obtener_servicio_id(servicio_id)
@@ -31,7 +44,6 @@ def ver_servicio_id(servicio_id):
         raise ValueError("NOT_FOUND")
     
     return servicio
-
 
 #crear un nuevo servicio
 def crear_servicio(body):
@@ -70,7 +82,6 @@ def actualizar_servicio_id(servicio_id, body):
     
     return True
     
-
 #Cambia el estado de un servicio.
 def cambiar_estado_servicio(servicio_id, body):
 

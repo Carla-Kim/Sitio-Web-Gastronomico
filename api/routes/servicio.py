@@ -28,7 +28,24 @@ def lista_servicios():
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
-    
+
+#Endpoint para obtener un servicio por estado.    
+@servicio_bp.route("/servicios/estado/<string:estado>", methods=["GET"])
+def servicios_por_estado(estado):
+
+    try:
+        resultado = servicios.ver_servicios_estado(estado)
+        return jsonify(resultado), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500
 
 #Endpoint para obtener un servicio por ID.
 @servicio_bp.route("/servicios/<int:servicio_id>", methods=["GET"])
