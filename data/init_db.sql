@@ -209,7 +209,7 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 (21, 19, 3),
 (22, 19, 4);
 
---Mesas
+-- Mesas
 INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) VALUES 
 (1, 'ocupada', 27),
 (2, 'desocupada', 43);
