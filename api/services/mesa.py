@@ -12,7 +12,6 @@ def disponibilidad_mesas():
         "desocupadas": 0,
         "ocupadas": 0
     }
-
     
     for fila in resultados:
         estado = fila[0]     

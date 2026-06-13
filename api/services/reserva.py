@@ -48,6 +48,8 @@ def crear_reserva(data):
             return 'servicio_no_encontrado'
         if resultado == 'duplicado_dni_horario':
             return 'reserva_duplicada_horario'
+        if resultado == 'sin_capacidad_mesas':
+            return 'sin_disponibilidad'
         
         try:
             usuario_datos = {
@@ -145,3 +147,23 @@ def obtener_reservas(base_url, query_params, limit, offset):
         "data": reservas
     }
     return response_body
+
+def escanear_y_finalizar_reserva(id):
+    try:
+        reserva = seleccionar_unica_reserva(id)
+        if not reserva:
+            return 'reserva_no_encontrada'
+            
+        if reserva['estado'] == 'finalizada':
+            return 'reserva_ya_finalizada'
+        if reserva['estado'] == 'cancelada':
+            return 'reserva_cancelada'
+
+        rows = cambiar_estado_finalizado(id)
+        if not rows:
+            return 'reserva_no_encontrada'
+            
+        return 'exito'
+    except Exception as e:
+        print(f"Error en servicio al finalizar reserva: {e}")
+        return 'error_db'

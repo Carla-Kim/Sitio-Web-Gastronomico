@@ -6,7 +6,7 @@ def obtener_conteo_mesas_db():
     cursor = conn.cursor() 
     try:
         query = """
-            SELECT estado, COUNT(*) as cantidad 
+            SELECT estado, SUM(cantidad_mesas) as cantidad 
             FROM Mesas 
             GROUP BY estado
         """

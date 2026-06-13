@@ -30,6 +30,8 @@ def agregar_reserva():
         return jsonify(ReturnErrors(500)), 500
     elif result == 'reserva_duplicada_horario':
         return jsonify(ReturnErrors(500)), 500
+    elif result == 'sin_disponibilidad':
+        return jsonify(ReturnErrors(409)), 409
     else:
         return jsonify(ReturnErrors(500)), 500
 

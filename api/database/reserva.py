@@ -2,7 +2,12 @@ import mysql.connector
 from .config import DB_CONFIG, DB_NAME
 from .connection import get_connection
 
+import math
+
 def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado):
+    mesas_necesarias = math.ceil(cantidad_personas / 2)
+    DURACION_RESERVA_HORAS = 2
+
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -18,6 +23,30 @@ def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_perso
         
         if existe > 0:
             return 'duplicado_dni_horario'
+
+        mesas_totales_query = "SELECT SUM(cantidad_mesas) FROM Mesas"
+        cursor.execute(mesas_totales_query)
+        (total_mesas,) = cursor.fetchone()
+        
+        if total_mesas is None:
+            total_mesas = 0
+
+        ocupacion_query = """
+            SELECT cantidad_personas 
+            FROM Reservas 
+            WHERE estado NOT IN ('cancelada', 'finalizada')
+              AND fecha < DATE_ADD(%s, INTERVAL %s HOUR)
+              AND DATE_ADD(fecha, INTERVAL %s HOUR) > %s
+        """
+        cursor.execute(ocupacion_query, (fecha, DURACION_RESERVA_HORAS, DURACION_RESERVA_HORAS, fecha))
+        reservas_en_rango = cursor.fetchall()
+        
+        mesas_ocupadas = 0
+        for (cant,) in reservas_en_rango:
+            mesas_ocupadas += math.ceil(cant / 2)
+            
+        if mesas_ocupadas + mesas_necesarias > total_mesas:
+            return 'sin_capacidad_mesas'
 
         insert_query = """
             INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
@@ -111,19 +140,31 @@ def cambiar_estado_cancelado(id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)    
     try:
-        query_datos = "SELECT nombre, email, fecha FROM Reservas WHERE reserva_id = %s"
+        query_datos = "SELECT nombre, email, fecha, cantidad_personas, estado FROM Reservas WHERE reserva_id = %s"
         cursor.execute(query_datos, (id,))
         datos_reserva = cursor.fetchone()
 
-        if not datos_reserva:
+        if not datos_reserva or datos_reserva['estado'] == 'cancelada':
             return 0, None
+
+        mesas_a_liberar = math.ceil(datos_reserva['cantidad_personas'] / 2)
 
         query_update = "UPDATE Reservas SET estado = 'cancelada' WHERE reserva_id = %s"
         cursor.execute(query_update, (id,))
+
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas - %s WHERE estado = 'ocupada'",
+            (mesas_a_liberar,)
+        )
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas + %s WHERE estado = 'desocupada'",
+            (mesas_a_liberar,)
+        )
+
         conn.commit()
-        
         return cursor.rowcount, datos_reserva
     except Exception as e:
+        conn.rollback()
         print(f"Error en DB al cancelar: {e}")
         raise e
     finally:
@@ -150,11 +191,31 @@ def cambiar_estado_finalizado(id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)    
     try:
+        query_datos = "SELECT cantidad_personas, estado FROM Reservas WHERE reserva_id = %s"
+        cursor.execute(query_datos, (id,))
+        datos_reserva = cursor.fetchone()
+
+        if not datos_reserva or datos_reserva['estado'] == 'finalizada':
+            return 0
+
+        mesas_a_liberar = math.ceil(datos_reserva['cantidad_personas'] / 2)
+
         query = "UPDATE Reservas SET estado = 'finalizada' WHERE reserva_id = %s"
         cursor.execute(query, (id,))
+
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas - %s WHERE estado = 'ocupada'",
+            (mesas_a_liberar,)
+        )
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas + %s WHERE estado = 'desocupada'",
+            (mesas_a_liberar,)
+        )
+
         conn.commit()
         return cursor.rowcount
     except Exception as e:
+        conn.rollback()
         print(f"Error en DB al finalizar por QR: {e}")
         raise e
     finally:
