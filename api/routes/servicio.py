@@ -87,42 +87,48 @@ def crear_new_servicio():
         return jsonify(ReturnErrors(500)), 500
     
 
-#Endpoint para actualizar un servicio existente.
-@servicio_bp.route("/servicios/<int:servicio_id>", methods=["PUT"])
-def update_servicio(servicio_id):
+# Endpoint para actualizar el nombre de un servicio existente.
+@servicio_bp.route("/servicios/<int:servicio_id>/nombre", methods=["PATCH"])
+def actualizar_nombre_servicio(servicio_id):
     body = request.get_json()
 
     if not body:
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        servicios.actualizar_servicio_id(servicio_id, body)
-        return jsonify({"message": "Servicio actualizado exitosamente"}), 200
+        servicios.actualizar_nombre_servicio(servicio_id, body)
+
+        return jsonify({
+            "message": "Nombre del servicio actualizado exitosamente"
+        }), 200
 
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404
+
         if str(val_err) == "CONFLICT":
             return jsonify(ReturnErrors(409)), 409
+
         return jsonify(ReturnErrors(400)), 400
 
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-#Endpoint para cambiar el estado de un servicio.
-@servicio_bp.route("/servicios/<int:servicio_id>", methods=["PATCH"])
-def cambiar_estado_servicio(servicio_id):
+# Endpoint para cambiar el estado de un servicio.
+@servicio_bp.route("/servicios/<int:servicio_id>/estado", methods=["PATCH"])
+def actualizar_estado_servicio(servicio_id):
     body = request.get_json()
 
     if not body:
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        servicios.cambiar_estado_servicio(servicio_id, body)
-        return jsonify(
-            {"message": "Estado del servicio actualizado exitosamente"}
-        ), 200
+        servicios.actualizar_estado_servicio(servicio_id, body)
+
+        return jsonify({
+            "message": "Estado del servicio actualizado exitosamente"
+        }), 200
 
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":

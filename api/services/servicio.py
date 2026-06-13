@@ -63,27 +63,33 @@ def crear_servicio(body):
     else:
         raise ValueError("CONFLICT")
 
-#Actualizar un servicio por ID
-def actualizar_servicio_id(servicio_id, body):
-    required_field = ["nombre"]
-    
-    if required_field[0] not in body:
-        raise ValueError("BAD_REQUEST")
-    
+#Actualizar nommbre
+def actualizar_nombre_servicio(servicio_id, body):
 
-    if obtener_servicio_id(servicio_id) is None:
+    if "nombre" not in body:
+        raise ValueError("BAD_REQUEST")
+
+    body["nombre"] = body["nombre"].strip()
+
+    if not body["nombre"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicio = obtener_servicio_id(servicio_id)
+
+    if servicio is None:
         raise ValueError("NOT_FOUND")
-        
+
     existe_nombre = verificacion_servicio(body)
+
     if existe_nombre and existe_nombre["servicio_id"] != servicio_id:
-        raise ValueError("CONFLICT") 
-    
-    servicio = servicio_actualizado_db(servicio_id, body)
-    
+        raise ValueError("CONFLICT")
+
+    actualizar_nombre_servicio_db(servicio_id, body["nombre"])
+
     return True
     
-#Cambia el estado de un servicio.
-def cambiar_estado_servicio(servicio_id, body):
+#actualizar estado.
+def actualizar_estado_servicio(servicio_id, body):
 
     if "estado" not in body:
         raise ValueError("BAD_REQUEST")
@@ -96,7 +102,10 @@ def cambiar_estado_servicio(servicio_id, body):
     if servicio is None:
         raise ValueError("NOT_FOUND")
 
-    actualizar_estado_servicio(servicio_id, body["estado"])
+    actualizar_estado_servicio_db(
+        servicio_id,
+        body["estado"]
+    )
 
     return True
         

@@ -86,24 +86,29 @@ def insertar_servicio(body):
         conn.close()
 
 
-#Actualizar un servicio por ID en la db.
-def servicio_actualizado_db(servicio_id, body):
+#Actualizar nombre en la db.
+def actualizar_nombre_servicio_db(servicio_id, nombre):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
-        query = "UPDATE Servicios SET nombre = %s WHERE servicio_id = %s"
-        cursor.execute(query, [body["nombre"], servicio_id])
+        query = """
+            UPDATE Servicios
+            SET nombre = %s
+            WHERE servicio_id = %s
+        """
+
+        cursor.execute(query, [nombre, servicio_id])
         conn.commit()
 
         return cursor.rowcount
-    
+
     finally:
         cursor.close()
         conn.close()
 
-#Cambia el estado de un servicio de la db.
-def actualizar_estado_servicio(servicio_id, estado):
+#Actualizar estado de un servicio de la db.
+def actualizar_estado_servicio_db(servicio_id, estado):
     conn = get_connection()
     cursor = conn.cursor()
 
