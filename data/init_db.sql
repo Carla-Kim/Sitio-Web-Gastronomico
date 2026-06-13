@@ -33,8 +33,10 @@ CREATE TABLE IF NOT EXISTS Productos (
 -- TABLA: Servicios
 CREATE TABLE IF NOT EXISTS Servicios (
     servicio_id INT PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(100) NOT NULL UNIQUE
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    estado VARCHAR(20) NOT NULL DEFAULT 'habilitado' CHECK (estado IN ('habilitado', 'deshabilitado'))
 );
+
 -- TABLA: Reservas
 CREATE TABLE IF NOT EXISTS Reservas (
     reserva_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -45,7 +47,9 @@ CREATE TABLE IF NOT EXISTS Reservas (
     DNI VARCHAR(12) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     cantidad_personas INT NOT NULL CHECK (cantidad_personas > 0),
-    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'));
+    comentario VARCHAR(300),
+    estado VARCHAR(30) NOT NULL DEFAULT 'reservada' CHECK (estado IN ('reservada', 'cancelada', 'finalizada'))
+    );
 
 -- TABLA: Resenas
 CREATE TABLE IF NOT EXISTS Resenas (
@@ -56,6 +60,7 @@ CREATE TABLE IF NOT EXISTS Resenas (
     puntuacion_comida INT NOT NULL CHECK (puntuacion_comida BETWEEN 1 AND 5),
     comentario TEXT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) NOT NULL DEFAULT 'habilitada' CHECK (estado IN ('habilitada', 'deshabilitada')),
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE
 );
 
@@ -71,7 +76,7 @@ CREATE TABLE IF NOT EXISTS Servicios_reserva (
 -- TABLA: Mesas
 CREATE TABLE IF NOT EXISTS Mesas (
     mesa_id INT PRIMARY KEY AUTO_INCREMENT,
-    estado VARCHAR(20) NOT NULL DEFAULT 'desocupada' CHECK (estado IN ('ocupada', 'desocupada')),
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('ocupada', 'desocupada')),
     cantidad_mesas INT NOT NULL CHECK (cantidad_mesas > 0)
 );
 
@@ -80,16 +85,13 @@ CREATE TABLE IF NOT EXISTS Mesas (
 
 -- Usuarios
 INSERT IGNORE INTO Usuarios (usuario_id, nombre, apellido, nombre_usuario, email, contrasena, rol) VALUES 
-(1, 'Kevin', 'La Rocca', 'kevin_dev', 'kevin@test.com', 'hashed_password_123', 'admin'),
-(2, 'Carla', 'Kim', 'carla_admin', 'carla@test.com', 'hashed_password_456', 'admin'),
-(3, 'Juan', 'Pérez', 'juan_comensal', 'juan.perez@gmail.com', 'hashed_user_789', 'cliente'),
-(4, 'María', 'Gomez', 'maria_g', 'maria.gomez@hotmail.com', 'hashed_user_abc', 'cliente'),
-(5, 'Carlos', 'Rodríguez', 'carlos_rod', 'carlos.rodriguez@gmail.com', 'hashed_user_def', 'cliente'),
-(6, 'Ana', 'Martínez', 'ana_mar', 'ana.martinez@yahoo.com', 'hashed_user_ghi', 'cliente'),
-(7, 'Ulfric', 'Stormcloak', 'ulfric_windhelm', 'ulfric@skyrim.com', 'hashed_password_456', 'cliente'),
-(8, 'Lydia', 'Housecarl', 'lydia_guard', 'lydia@skyrim.com', 'hashed_password_789', 'cliente'),
-(9, 'Balgruuf', 'The Greater', 'jarl_balgruuf', 'balgruuf@skyrim.com', 'hashed_password_101', 'cliente'),
-(10, 'Delphine', 'Blade', 'delphine_blades', 'delphine@skyrim.com', 'hashed_password_202', 'cliente');
+(1, 'El', 'Supremo', 'El_Supremo', 'el_Supremon@test.com', 'hashed_password_777', 'admin'),
+(2, 'Kevin', 'La Rocca', 'kevin_dev', 'kevin@test.com', 'hashed_password_123', 'admin'),
+(3, 'Carla', 'Kim', 'carla_admin', 'carla@test.com', 'hashed_password_456', 'admin'),
+(4, 'Ulfric', 'Stormcloak', 'ulfric_windhelm', 'ulfric@skyrim.com', 'hashed_password_456', 'cliente'),
+(5, 'Lydia', 'Housecarl', 'lydia_guard', 'lydia@skyrim.com', 'hashed_password_789', 'cliente'),
+(6, 'Balgruuf', 'The Greater', 'jarl_balgruuf', 'balgruuf@skyrim.com', 'hashed_password_101', 'cliente'),
+(7, 'Delphine', 'Blade', 'delphine_blades', 'delphine@skyrim.com', 'hashed_password_202', 'cliente');
 
 -- Categorias
 INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES 
@@ -133,39 +135,54 @@ INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, p
 
 -- Servicios
 INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES 
-(1, 'Almuerzo Ejecutivo'),
-(2, 'Cena a la Carta'),
+(1, 'Estacionamiento'),
+(2, 'Terraza'),
 (3, 'Evento Privado'),
-(4, 'Celebración del Gremio de Ladrones');
+(4, 'Asiento para bebe');
 
 --Reservas
 INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) VALUES 
 
 -- Reservas Históricas (Finalizadas, habilitadas para tener reseñas)
-(1, '2026-05-20', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'finalizada'),
-(2, '2026-05-28', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'finalizada'),
-(3, '2026-06-02', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'finalizada'),
-(8, '2026-06-03', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'finalizada'),
-(9, '2026-06-04', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, 'finalizada'),
-(10, '2026-06-20', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, 'finalizada'),
+(1, '2026-05-10', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'finalizada'),
+(2, '2026-05-11', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'finalizada'),
+(3, '2026-06-12', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'finalizada'),
+(4, '2026-06-13', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'finalizada'),
+(5, '2026-06-14', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, 'finalizada'),
+(6, '2026-06-15', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, 'finalizada'),
+(7, '2026-05-16', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'finalizada'),
+(8, '2026-05-17', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'finalizada'),
+(9, '2026-06-17', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'finalizada'),
+(10, '2026-06-18', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'finalizada'),
+(11, '2026-06-19', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, 'finalizada'),
+(12, '2026-06-20', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, 'finalizada'),
 
 -- Reservas Pendientes / Activas (Futuras)
-(4, '2026-06-15', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'reservada'),
-(5, '2026-06-20', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, 'reservada'),
-(6, '2026-06-22', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, 'reservada'),
+(13, '2026-07-15', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'reservada'),
+(14, '2026-07-20', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, 'reservada'),
+(15, '2026-07-22', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, 'reservada'),
+(16, '2026-07-17', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'reservada'),
+(17, '2026-07-23', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, 'reservada'),
+(18, '2026-07-29', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, 'reservada'),
 
 -- Reservas Canceladas
-(7, '2026-06-01', 'cancelado@test.com', 'Pedro', 'Mármol', '20123999', '1100001111', 2, 'cancelada'),
-(11, '2026-06-02', 'delphine@skyrim.com', 'Delphine', 'Blade', '44444444', '4444444444', 3, 'cancelada');
+(19, '2026-06-01', 'cancelado@test.com', 'Pedro', 'Mármol', '20123999', '1100001111', 2, 'cancelada'),
+(20, '2026-06-02', 'delphine@skyrim.com', 'Delphine', 'Blade', '44444444', '4444444444', 3, 'cancelada');
 
 --Resenas
 INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) VALUES 
 (1, 1, 4, 5, 4, 'Muy buena atención por parte del personal y los platos llegaron a tiempo. Recomendable.'),
 (2, 2, 5, 4, 5, 'El ambiente es muy agradable y tranquilo para almuerzos de trabajo. Excelente calidad en los ingredientes.'),
 (3, 3, 3, 4, 4, 'La comida estuvo muy bien lograda, aunque la música del salón estaba un poco alta. Volvería.'),
-(4, 8, 5, 5, 5, 'Una experiencia gastronómica impecable. El bife de chorizo estaba en el punto exacto solicitado y la atención fue de primer nivel.'),
-(5, 9, 4, 3, 5, 'Las empanadas de carne y las pastas caseras son exquisitas. Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.'),
-(2, 10, 5, 4, 5, 'Casi tan acogedor como Carrera Blanca.');
+(4, 4, 1, 1, 1, 'No lo recomiendo para nada. Me trajeron una empanada de carne como bebida.'),
+(5, 5, 5, 5, 5, 'Las empanadas de carne y las pastas caseras son exquisitas. Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.'),
+(6, 6, 5, 4, 5, 'Casi tan acogedor como Carrera Blanca.'),
+(7, 7, 4, 5, 4, 'Recomendable.'),
+(8, 8, 5, 4, 5, 'Excelente calidad en los ingredientes.'),
+(9, 9, 3, 4, 4, 'La comida estuvo muy bien lograda. Volvería.'),
+(12, 10, 5, 5, 5, 'Una experiencia gastronómica impecable. El bife de chorizo estaba en el punto exacto solicitado y la atención fue de primer nivel.'),
+(11, 11, 4, 3, 5, 'Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.'),
+(12, 12, 5, 4, 5, 'El lugar estaba impecable, parecia que estaba en el palacio de Soldad.');
 
 --Servicios_reserva
 INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio_id) VALUES 
@@ -179,9 +196,20 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 (8, 8, 2),
 (9, 9, 1),
 (10, 10, 4),
-(11, 10, 3);
+(11, 10, 3),
+(12, 12, 1),
+(13, 13, 2),
+(14, 14, 1),
+(15, 15, 3),
+(16, 16, 3),
+(17, 17, 2),
+(18, 18, 2),
+(19, 19, 1),
+(20, 19, 2),
+(21, 19, 3),
+(22, 19, 4);
 
 --Mesas
 INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_personas) VALUES 
-(1, 'ocupada', 14),
-(2, 'desocupada', 50);
+(1, 'ocupada', 27),
+(2, 'desocupada', 43);

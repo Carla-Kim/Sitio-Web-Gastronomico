@@ -23,6 +23,19 @@ def ver_servicios(base_url, query_params, limit, offset):
 
     return response_body
 
+#Ver un servicio por estado.
+def ver_servicios_estado(estado):
+
+    if estado not in ["habilitado", "deshabilitado"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicios = obtener_servicios_estado(estado)
+
+    if len(servicios) == 0:
+        raise ValueError("NOT_FOUND")
+
+    return servicios
+
 #Ver un servicio por ID
 def ver_servicio_id(servicio_id):
     servicio = obtener_servicio_id(servicio_id)
@@ -31,7 +44,6 @@ def ver_servicio_id(servicio_id):
         raise ValueError("NOT_FOUND")
     
     return servicio
-
 
 #crear un nuevo servicio
 def crear_servicio(body):
@@ -51,32 +63,50 @@ def crear_servicio(body):
     else:
         raise ValueError("CONFLICT")
 
-#Actualizar un servicio por ID
-def actualizar_servicio_id(servicio_id, body):
-    required_field = ["nombre"]
-    
-    if required_field[0] not in body:
-        raise ValueError("BAD_REQUEST")
-    
+#Actualizar nommbre
+def actualizar_nombre_servicio(servicio_id, body):
 
-    if obtener_servicio_id(servicio_id) is None:
+    if "nombre" not in body:
+        raise ValueError("BAD_REQUEST")
+
+    body["nombre"] = body["nombre"].strip()
+
+    if not body["nombre"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicio = obtener_servicio_id(servicio_id)
+
+    if servicio is None:
         raise ValueError("NOT_FOUND")
-        
+
     existe_nombre = verificacion_servicio(body)
+
     if existe_nombre and existe_nombre["servicio_id"] != servicio_id:
-        raise ValueError("CONFLICT") 
-    
-    servicio = servicio_actualizado_db(servicio_id, body)
-    
+        raise ValueError("CONFLICT")
+
+    actualizar_nombre_servicio_db(servicio_id, body["nombre"])
+
     return True
     
+#actualizar estado.
+def actualizar_estado_servicio(servicio_id, body):
 
-#Eliminar servicio por ID
-def eliminar_servicio_id(servicio_id):
-    
-    delete = servicio_eliminado(servicio_id)
+    if "estado" not in body:
+        raise ValueError("BAD_REQUEST")
 
-    if delete == 0:
+    if body["estado"] not in ["habilitado", "deshabilitado"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicio = obtener_servicio_id(servicio_id)
+
+    if servicio is None:
         raise ValueError("NOT_FOUND")
+
+    actualizar_estado_servicio_db(
+        servicio_id,
+        body["estado"]
+    )
+
+    return True
         
 
