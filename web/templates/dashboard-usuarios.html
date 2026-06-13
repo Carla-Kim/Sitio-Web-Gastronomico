@@ -182,23 +182,23 @@ Usuarios | Dashboard
 
                 <div class="form-group">
                     <label for="add-user-name">Nombre</label>
-                    <input type="text" id="add-user-name" name="nombre" placeholder="Nombre">
+                    <input type="text" id="add-user-name" name="nombre" placeholder="Nombre" required minlength="1">
                 </div>
                 <div class="form-group">
                     <label for="add-user-last-name">Apellido</label>
-                    <input type="text" id="add-user-last-name" name="apellido" placeholder="Apellido">
+                    <input type="text" id="add-user-last-name" name="apellido" placeholder="Apellido" required minlength="1">
                 </div>
                 <div class="form-group">
                     <label for="add-user-username">Nombre de usuario</label>
-                    <input type="text" id="add-user-username" name="nombre_usuario" placeholder="Nombre de usuario">
+                    <input type="text" id="add-user-username" name="nombre_usuario" placeholder="Nombre de usuario" required minlength="1">
                 </div>
                 <div class="form-group">
                     <label for="add-user-email">Email</label>
-                    <input type="email" id="add-user-email" name="email" placeholder="Email">
+                    <input type="email" id="add-user-email" name="email" placeholder="Email" required minlength="1">
                 </div>
                 <div class="form-group">
                     <label for="add-user-password">Contraseña</label>
-                    <input type="text" id="add-user-password" name="contrasena" placeholder="Contraseña">
+                    <input type="text" id="add-user-password" name="contrasena" placeholder="Contraseña" required minlength="1">
                 </div>
                 <div class="form-group">
                     <label for="add-user-role">Rol</label>
@@ -234,7 +234,11 @@ Usuarios | Dashboard
                 <input type="hidden" name="id_usuario" id="input-edit-id-usuario">
                 <div class="form-group">
                     <label for="edit-user-email">Nuevo email</label>
-                    <input type="email" id="edit-user-email" name="email" placeholder="Dejar vacío para no cambiar">
+                    <div class="password-container">
+                        <input type="email" id="edit-user-email" name="email" placeholder="Dejar vacío para no cambiar">
+                        <button type="button" id="toggle-pass-btn">Mostrar</button>
+                    </div>
+
                 </div>
                 <div class="form-group">
                     <label for="edit-user-password">Nueva Contraseña</label>
@@ -246,9 +250,6 @@ Usuarios | Dashboard
                   </button>
                 </div>
             </form>
-            <button type="button" class="btn btn-secondary btn-small btn-delete-user-modal" data-id=""> 
-                Borrar Usuario
-            </button>
         </div>
     </div>
 
@@ -323,6 +324,17 @@ Usuarios | Dashboard
             <button type="button" class="btn btn-secondary btn-small btn-delete-user-modal" data-id=""> 
                 Borrar Usuario
             </button>
+        </div>
+    </div>
+
+    <div id="modal-delete-user" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h2 class="modal-title">Confirmar eliminación</h2>
+            <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button id="btn-cancel-delete" class="btn btn-secondary btn-small">Cancelar</button>
+                <button id="btn-confirm-delete" class="btn btn-primary btn-small">Confirmar</button>
+            </div>
         </div>
     </div>
 

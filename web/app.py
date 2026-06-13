@@ -621,9 +621,7 @@ def dashboard_menu():
                 lista_productos = data.get('productos', [])
 
             for producto in lista_productos:
-                if producto.get("imagen_url"):
-                    producto["imagen_url"] = f"/uploads/{producto['imagen_url']}"
-                else:
+                if not producto.get("imagen_url"):
                     producto["imagen_url"] = "/uploads/productos/image.webp"
             
             return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias)
@@ -643,12 +641,23 @@ def crear_producto():
     try:
         precio = float(request.form.get('precio', 0))
         categorias_id = int(request.form.get('categorias_id', 0))
+        imagen = request.files.get("imagen")
     except (ValueError, TypeError):
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
     if not nombre or not descripcion:
         flash("Datos incompletos. El nombre y la descripción son obligatorios.")
         return redirect(url_for('dashboard_menu'))
+    
+    files = {}
+
+    if imagen and imagen.filename:
+        files["imagen"] = (
+            imagen.filename,
+            imagen.stream,
+            imagen.mimetype
+        )
+
     datos = {
         "nombre": nombre,
         "descripcion": descripcion,
@@ -658,8 +667,10 @@ def crear_producto():
     
     try:
         url_api = f'http://localhost:5000/api/productos'
-        response = requests.post(url_api, json=datos, timeout=5)
+        response = requests.post(url_api, data=datos, files=files, timeout=5)
         response.raise_for_status()
+        print(response.status_code)
+        print(response.text)
         flash("Producto creado con éxito")
     except requests.exceptions.RequestException as e:
         flash("Error al crear el producto")
@@ -673,6 +684,7 @@ def editar_producto():
     try:
         precio = float(request.form.get('precio', 0))
         categorias_id = int(request.form.get('categorias_id', 0))
+        imagen = request.files.get('imagen')
     except (ValueError, TypeError):
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
@@ -683,29 +695,18 @@ def editar_producto():
         "descripcion": descripcion
     }
 
-    imagen = request.files.get('imagen')
+    files = {}
 
     if imagen and imagen.filename:
-        if "." in imagen.filename:
-            extension = imagen.filename.rsplit(".", 1)[1].lower()
-        else:
-            flash("Archivo inválido")
-            return redirect(url_for("dashboard_menu"))
-
-        nombre_archivo = f"productos/{id_producto}.{extension}"
-
-        imagen.save(
-            os.path.join(
-                UPLOAD_FOLDER,
-                nombre_archivo
-            )
+        files["imagen"] = (
+            imagen.filename,
+            imagen.stream,
+            imagen.mimetype
         )
-
-        datos["imagen_url"] = nombre_archivo
 
     try:
         url_api = f'http://localhost:5000/api/productos/{id_producto}'
-        response = requests.put(url_api, json=datos, timeout=5)
+        response = requests.put(url_api, data=datos, files=files, timeout=5)
         response.raise_for_status()
         flash("Producto actualizado con éxito")
     except requests.exceptions.RequestException:
@@ -747,7 +748,7 @@ def editar_categoria():
     return redirect(url_for('dashboard_menu'))
 
        
-@app.route('/dashboard/usuarios', methods=['GET', 'POST'])
+app.route('/dashboard/usuarios', methods=['GET', 'POST'])
 # @login_requerido
 def dashboard_usuarios():
     if request.method == 'POST':
@@ -797,7 +798,6 @@ def dashboard_usuarios():
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
                lista_usuarios = response.json().get('data', [])
-           print(f"{lista_usuarios}")
            return render_template('dashboard-usuarios.html', usuarios=lista_usuarios, limit=limit, offset=offset)
 
         except requests.exceptions.HTTPError:
@@ -809,19 +809,26 @@ def dashboard_usuarios():
 
 @app.route('/dashboard/usuarios/crear', methods=['POST'])
 def crear_usuario():
+    nombre_usuario = request.form.get('nombre_usuario', '').strip()
+    contrasena = request.form.get('contrasena', '').strip()
+    email = request.form.get('email', '').strip()
+    nombre = request.form.get('nombre', '').strip()
+    apellido = request.form.get('apellido', '').strip()
+    if not nombre_usuario or not contrasena or not email or not nombre or not apellido:
+        flash ("Error al crear usuario: Datos invalidos")
+        return redirect(url_for('dashboard_usuarios'))
     datos = {
-        "nombre_usuario": request.form.get('nombre_usuario'),
-        "contrasena": request.form.get('contrasena'),
-        "email": request.form.get('email'),
-        "nombre": request.form.get('nombre'),
-        "apellido": request.form.get('apellido'),
+        "nombre_usuario": nombre_usuario,
+        "contrasena": contrasena,
+        "email": email,
+        "nombre": nombre,
+        "apellido": apellido,
         "rol": request.form.get('rol')
     }
     try:
         url_api = f'http://localhost:5000/api/usuarios'
         response = requests.post(url_api, json=datos, timeout=5)
         response.raise_for_status()
-        print(f"DEBUG: Enviando datos: {datos}") # <--- Mira esto en tu terminal
         flash("Usuario creado con éxito")
     except requests.exceptions.HTTPError as e:
         flash(f"Error: {e.response.text}")
@@ -832,9 +839,15 @@ def crear_usuario():
 @app.route('/dashboard/usuarios/editar/parcial', methods=['POST'])
 def editar_usuario_parcial():
     id_usuario = request.form.get('id_usuario')
+    email = request.form.get('email').strip()
+    contrasena = request.form.get('password').strip()
+    if not email or not contrasena:
+        flash ("Error al editar credenciales: Datos invalidos")
+        return redirect(url_for('dashboard_usuarios'))
+
     datos = {
-        "email": request.form.get('email'),
-        "contrasena": request.form.get('password')
+        "email": email,
+        "contrasena": contrasena
     }
     datos = {k: v for k, v in datos.items() if v}
     try:
@@ -850,14 +863,22 @@ def editar_usuario_parcial():
 @app.route('/dashboard/usuarios/editar/completo', methods=['POST'])
 def editar_usuario_completo():
     id_usuario = request.form.get('id_usuario')
+    nombre_usuario = request.form.get('usuario', '').strip()
+    contrasena = request.form.get('password', '').strip()
+    email = request.form.get('email', '').strip()
+    nombre = request.form.get('nombre', '').strip()
+    apellido = request.form.get('apellido', '').strip()
+    if not nombre_usuario or not contrasena or not email or not nombre or not apellido:
+        flash ("Error al editar usuario: Datos invalidos")
+        return redirect(url_for('dashboard_usuarios'))
     datos_completos = {
-        "nombre_usuario": request.form.get('usuario'),
-        "contrasena": request.form.get('password'),
-        "email": request.form.get('email'),
-        "nombre": request.form.get('nombre'),
-        "apellido": request.form.get('apellido'),
+        "nombre_usuario": nombre_usuario,
+        "contrasena": contrasena,
+        "email": email,
+        "nombre": nombre,
+        "apellido": apellido,
         "rol": request.form.get('rol')
-    }
+    } 
     
     datos_completos = {k: v for k, v in datos_completos.items() if v}
     try:
