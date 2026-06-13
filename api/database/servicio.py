@@ -82,18 +82,23 @@ def servicio_actualizado_db(servicio_id, body):
         cursor.close()
         conn.close()
 
-#Eliminar servicio por ID de la db
-def servicio_eliminado(servicio_id):
+#Cambia el estado de un servicio de la db.
+def actualizar_estado_servicio(servicio_id, estado):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
-        query = "DELETE FROM Servicios WHERE servicio_id = %s"
-        cursor.execute(query, [servicio_id])
+        query = """
+            UPDATE Servicios
+            SET estado = %s
+            WHERE servicio_id = %s
+        """
+
+        cursor.execute(query, [estado, servicio_id])
         conn.commit()
 
         return cursor.rowcount
-    
+
     finally:
         cursor.close()
         conn.close()

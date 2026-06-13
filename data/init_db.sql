@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS Resenas (
     puntuacion_comida INT NOT NULL CHECK (puntuacion_comida BETWEEN 1 AND 5),
     comentario TEXT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    estado VARCHAR(20) NOT NULL DEFAULT 'habilitada' CHECK (estado IN ('habilitada', 'deshabilitada'))
+    estado VARCHAR(20) NOT NULL DEFAULT 'habilitada' CHECK (estado IN ('habilitada', 'deshabilitada')),
     FOREIGN KEY (reserva_id) REFERENCES Reservas(reserva_id) ON DELETE CASCADE
 );
 

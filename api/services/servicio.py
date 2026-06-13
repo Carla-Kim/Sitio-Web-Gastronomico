@@ -71,12 +71,22 @@ def actualizar_servicio_id(servicio_id, body):
     return True
     
 
-#Eliminar servicio por ID
-def eliminar_servicio_id(servicio_id):
-    
-    delete = servicio_eliminado(servicio_id)
+#Cambia el estado de un servicio.
+def cambiar_estado_servicio(servicio_id, body):
 
-    if delete == 0:
+    if "estado" not in body:
+        raise ValueError("BAD_REQUEST")
+
+    if body["estado"] not in ["habilitado", "deshabilitado"]:
+        raise ValueError("BAD_REQUEST")
+
+    servicio = obtener_servicio_id(servicio_id)
+
+    if servicio is None:
         raise ValueError("NOT_FOUND")
+
+    actualizar_estado_servicio(servicio_id, body["estado"])
+
+    return True
         
 
