@@ -11,7 +11,7 @@ def obtener_resenas(limit, offset, sql_where, params_filtros):
         count = res_count["count"] if res_count else 0
 
         sql_elems = f"""
-            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario, res.fecha,
+            SELECT res.resena_id, res.reserva_id, res.puntuacion_ambiente, res.puntuacion_servicio, res.puntuacion_comida, res.comentario, res.fecha, res.estado,
             CONCAT(r.nombre, ' ', r.apellido) as nombre_usuario
             FROM Resenas res
             JOIN Reservas r ON res.reserva_id = r.reserva_id
@@ -72,7 +72,7 @@ def obtener_promedio_columna(columna_puntuacion):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        query = f"SELECT AVG({columna_puntuacion}) as promedio FROM Resenas"
+        query = f"SELECT AVG({columna_puntuacion}) as promedio FROM Resenas WHERE estado = 'habilitada'"
         cursor.execute(query)
         result = cursor.fetchone()
         return result["promedio"] if result else None
@@ -118,8 +118,8 @@ def ingresar_resena(reserva_id, puntuacion_ambiente, puntuacion_servicio, puntua
     cursor = conn.cursor()
     try:
         query = """
-            INSERT INTO Resenas (reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario, fecha)
-            VALUES (%s, %s, %s, %s, %s, CURDATE())
+            INSERT INTO Resenas (reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario, fecha, estado)
+            VALUES (%s, %s, %s, %s, %s, CURDATE(), 'habilitada')
         """
         cursor.execute(query, (reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario))
         conn.commit()
@@ -131,12 +131,12 @@ def ingresar_resena(reserva_id, puntuacion_ambiente, puntuacion_servicio, puntua
         cursor.close()
         conn.close()
 
-def borrar_resena(resena_id):
+def cambiar_estado_resena(resena_id, nuevo_estado):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        query = "DELETE FROM Resenas WHERE resena_id = %s"
-        cursor.execute(query, (resena_id,))
+        query = "UPDATE Resenas SET estado = %s WHERE resena_id = %s"
+        cursor.execute(query, (nuevo_estado, resena_id))
         conn.commit()
         return cursor.rowcount
     except Exception as err:

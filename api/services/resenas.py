@@ -1,10 +1,17 @@
 from api.database import resenas as resenas_db
 from api.utils.pagination import build_links
 
-
-def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, p_ambiente=None, p_servicio=None, p_comida=None):
+def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, p_ambiente=None, p_servicio=None, p_comida=None, estado=None):
     where_clauses = []
     params_filtros = []
+
+    if estado:
+        if estado not in ['habilitada', 'deshabilitada']:
+            raise ValueError("BAD_REQUEST")
+        where_clauses.append("res.estado = %s")
+        params_filtros.append(estado)
+    else:
+        where_clauses.append("res.estado = 'habilitada'")
 
     if fecha_desde:
         where_clauses.append("res.fecha >= %s")
@@ -51,12 +58,15 @@ def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, 
                 "puntuacion_ambiente": r["puntuacion_ambiente"],
                 "puntuacion_servicio": r["puntuacion_servicio"],
                 "puntuacion_comida": r["puntuacion_comida"],
+                "estado": r["estado"],
                 "fecha": r["fecha"].isoformat() if r["fecha"] else None
             } for r in resenas_data["data"]] 
         
         count = resenas_data["count"]
         
         filtros_actuales = {}
+        if estado:
+            filtros_actuales["estado"] = estado
         if fecha_desde: 
             filtros_actuales["fecha_desde"] = fecha_desde
         if fecha_hasta: 
@@ -139,11 +149,19 @@ def obtener_promedio(columna):
         raise ValueError("NOT_FOUND")
     return {"promedio": round(float(promedio), 2)}
 
-
-def eliminar_resena(resena_id):
-    if resena_id is None or resena_id <= 0:
+def actualizar_estado_resena(resena_id, data):
+    if not data or 'estado' not in data:
         raise ValueError("BAD_REQUEST")
         
-    filas_borradas = resenas_db.borrar_resena(resena_id)
-    if filas_borradas == 0:
+    nuevo_estado = data['estado']
+    if nuevo_estado not in ['habilitada', 'deshabilitada']:
+        raise ValueError("BAD_REQUEST")
+        
+    filas_afectadas = resenas_db.cambiar_estado_resena(resena_id, nuevo_estado)
+    if filas_afectadas == 0:
         raise ValueError("NOT_FOUND")
+        
+    return {
+        "status": "success",
+        "message": f"Estado de la reseña actualizado a '{nuevo_estado}' con éxito."
+    }

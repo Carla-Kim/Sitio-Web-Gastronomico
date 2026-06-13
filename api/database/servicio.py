@@ -1,6 +1,6 @@
 from .connection import get_connection
 
-#Obtener servicios con paginacion desde la db
+#Obtener servicios con paginacion desde la db.
 def obtener_servicios(limit, offset):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -20,8 +20,28 @@ def obtener_servicios(limit, offset):
         cursor.close()
         conn.close()
 
+#Obtener un servicio por estado desde la db.
+def obtener_servicios_estado(estado):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
 
-#Obtener un servicio por ID desde la db
+    try:
+        query = """
+            SELECT *
+            FROM Servicios
+            WHERE estado = %s
+            ORDER BY servicio_id
+        """
+
+        cursor.execute(query, [estado])
+
+        return cursor.fetchall()
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#Obtener un servicio por ID desde la db.
 def obtener_servicio_id(servicio_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -35,7 +55,7 @@ def obtener_servicio_id(servicio_id):
         cursor.close()
         conn.close()
 
-#verificacion de un servicio antes de su creacion
+#verificacion de un servicio antes de su creacion.
 def verificacion_servicio(body):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -49,7 +69,7 @@ def verificacion_servicio(body):
         cursor.close()
         conn.close()
 
-#Insertar un nuevo servicio en la db
+#Insertar un nuevo servicio en la db.
 def insertar_servicio(body):
     conn = get_connection()
     cursor = conn.cursor()
@@ -66,34 +86,44 @@ def insertar_servicio(body):
         conn.close()
 
 
-#Actualizar un servicio por ID en la db
-def servicio_actualizado_db(servicio_id, body):
+#Actualizar nombre en la db.
+def actualizar_nombre_servicio_db(servicio_id, nombre):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
-        query = "UPDATE Servicios SET nombre = %s WHERE servicio_id = %s"
-        cursor.execute(query, [body["nombre"], servicio_id])
+        query = """
+            UPDATE Servicios
+            SET nombre = %s
+            WHERE servicio_id = %s
+        """
+
+        cursor.execute(query, [nombre, servicio_id])
         conn.commit()
 
         return cursor.rowcount
-    
+
     finally:
         cursor.close()
         conn.close()
 
-#Eliminar servicio por ID de la db
-def servicio_eliminado(servicio_id):
+#Actualizar estado de un servicio de la db.
+def actualizar_estado_servicio_db(servicio_id, estado):
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
-        query = "DELETE FROM Servicios WHERE servicio_id = %s"
-        cursor.execute(query, [servicio_id])
+        query = """
+            UPDATE Servicios
+            SET estado = %s
+            WHERE servicio_id = %s
+        """
+
+        cursor.execute(query, [estado, servicio_id])
         conn.commit()
 
         return cursor.rowcount
-    
+
     finally:
         cursor.close()
         conn.close()

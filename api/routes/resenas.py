@@ -10,6 +10,7 @@ def obtener_resenas():
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
     
+    estado = request.args.get('estado', default=None, type=str)
     fecha_desde = request.args.get('fecha_desde', default=None, type=str)
     fecha_hasta = request.args.get('fecha_hasta', default=None, type=str)
 
@@ -21,9 +22,8 @@ def obtener_resenas():
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta, p_ambiente, p_servicio, p_comida)
+        resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta, p_ambiente, p_servicio, p_comida, estado)
         lista_elementos = resultado.get('data', resultado.get('resenas', []))
-
         conteo_total = resultado.get('count', resultado.get('total', 0))
 
         return jsonify({
@@ -103,15 +103,19 @@ def crear_resena():
         print(f"No fue posible crear la reseña. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-@resenas_bp.route('/resenas/<int:resena_id>', methods=['DELETE']) 
-def borrar_resena(resena_id):                                    
+@resenas_bp.route('/resenas/<int:resena_id>', methods=['PATCH'])
+def cambiar_estado_resena(resena_id):
+    if not request.is_json:
+        return jsonify(ReturnErrors(415)), 415
+        
+    data = request.get_json()
     try:
-        resenas_service.eliminar_resena(resena_id)
-        return "", 204
+        resultado = resenas_service.actualizar_estado_resena(resena_id, data)
+        return jsonify(resultado), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404
         return jsonify(ReturnErrors(400)), 400
     except Exception as e:
-        print(f"No fue posible eliminar la reseña. Error: {e}")
+        print(f"No fue posible actualizar el estado de la reseña. Error: {e}")
         return jsonify(ReturnErrors(500)), 500

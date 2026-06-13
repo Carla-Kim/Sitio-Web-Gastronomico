@@ -4,7 +4,7 @@ from api.utils.errors import *
 
 servicio_bp = Blueprint("servicio", __name__)
 
-#Endpoint para listar servicios
+#Endpoint para listar servicios.
 @servicio_bp.route("/servicios", methods=["GET"])
 def lista_servicios():
     base_url = request.base_url
@@ -28,9 +28,26 @@ def lista_servicios():
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
-    
 
-#Endpoint para obtener un servicio por ID
+#Endpoint para obtener un servicio por estado.    
+@servicio_bp.route("/servicios/estado/<string:estado>", methods=["GET"])
+def servicios_por_estado(estado):
+
+    try:
+        resultado = servicios.ver_servicios_estado(estado)
+        return jsonify(resultado), 200
+
+    except ValueError as val_err:
+        if str(val_err) == "NOT_FOUND":
+            return jsonify(ReturnErrors(404)), 404
+
+        return jsonify(ReturnErrors(400)), 400
+
+    except Exception as e:
+        print(f"Error crítico capturado en la ruta: {e}")
+        return jsonify(ReturnErrors(500)), 500
+
+#Endpoint para obtener un servicio por ID.
 @servicio_bp.route("/servicios/<int:servicio_id>", methods=["GET"])
 def servicio_id(servicio_id):
 
@@ -48,7 +65,7 @@ def servicio_id(servicio_id):
         return jsonify(ReturnErrors(500)), 500
     
 
-#Endpoint para crear un nuevo servicio
+#Endpoint para crear un nuevo servicio.
 @servicio_bp.route("/servicios", methods=["POST"])
 def crear_new_servicio():
     body = request.get_json()
@@ -70,40 +87,53 @@ def crear_new_servicio():
         return jsonify(ReturnErrors(500)), 500
     
 
-#Endpoint para actualizar un servicio existente
-@servicio_bp.route("/servicios/<int:servicio_id>", methods=["PUT"])
-def update_servicio(servicio_id):
+# Endpoint para actualizar el nombre de un servicio existente.
+@servicio_bp.route("/servicios/<int:servicio_id>/nombre", methods=["PATCH"])
+def actualizar_nombre_servicio(servicio_id):
     body = request.get_json()
 
     if not body:
         return jsonify(ReturnErrors(400)), 400
 
     try:
-        servicios.actualizar_servicio_id(servicio_id, body)
-        return jsonify({"message": "Servicio actualizado exitosamente"}), 200
+        servicios.actualizar_nombre_servicio(servicio_id, body)
+
+        return jsonify({
+            "message": "Nombre del servicio actualizado exitosamente"
+        }), 200
 
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404
+
         if str(val_err) == "CONFLICT":
             return jsonify(ReturnErrors(409)), 409
+
         return jsonify(ReturnErrors(400)), 400
 
     except Exception as e:
         print(f"Error crítico capturado en la ruta: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-#Endpoint para eliminar un servicio existente
-@servicio_bp.route("/servicios/<int:servicio_id>", methods = ["DELETE"])
-def eliminar_servicio(servicio_id):
+# Endpoint para cambiar el estado de un servicio.
+@servicio_bp.route("/servicios/<int:servicio_id>/estado", methods=["PATCH"])
+def actualizar_estado_servicio(servicio_id):
+    body = request.get_json()
+
+    if not body:
+        return jsonify(ReturnErrors(400)), 400
 
     try:
-        servicios.eliminar_servicio_id(servicio_id)
-        return jsonify({"message": "Servicio eliminado exitosamente"}), 200
-    
+        servicios.actualizar_estado_servicio(servicio_id, body)
+
+        return jsonify({
+            "message": "Estado del servicio actualizado exitosamente"
+        }), 200
+
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
             return jsonify(ReturnErrors(404)), 404
+
         return jsonify(ReturnErrors(400)), 400
 
     except Exception as e:
