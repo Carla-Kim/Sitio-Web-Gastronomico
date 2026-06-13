@@ -5,7 +5,6 @@ const form = document.querySelector(".form-filter");
 
 const inputs = {
     nombre_apellido: form.querySelector("#filter-nombre-apellido"),
-    usuario_id: form.querySelector("#filter-usuario-id"),
     email: form.querySelector("#filter-usuario-email"),
     rol: form.querySelector("#filter-usuario-rol")
 };
@@ -17,20 +16,17 @@ createTableFilter({
     getRowData: (row) => ({
         nombre: row.querySelector(".usuario-nombre").textContent.toLowerCase(),
         apellido: row.querySelector(".usuario-apellido").textContent.toLowerCase(),
-        usuario_id: row.querySelector(".usuario-id").textContent,
         email: row.querySelector(".usuario-email").textContent.toLowerCase(),
         rol: row.dataset.rol
     }),
 
     matchRow: (data) => {
         const nombre_apellido = inputs.nombre_apellido.value.toLowerCase().trim();
-        const id = inputs.usuario_id.value.trim();
         const email = inputs.email.value.toLowerCase().trim();
         const rol = inputs.rol.value;
 
         return (
             (!nombre_apellido || data.nombre.includes(nombre_apellido) || data.apellido.includes(nombre_apellido)) &&
-            (!id || data.usuario_id.includes(id)) &&
             (!email || data.email.includes(email)) &&
             (!rol || rol === data.rol)
         );
@@ -98,17 +94,6 @@ document.querySelectorAll('.btn-open-edit-user-role, .btn-open-edit-completo').f
     });
 });
 
-document.querySelectorAll('.btn-delete-user-modal').forEach(btn => {
-    btn.addEventListener('click', (event) => {
-        const id = event.currentTarget.dataset.id;
-        
-        if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-            inputDeleteId.value = id;
-            formDelete.submit();
-        }
-    });
-});
-
 document.querySelectorAll('.btn-view-credentials').forEach(button => {
     button.addEventListener('click', function(event) {
         const row = event.target.closest('.usuario-fila');
@@ -121,4 +106,40 @@ document.querySelectorAll('.btn-view-credentials').forEach(button => {
         
         viewCredentialsModal.open();
     });
+});
+
+const toggleBtn = document.getElementById('toggle-pass-btn');
+const passwordInput = document.getElementById('edit-user-password');
+
+toggleBtn.addEventListener('click', function() {
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleBtn.textContent = 'Ocultar';
+    } else {
+        passwordInput.type = 'password';
+        toggleBtn.textContent = 'Mostrar';
+    }
+});
+
+const deleteModal = document.getElementById('modal-delete-user');
+let userIdToDelete = null;
+
+document.querySelectorAll('.btn-delete-user-modal').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+        userIdToDelete = event.currentTarget.dataset.id;
+        editUserParcialModal.close();
+        editUserCompletoModal.close();
+        deleteModal.classList.remove('hidden');
+    });
+});
+
+document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+    if (userIdToDelete) {
+        document.getElementById('delete-id-usuario').value = userIdToDelete;
+        document.getElementById('form-delete-usuario').submit();
+    }
+});
+
+document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+    deleteModal.classList.add('hidden');
 });

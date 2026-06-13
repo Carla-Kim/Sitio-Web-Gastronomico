@@ -46,27 +46,44 @@ Reseñas | Dashboard
 
             <div class="filter-row">
                 <div class="form-group">
-                    <label for="filter-fecha-desde">Desde:</label>
-                    <input type="date" id="filter-fecha-desde" name="resena-fecha-desde" placeholder="Desde">
-                </div>
-                <div class="form-group">
-                    <label for="filter-fecha-hasta">Hasta:</label>
-                    <input type="date" id="filter-fecha-hasta" name="resena-fecha-hasta" placeholder="Hasta">
+                    <label for="filter-fecha">Fecha</label>
+                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha">
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-resena-ambiente">Ambiente</label>
-                    <input type="text" id="filter-resena-ambiente" name="resena-ambiente" placeholder="Puntuación del ambiente">
+                    <select name="ambiente" id="filter-ambiente">
+                        <option value="">Todos</option>
+                        <option value="1">1 Estrella</option>
+                        <option value="2">2 Estrellas</option>
+                        <option value="3">3 Estrellas</option>
+                        <option value="4">4 Estrellas</option>
+                        <option value="5">5 Estrellas</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-resena-servicio">Servicio</label>
-                    <input type="text" id="filter-resena-servicio" name="resena-servicio" placeholder="Puntuación del servicio">
+                    <select name="servicio" id="filter-servicio"> 
+                        <option value="">Todos</option>
+                        <option value="1">1 Estrella</option>
+                        <option value="2">2 Estrellas</option>
+                        <option value="3">3 Estrellas</option>
+                        <option value="4">4 Estrellas</option>
+                        <option value="5">5 Estrellas</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-resena-comida">Comida</label>
-                    <input type="text" id="filter-resena-comida" name="resena-comida" placeholder="Puntuación de la comida">
+                    <select name="comida" id="filter-comida">
+                        <option value="">Todos</option>
+                        <option value="1">1 Estrella</option>
+                        <option value="2">2 Estrellas</option>
+                        <option value="3">3 Estrellas</option>
+                        <option value="4">4 Estrellas</option>
+                        <option value="5">5 Estrellas</option>
+                    </select>
                 </div>
             </div>
 
@@ -143,7 +160,8 @@ Reseñas | Dashboard
                         data-ambiente="{{ resena.puntuacion_ambiente }}"
                         data-servicio="{{ resena.puntuacion_servicio }}"
                         data-comida="{{ resena.puntuacion_comida }}"
-                        data-comentario="{{ resena.comentario }}">
+                        data-comentario="{{ resena.comentario }}"
+                        data-fecha="{{ resena.fecha }}">
 
                         <td class="resena-id">{{ resena.resena_id }}</td>
                         <td class="resena-nombre-apellido">{{ resena.nombre_usuario }}</td>
@@ -193,7 +211,7 @@ Reseñas | Dashboard
                             <td id="modal-resena-reserva-id"></td>
                         </tr>
                         <tr>
-                            <th>Fecha de reserva</th>
+                            <th>Fecha de reseña</th>
                             <td id="modal-resena-fecha"></td>
                         </tr>
                         <tr>
@@ -217,34 +235,34 @@ Reseñas | Dashboard
             </div>
 
             <div class="modal-actions">
-                <button id="btn-open-delete-review" class="btn btn-primary btn-small">
-                    Borrar
+                <button id="btn-open-ocultar-review" class="btn btn-primary btn-small">
+                    Ocultar en reseñas
                 </button>
             </div>
 
         </div>
     </div>
 
-    <div id="modal-delete-review" class="modal-overlay hidden">
+    <div id="modal-ocultar-review" class="modal-overlay hidden">
         <div class="modal-card">
 
             <h2 class="modal-title">
-                Confirmar eliminación
+                Confirmar ocultamiento
             </h2>
 
             <p>
-                ¿Estás seguro de que deseas eliminar esta reseña?
+                ¿Estás seguro de que deseas ocultar esta reseña?
             </p>
 
             <div class="modal-actions">
 
-                <button id="btn-cancel-delete-review" class="btn btn-secondary btn-small">
+                <button id="btn-cancel-ocultar-review" class="btn btn-secondary btn-small">
                     Cancelar
                 </button>
 
-                <form id="delete-review-form" action="/dashboard/resenas" method="POST">
-                    <input type="hidden" name="id_resena" id="input-delete-id-resena">
-                    <button id="btn-confirm-delete-review" type="submit" class="btn btn-primary btn-small" form="delete-review-form">
+                <form id="ocultar-review-form" action="/dashboard/resenas" method="POST">
+                    <input type="hidden" name="id_resena" id="input-ocultar-id-resena">
+                    <button id="btn-confirm-ocultar-review" type="submit" class="btn btn-primary btn-small" form="ocultar-review-form">
                         Confirmar
                     </button>
                 </form>

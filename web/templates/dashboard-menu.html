@@ -56,12 +56,16 @@ Menú | Dashboard
 
             <div class="filter-row">
                 <div class="form-group">
+                    <label>ID Producto</label>
+                    <input type="text" id="filter-id" name="id" placeholder="Buscar por ID">
+                </div>
+                <div class="form-group">
                     <label for="filter-precio-min">Precio Min</label>
-                    <input type="number" id="filter-precio-min" name="precio_min" placeholder="$0">
+                    <input type="number" id="filter-min" name="min" placeholder="$0">
                 </div>
                 <div class="form-group">
                     <label for="filter-precio-max">Precio Max</label>
-                    <input type="number" id="filter-precio-max" name="precio_max" placeholder="$0">
+                    <input type="number" id="filter-max" name="max" placeholder="$0">
                 </div>
             </div>
 
@@ -128,26 +132,32 @@ Menú | Dashboard
                 </thead>
 
                 <tbody>
-                    {% for producto in productos %}
-                    <tr class="producto-fila"
-                        data-id="{{ producto.id }}" 
-                        data-nombre="{{ producto.nombre }}"
-                        data-categoria="{{ producto.categoria }}" 
-                        data-precio="{{ producto.precio }}" 
-                        data-descripcion="{{ producto.descripcion }}"
-                        data-imagen="{{ producto.imagen_url }}">
-                        <td class="producto-nombre">{{ producto.nombre }}</td>
-                        <td class="producto-id">{{ producto.id }}</td>
-                        <td class="producto-categoria">{{ producto.categoria }}</td>
-                        <td class="producto-precio">${{ producto.precio }}</td>
-                        <td class="producto-descripcion">{{ producto.descripcion }}</td>
-                        <td>
-                            <button class="btn btn-primary btn-small btn-open-edit-product">
-                                Editar
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    {% if productos %}
+                        {% for producto in productos %}
+                        <tr class="producto-fila"
+                            data-id="{{ producto.id }}" 
+                            data-nombre="{{ producto.nombre }}"
+                            data-categoria="{{ producto.categoria }}" 
+                            data-precio="{{ producto.precio }}" 
+                            data-descripcion="{{ producto.descripcion }}"
+                            data-imagen="{{ producto.imagen_url }}">
+                            <td class="producto-nombre">{{ producto.nombre }}</td>
+                            <td class="producto-id">{{ producto.id }}</td>
+                            <td class="producto-categoria">{{ producto.categoria }}</td>
+                            <td class="producto-precio">${{ producto.precio }}</td>
+                            <td class="producto-descripcion">{{ producto.descripcion }}</td>
+                            <td>
+                                <button class="btn btn-primary btn-small btn-open-edit-product">
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No hay elementos cargados</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
 
             </table>
@@ -175,9 +185,13 @@ Menú | Dashboard
                 <div class="form-group">
                     <label for="add-product-category">Categoría</label>
                     <select id="add-product-category" name="categorias_id">
-                        {% for categoria in categorias %}
-                            <option value="{{ categoria.categorias_id }}">{{ categoria.nombre }}</option>
-                        {% endfor %}
+                        {% if categorias %}
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.categorias_id }}">{{ categoria.nombre }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <p>No hay elementos cargados</p>
+                        {% endif %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -231,23 +245,29 @@ Menú | Dashboard
                     </thead>
 
                     <tbody>
-                        {% for categoria in categorias %}
-                        <tr class="table-row" data-id="{{ categoria.categorias_id }}">
-                            <td class="cat-nombre">
-                                {{ categoria.nombre }}
-                            </td>
-                            <td class="table-actions">
-                                <button class="btn btn-primary btn-small btn-open-edit-category">
-                                    Editar
-                                </button>
-                            </td>
-                            <td class="table-actions">
-                                <button class="btn btn-secondary btn-small btn-delete-category" data-tipo="categoria">
-                                    Borrar
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        {% if categorias %}
+                            {% for categoria in categorias %}
+                            <tr class="table-row" data-id="{{ categoria.categorias_id }}">
+                                <td class="cat-nombre">
+                                    {{ categoria.nombre }}
+                                </td>
+                                <td class="table-actions">
+                                    <button class="btn btn-primary btn-small btn-open-edit-category">
+                                        Editar
+                                    </button>
+                                </td>
+                                <td class="table-actions">
+                                    <button class="btn btn-secondary btn-small btn-delete-category" data-tipo="categoria">
+                                        Borrar
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3">No hay elementos cargados</td>
+                            </tr>
+                        {% endif %}
                     </tbody>
 
                 </table>
@@ -390,6 +410,50 @@ Menú | Dashboard
         <input type="hidden" name="tipo" id="delete-tipo">
         <input type="hidden" name="id" id="delete-id">
     </form>
+    <div id="modal-delete-product" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <h2 class="modal-title">
+                Confirmar eliminacion
+            </h2>
+
+            <p>
+                ¿Estás seguro de que deseas eliminar este producto?
+            </p>
+
+            <div class="modal-actions">
+                <button id="btn-cancel-delete-product" class="btn btn-secondary btn-small">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="producto">
+                    Confirmar
+               </button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-delete-category" class="modal-overlay hidden">
+        <div class="modal-card">
+
+            <h2 class="modal-title">
+                Confirmar eliminacion
+            </h2>
+
+            <p>
+                ¿Estás seguro de que deseas eliminar esta categoria?
+            </p>
+
+            <div class="modal-actions">
+                <button id="btn-cancel-delete-category" class="btn btn-secondary btn-small">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-secondary btn-small btn-delete-trigger" data-tipo="categoria">
+                    Confirmar
+               </button>
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock %}
 
