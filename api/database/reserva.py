@@ -144,7 +144,11 @@ def cambiar_estado_cancelado(id):
         cursor.execute(query_datos, (id,))
         datos_reserva = cursor.fetchone()
 
-        if not datos_reserva or datos_reserva['estado'] == 'cancelada':
+        if not datos_reserva:
+            return 0, None
+        if datos_reserva['estado'] == 'finalizada':
+            return 'reserva_ya_finalizada', None
+        if datos_reserva['estado'] == 'cancelada':
             return 0, None
 
         mesas_a_liberar = math.ceil(datos_reserva['cantidad_personas'] / 2)
@@ -160,7 +164,6 @@ def cambiar_estado_cancelado(id):
             "UPDATE Mesas SET cantidad_mesas = cantidad_mesas + %s WHERE estado = 'desocupada'",
             (mesas_a_liberar,)
         )
-
         conn.commit()
         return cursor.rowcount, datos_reserva
     except Exception as e:
