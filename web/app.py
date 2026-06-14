@@ -748,7 +748,7 @@ def editar_categoria():
     return redirect(url_for('dashboard_menu'))
 
        
-app.route('/dashboard/usuarios', methods=['GET', 'POST'])
+@app.route('/dashboard/usuarios', methods=['GET', 'POST'])
 # @login_requerido
 def dashboard_usuarios():
     if request.method == 'POST':
