@@ -43,6 +43,20 @@ def login_requerido(view):
 
     return wrapper
 
+def admin_requerido(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if session.get("usuario_id") is None:
+            return redirect('/dashboard/login')
+
+        if session.get("rol") != "admin":
+            return redirect('/dashboard')
+
+        return view(*args, **kwargs)
+
+    return wrapper
+
+
 @app.route("/uploads/<path:filename>")
 def uploads(filename):
     ruta = os.path.join(
@@ -280,6 +294,7 @@ def dashboard_login():
 
     datos = respuesta.json()
     session['usuario_id'] = datos['usuario_id']
+    session['rol'] = datos['rol']
 
     return redirect('/dashboard')
 
@@ -749,7 +764,7 @@ def editar_categoria():
 
        
 @app.route('/dashboard/usuarios', methods=['GET', 'POST'])
-# @login_requerido
+@admin_requerido
 def dashboard_usuarios():
     if request.method == 'POST':
        usuario_a_eliminar = request.form.get('id_usuario')

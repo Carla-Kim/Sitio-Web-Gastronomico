@@ -203,8 +203,8 @@ def verificar_usuario():
     if not body:
         return jsonify(ReturnErrors(400)), 400
     try:
-        usuario_id = user.verificar_usuario(body)
-        return jsonify(usuario_id), 200
+        usuario = user.verificar_usuario(body)
+        return jsonify(usuario), 200
     except ValueError as val_err:
         if str(val_err) == "UNAUTHORIZED":
             return jsonify(ReturnErrors(401)), 401
