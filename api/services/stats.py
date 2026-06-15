@@ -1,10 +1,21 @@
 from ..database import stats
 
 def obtener_stats():
-    reservas = stats.obtener_reservas_por_mes()
-    usuarios = stats.obtener_usuarios_por_rol()
-    resenas = stats.obtener_promedios_de_resenas()
-    menu = stats.obtener_productos_por_categoria()
+
+    # Obtiene la cantidad de reservas agrupadas por estado.
+    reservas_estado = stats.obtener_reservas_por_estado()
+
+    # Obtiene la cantidad de reservas agrupadas por mes.
+    reservas_mes = stats.obtener_reservas_por_mes()
+
+    # Obtiene la cantidad de productos y el precio promedio por categoría.
+    categorias = stats.obtener_productos_por_categoria()
+
+    # Obtiene los promedios de puntuación de las reseñas habilitadas.
+    resenas = stats.obtener_promedio_resenas()
+
+    # Obtiene el servicio más solicitado por los clientes.
+    servicio_mas_solicitado = stats.obtener_servicio_mas_solicitado()
 
     meses = [
         "Ene", "Feb", "Mar", "Abr", "May", "Jun",
@@ -12,32 +23,36 @@ def obtener_stats():
     ]
 
     results = {
-        "reservas": {
-            "meses": [meses[r["mes"]] for r in reservas],
-            "cantidades": [r["cantidad"] for r in reservas]
+
+        "reservas_por_estado": {
+            "estados": [r["estado"] for r in reservas_estado],
+            "cantidades": [r["cantidad"] for r in reservas_estado]
         },
 
-        "usuarios": {
-            "roles": [r["rol"] for r in usuarios],
-            "cantidades": [r["cantidad"] for r in usuarios]
+        "reservas_por_mes": {
+            "meses": [meses[r["mes"] - 1] for r in reservas_mes],
+            "cantidades": [r["cantidad"] for r in reservas_mes]
         },
 
-        "reseñas": {
-            "aspectos": [
-                "Ambiente",
-                "Servicio",
-                "Comida"
-            ],
-            "promedios": [
-                float(resenas["ambiente"] or 0),
-                float(resenas["servicio"] or 0),
-                float(resenas["comida"] or 0)
+        "productos_por_categoria": {
+            "categorias": [r["nombre"] for r in categorias],
+            "cantidades": [r["cantidad"] for r in categorias],
+            "precios_promedio": [
+                float(r["precio_promedio"] or 0)
+                for r in categorias
             ]
         },
 
-        "menu": {
-            "categorias": [r["nombre"] for r in menu],
-            "cantidades": [r["cantidad"] for r in menu]
+        "promedio_resenas": {
+            "ambiente": float(resenas["ambiente"] or 0),
+            "servicio": float(resenas["servicio"] or 0),
+            "comida": float(resenas["comida"] or 0),
+            "general": float(resenas["general"] or 0)
+        },
+
+        "servicio_mas_solicitado": {
+            "nombre": servicio_mas_solicitado["nombre"] if servicio_mas_solicitado else None,
+            "cantidad": servicio_mas_solicitado["cantidad"] if servicio_mas_solicitado else 0
         }
     }
 
