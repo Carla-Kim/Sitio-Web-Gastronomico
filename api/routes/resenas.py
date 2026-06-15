@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from api.services import resenas as resenas_service
 from api.utils.errors import ReturnErrors
+from api.utils.formato_fecha import formato_fecha
 
 resenas_bp = Blueprint("resenas", __name__)
 
@@ -25,6 +26,7 @@ def obtener_resenas():
         resultado = resenas_service.listar_resenas(base_url, limit, offset, fecha_desde, fecha_hasta, p_ambiente, p_servicio, p_comida, estado)
         lista_elementos = resultado.get('data', resultado.get('resenas', []))
         conteo_total = resultado.get('count', resultado.get('total', 0))
+        formato_fecha(lista_elementos)
 
         return jsonify({
             "data": lista_elementos,
@@ -45,6 +47,8 @@ def obtener_resenas():
 def obtener_resena_por_id(resena_id):
     try:
         resultado = resenas_service.buscar_por_id(resena_id)
+        if resultado:
+            formato_fecha([resultado])
         return jsonify(resultado), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
@@ -58,6 +62,8 @@ def obtener_resena_por_id(resena_id):
 def obtener_resena_por_reserva(reserva_id):
     try:
         resultado = resenas_service.buscar_por_reserva(reserva_id)
+        if resultado:
+            formato_fecha([resultado])
         return jsonify(resultado), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":

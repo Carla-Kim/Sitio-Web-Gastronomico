@@ -1,6 +1,11 @@
+SET NAMES 'utf8mb4';
+
 -- CREACIÓN DE BASE DE DATOS
-CREATE DATABASE IF NOT EXISTS gastronomia_db;
+CREATE DATABASE IF NOT EXISTS gastronomia_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE gastronomia_db;
+
+--  codificacion
+ALTER DATABASE `gastronomia_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- TABLA: Usuarios
 CREATE TABLE IF NOT EXISTS Usuarios (
