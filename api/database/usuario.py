@@ -292,7 +292,7 @@ def obtener_usuarios_por_rol_paginado(rol, limit=10, offset=0):
         cursor.close()
         conn.close()
 
-def seleccionar_usuario_id_desde_login(body):
+def seleccionar_usuario_desde_login(body):
     email = body.get('email')
     contrasena = body.get('contrasena')
 
@@ -301,17 +301,17 @@ def seleccionar_usuario_id_desde_login(body):
 
     try:
         query = """
-            SELECT usuario_id
+            SELECT usuario_id, rol
             FROM Usuarios
             WHERE email = %s
             AND contrasena = %s
         """
 
         cursor.execute(query, (email, contrasena))
-        usuario_id = cursor.fetchone()
+        usuario = cursor.fetchone()
 
     finally:
         cursor.close()
         conn.close()
 
-    return usuario_id
+    return usuario

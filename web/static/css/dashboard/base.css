@@ -117,6 +117,18 @@ footer {
     font-size: 0.8rem;
 }
 
+/* =========================
+    PROFILE ICON & MENU
+========================= */
+.user-profile {
+    position: relative;
+}
+
+.profile-icon {
+    width: 22px;
+    height: 22px;
+}
+
 .profile-button {
     width: 42px;
     height: 42px;
@@ -129,9 +141,24 @@ footer {
     cursor: pointer;
 }
 
-.profile-icon {
-    width: 22px;
-    height: 22px;
+.profile-menu {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    background-color: #F6F8FA;
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 200;
+}
+
+.profile-menu-item {
+    padding: 0.9rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
 
