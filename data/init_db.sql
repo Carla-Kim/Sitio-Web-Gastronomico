@@ -110,7 +110,7 @@ INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, p
 -- Entradas
 (1, 1, 'Empanada de carne cortada a cuchillo, frita', 'Empanada de Carne', 450.00, NULL),
 (2, 1, 'Provoleta tradicional a la chapa con orégano y oliva', 'Provoleta Clásica', 1800.00, NULL),
-(3, 1, 'Porción de papas fritas bastón crujientes', 'Papas Fritas Medianas', 1100.00, NULL),
+(3, 1, 'Porción de papas fritas bastón crujientes', 'Papas Fritas Medianas', 1100.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/papas.jpg"),
 (4, 1, 'Bastones de muzzarella rebozados acompañados de salsa pomodoro', 'Bastones de Muzzarella', 1500.00, NULL),
 
 -- Platos Principales
@@ -146,33 +146,33 @@ INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES
 (4, 'Asiento para bebe');
 
 -- Reservas
-INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) VALUES 
+INSERT IGNORE INTO Reservas (reserva_id, fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, comentario, estado) VALUES 
 
 -- Reservas Históricas (Finalizadas, habilitadas para tener reseñas)
-(1, '2026-05-10', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'finalizada'),
-(2, '2026-05-11', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'finalizada'),
-(3, '2026-06-12', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'finalizada'),
-(4, '2026-06-13', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'finalizada'),
-(5, '2026-06-14', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, 'finalizada'),
-(6, '2026-06-15', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, 'finalizada'),
-(7, '2026-05-16', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'finalizada'),
-(8, '2026-05-17', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'finalizada'),
-(9, '2026-06-17', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'finalizada'),
-(10, '2026-06-18', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'finalizada'),
-(11, '2026-06-19', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, 'finalizada'),
-(12, '2026-06-20', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, 'finalizada'),
+(1, '2026-05-10', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, 'comentario1', 'finalizada'),
+(2, '2026-05-11', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, 'comentario2', 'finalizada'),
+(3, '2026-06-12', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, 'comentario3', 'finalizada'),
+(4, '2026-06-13', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, NULL, 'finalizada'),
+(5, '2026-06-14', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, NULL, 'finalizada'),
+(6, '2026-06-15', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, NULL, 'finalizada'),
+(7, '2026-05-16', 'test@gmail.com', 'Kevin', 'La Rocca', '44123456', '1123456789', 4, NULL, 'finalizada'),
+(8, '2026-05-17', 'carlos.rodriguez@gmail.com', 'Carlos', 'Rodríguez', '32456789', '1133445566', 2, NULL, 'finalizada'),
+(9, '2026-06-17', 'ana.martinez@yahoo.com', 'Ana', 'Martínez', '39123852', '1166778899', 3, NULL, 'finalizada'),
+(10, '2026-06-18', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, NULL,'finalizada'),
+(11, '2026-06-19', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 4, NULL, 'finalizada'),
+(12, '2026-06-20', 'lydia@skyrim.com', 'Lydia', 'Housecarl', '44222222', '2222222222', 2, NULL,'finalizada'),
 
 -- Reservas Pendientes / Activas (Futuras)
-(13, '2026-07-15', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'reservada'),
-(14, '2026-07-20', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, 'reservada'),
-(15, '2026-07-22', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, 'reservada'),
-(16, '2026-07-17', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, 'reservada'),
-(17, '2026-07-23', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, 'reservada'),
-(18, '2026-07-29', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, 'reservada'),
+(13, '2026-07-15', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, NULL, 'reservada'),
+(14, '2026-07-20', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, NULL, 'reservada'),
+(15, '2026-07-22', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, NULL,'reservada'),
+(16, '2026-07-17', 'juan.perez@gmail.com', 'Juan', 'Pérez', '35123456', '1198765432', 2, NULL, 'reservada'),
+(17, '2026-07-23', 'maria.gomez@hotmail.com', 'María', 'Gomez', '38987654', '1155443322', 10, NULL, 'reservada'),
+(18, '2026-07-29', 'coordinacion@empresa.com', 'Esteban', 'Quito', '28456123', '1122334455', 15, NULL, 'reservada'),
 
 -- Reservas Canceladas
-(19, '2026-06-01', 'cancelado@test.com', 'Pedro', 'Mármol', '20123999', '1100001111', 2, 'cancelada'),
-(20, '2026-06-02', 'delphine@skyrim.com', 'Delphine', 'Blade', '44444444', '4444444444', 3, 'cancelada');
+(19, '2026-06-01', 'cancelado@test.com', 'Pedro', 'Mármol', '20123999', '1100001111', 2, NULL,'cancelada'),
+(20, '2026-06-02', 'delphine@skyrim.com', 'Delphine', 'Blade', '44444444', '4444444444', 3, NULL, 'cancelada');
 
 -- Resenas
 INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuacion_servicio, puntuacion_comida, comentario) VALUES 
@@ -185,7 +185,7 @@ INSERT IGNORE INTO Resenas (resena_id, reserva_id, puntuacion_ambiente, puntuaci
 (7, 7, 4, 5, 4, 'Recomendable.'),
 (8, 8, 5, 4, 5, 'Excelente calidad en los ingredientes.'),
 (9, 9, 3, 4, 4, 'La comida estuvo muy bien lograda. Volvería.'),
-(12, 10, 5, 5, 5, 'Una experiencia gastronómica impecable. El bife de chorizo estaba en el punto exacto solicitado y la atención fue de primer nivel.'),
+(10, 10, 5, 5, 5, 'Una experiencia gastronómica impecable. El bife de chorizo estaba en el punto exacto solicitado y la atención fue de primer nivel.'),
 (11, 11, 4, 3, 5, 'Hubo una pequeña demora con las bebidas, pero el sabor de la comida lo compensó por completo.'),
 (12, 12, 5, 4, 5, 'El lugar estaba impecable, parecia que estaba en el palacio de Soldad.');
 
@@ -215,6 +215,6 @@ INSERT IGNORE INTO Servicios_reserva (servicios_reserva_id, reserva_id, servicio
 (22, 19, 4);
 
 -- Mesas
-INSERT INTO Mesas (mesa_id, estado, cantidad_mesas) VALUES 
+INSERT IGNORE INTO Mesas (mesa_id, estado, cantidad_mesas) VALUES 
 (1, 'ocupada', 27),
 (2, 'desocupada', 43);

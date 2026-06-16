@@ -356,6 +356,35 @@
 }
 
 /* =========================
+   METRICS CHARTS
+========================= */
+.metric {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.metric-label {
+    margin: 0;
+    font-size: .85rem;
+    opacity: 0.7;
+}
+
+.metric-value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.metric-caption {
+    margin: 0;
+    opacity: 0.8;
+}
+
+/* =========================
     RESPONSIVES
 ========================= */
 @media (max-width: 900px) {

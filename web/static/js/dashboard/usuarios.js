@@ -39,7 +39,7 @@ import { createModal } from "./core.js";
 const addUserModal = createModal("modal-add-user");
 const editUserParcialModal = createModal("modal-edit-user-parcial");
 const editUserCompletoModal = createModal("modal-edit-user-completo");
-const viewCredentialsModal = createModal("modal-view-credentials");
+// const viewCredentialsModal = createModal("modal-view-credentials");
 
 document
     .getElementById("btn-open-add-user")

@@ -10,8 +10,6 @@ def listar_resenas(base_url, limit, offset, fecha_desde=None, fecha_hasta=None, 
             raise ValueError("BAD_REQUEST")
         where_clauses.append("res.estado = %s")
         params_filtros.append(estado)
-    else:
-        where_clauses.append("res.estado = 'habilitada'")
 
     if fecha_desde:
         where_clauses.append("res.fecha >= %s")

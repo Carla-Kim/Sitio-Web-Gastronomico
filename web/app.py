@@ -37,6 +37,7 @@ def login_requerido(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
         if session.get("usuario_id") is None:
+            flash("Inicia sesión primero")
             return redirect('/dashboard/login')
 
         return view(*args, **kwargs)
@@ -50,6 +51,7 @@ def admin_requerido(view):
             return redirect('/dashboard/login')
 
         if session.get("rol") != "admin":
+            flash("No tienes permisos para entrar al módulo Usuarios")
             return redirect('/dashboard')
 
         return view(*args, **kwargs)
@@ -80,10 +82,13 @@ def index():
 @app.route('/reservas', methods=['GET', 'POST'])
 def reservas():
     try:
-        resp = requests.get('http://localhost:5000/api/servicios')
-        servicios = resp.json().get('data', []) if resp.status_code == 200 else []
+        resp = requests.get('http://localhost:5000/api/servicios/estado/habilitado')
+        data = resp.json()
+        servicios = data if isinstance(data, list) else data.get('data', [])
+        print(f"Servicios cargados: {servicios}")
     except:
         servicios = []
+        print("Sin servicios")
     
     if request.method == 'POST':
         nombre_completo = request.form.get('nombre', '').split(' ', 1)
@@ -103,6 +108,7 @@ def reservas():
             "email": request.form.get('email'),
             "DNI": request.form.get('documento'),
             "telefono": request.form.get('telefono'),
+            "comentario": request.form.get('comentario') or None,
         }
 
         try:
@@ -124,6 +130,7 @@ def reservas():
         except Exception as e:
             print(f"Error al conectar con la API: {e}")
             flash('Error de conexión.', 'error')
+
 
     return render_template('reservas.html', servicios=servicios)
 
@@ -161,7 +168,7 @@ def resenas():
     offset = request.args.get('offset', default=0, type=int)
     
     with api_app.test_client() as client:
-        resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset})
+        resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset, 'estado':'habilitada'})
         promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
         promedio_comida_resp = client.get('/resenas/promedio/comida')
         promedio_servicio_resp = client.get('/resenas/promedio/servicio')
@@ -305,6 +312,7 @@ def logout():
 
 
 @app.route('/dashboard/reservas', methods=['GET', 'POST'])
+@login_requerido
 def dashboard_reservas():  
     if request.method == 'POST':
         id_reserva = request.form.get('reserva_id')
@@ -348,7 +356,7 @@ def dashboard_reservas():
             response = requests.get(url_api, timeout=5)
             response.raise_for_status()
             data = response.json()
-            lista_reservas = [data[1]]
+            lista_reservas = [data]
             
             url_rel = f'http://localhost:5000/api/servicios-reservas/{id_buscado}'
             resp_rel = requests.get(url_rel, timeout=5)
@@ -462,8 +470,8 @@ def editar_servicio():
         return redirect(url_for('dashboard_reservas'))
     
     try:
-        url_api = f'http://localhost:5000/api/servicios/{id_servicio}'
-        response = requests.put(url_api, json={"nombre": nuevo_nombre}, timeout=5)
+        url_api = f'http://localhost:5000/api/servicios/{id_servicio}/nombre'
+        response = requests.patch(url_api, json={"nombre": nuevo_nombre}, timeout=5)
         response.raise_for_status()
         flash("Servicio actualizado con éxito")
 
@@ -471,10 +479,10 @@ def editar_servicio():
         if response.status_code == 409:
             flash("Error: Ya existe otro servicio con ese nombre.")
         else:
-            flash("Error al actualizar el servicio.")
+            flash(f"Error al actualizar el servicio. {e}")
 
     except requests.exceptions.RequestException as e:
-        flash("Error al actualizar el servicio")
+        flash(f"Error al actualizar el servicio {e}")
 
     return redirect(url_for('dashboard_reservas'))
 
@@ -498,31 +506,64 @@ def cambiar_estado_servicio():
     nuevo_estado = 'deshabilitado' if estado_actual == 'habilitado' else 'habilitado'
     
     try:
-        url_api = f'http://localhost:5000/api/servicios/{servicio_id}/nombre'
+        url_api = f'http://localhost:5000/api/servicios/{servicio_id}/estado'
         response = requests.patch(url_api, json={'estado': nuevo_estado}, timeout=5)
         response.raise_for_status()
         
         flash(f"Servicio marcado como {nuevo_estado} correctamente")
-    except requests.exceptions.RequestException:
-        flash("Error al cambiar el estado del servicio")
+    except requests.exceptions.RequestException as e:
+        flash(f"Error al cambiar el estado del servicio {e}")
         
     return redirect(url_for('dashboard_reservas'))
 
-@app.route('/dashboard/resenas', methods=['GET', 'POST'])
-# @login_requerido
-def dashboard_resenas():
-    if request.method == 'POST':
-       resena_a_eliminar = request.form.get('id_resena')
-       if not resena_a_eliminar:
-           flash("No se pudo completar la acción: ID inexistente")
-           return redirect(url_for('dashboard_resenas'))
-       try:
-            url_api = f'http://localhost:5000/api/resenas/{resena_a_eliminar}'
+@app.route('/dashboard/mesas/accion', methods=['POST'])
+def gestionar_mesas():
+    accion = request.form.get('accion') 
+    mesa_id = request.form.get('mesa_id') 
+
+    try:
+        if accion == 'agregar':
+            url_api = 'http://localhost:5000/api/mesas'
+            response = requests.post(url_api, timeout=5)
+
+            response.raise_for_status() 
+            flash("Mesa agregada correctamente.")
+
+        elif accion == 'borrar':
+            url_api = f'http://localhost:5000/api/mesas/%7Bmesa_id%7D'
             response = requests.delete(url_api, timeout=5)
             response.raise_for_status()
-            flash("Reseña eliminada con éxito")
+            flash("Mesa eliminada.")
+
+    except requests.exceptions.HTTPError:
+        flash("Error al gestionar mesas")
+    except Exception as e:
+        flash(f"Error inesperado: {e}")
+    return redirect(url_for('dashboard_reservas'))
+
+@app.route('/dashboard/resenas', methods=['GET', 'POST'])
+@login_requerido
+def dashboard_resenas():
+    if request.method == 'POST':
+        resena_a_cambiar = request.form.get('id_resena')
+        estado_actual = request.form.get('estado')
+            
+        if not resena_a_cambiar:
+            flash("No se pudo completar la acción: ID inexistente")
             return redirect(url_for('dashboard_resenas'))
-       except requests.exceptions.RequestException as e:
+        
+        if estado_actual == 'deshabilitada':
+            estado_nuevo= 'habilitada'
+        else:
+            estado_nuevo = 'deshabilitada'
+
+        try:
+            url_api = f'http://localhost:5000/api/resenas/{resena_a_cambiar}'
+            response = requests.patch(url_api, json={'estado':estado_nuevo}, timeout=5)
+            response.raise_for_status()
+            flash(f"Reseña {estado_nuevo} con éxito")
+            return redirect(url_for('dashboard_resenas'))
+        except requests.exceptions.RequestException as e:
             print(f"Error al eliminar en API: {e}")
             return render_template('error-conexion.html'), 500
     else:
@@ -566,7 +607,7 @@ def dashboard_resenas():
 
 
 @app.route('/dashboard/menu', methods=['GET', 'POST'])
-# @login_requerido
+@login_requerido
 def dashboard_menu():
     if request.method == 'POST':
         tipo = request.form.get('tipo')
@@ -580,8 +621,6 @@ def dashboard_menu():
                 response = requests.delete(url_api, timeout=5)
                 response.raise_for_status()
                 flash("Producto eliminado con éxito")
-
-               
 
             else:
                 url_api = f'http://localhost:5000/api/categorias/{id_a_eliminar}'
@@ -635,10 +674,12 @@ def dashboard_menu():
                 data = response_productos.json()
                 lista_productos = data.get('productos', [])
 
+            dict_categorias = {c['categorias_id']: c['nombre'] for c in lista_categorias}
+
             for producto in lista_productos:
                 if not producto.get("imagen_url"):
                     producto["imagen_url"] = "/uploads/productos/image.webp"
-            
+                producto["categoria_nombre"] = dict_categorias.get(producto.get("categoria"), "Sin categoría")
             return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias)
         
         except requests.exceptions.HTTPError:
@@ -767,19 +808,19 @@ def editar_categoria():
 @admin_requerido
 def dashboard_usuarios():
     if request.method == 'POST':
-       usuario_a_eliminar = request.form.get('id_usuario')
-       if not usuario_a_eliminar:
-           flash("No se pudo completar la acción: ID inexistente")
-           return redirect(url_for('dashboard_usuarios'))
-       try:
-            url_api = f'http://localhost:5000/api/usuarios/{usuario_a_eliminar}'
-            response = requests.delete(url_api, timeout=5)
-            response.raise_for_status()
-            flash("Se elimino correctamente.")
+        usuario_a_eliminar = request.form.get('id_usuario')
+        if not usuario_a_eliminar:
+            flash("No se pudo completar la acción: ID inexistente")
             return redirect(url_for('dashboard_usuarios'))
-       except requests.exceptions.RequestException as e:
-            print(f"Error al eliminar en API: {e}")
-            return render_template('error-conexion.html'), 500
+        try:
+                url_api = f'http://localhost:5000/api/usuarios/{usuario_a_eliminar}'
+                response = requests.delete(url_api, timeout=5)
+                response.raise_for_status()
+                flash("Se elimino correctamente.")
+                return redirect(url_for('dashboard_usuarios'))
+        except requests.exceptions.RequestException as e:
+                print(f"Error al eliminar en API: {e}")
+                return render_template('error-conexion.html'), 500
     else:
         id_buscado = request.args.get('id')
         email_buscado = request.args.get('email')
@@ -906,18 +947,18 @@ def editar_usuario_completo():
 
     return redirect(url_for('dashboard_usuarios'))
 
-@app.route('/dashboard/usuarios/credenciales', methods=['POST'])
-def obtener_credenciales():
-    email = request.form.get('email')
-    try:
-        url_api = 'http://localhost:5000/api/usuarios/credenciales'
-        response = requests.post(url_api, json={'email': email}, timeout=5)
-        response.raise_for_status()
-        credenciales = response.json()
-        flash(f"Credenciales encontradas: {credenciales}")
-    except requests.exceptions.RequestException:
-        flash("Error al obtener las credenciales")
-    return redirect(url_for('dashboard_usuarios'))
+# @app.route('/dashboard/usuarios/credenciales', methods=['POST'])
+# def obtener_credenciales():
+#     email = request.form.get('email')
+#     try:
+#         url_api = 'http://localhost:5000/api/usuarios/credenciales'
+#         response = requests.post(url_api, json={'email': email}, timeout=5)
+#         response.raise_for_status()
+#         credenciales = response.json()
+#         flash(f"Credenciales encontradas: {credenciales}")
+#     except requests.exceptions.RequestException:
+#         flash("Error al obtener las credenciales")
+#     return redirect(url_for('dashboard_usuarios'))
   
 
 @app.errorhandler(404)

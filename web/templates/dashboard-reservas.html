@@ -26,24 +26,6 @@ Reservas | Dashboard
         <h1 class="page-title">
             Administración: Reservas
         </h1>
-        <div class="summary-cards" style="display: flex; gap: 10px; margin-bottom: 20px;">
-          <div class="card" style="padding: 15px; flex: 1;">
-             <h3>Total Reservas</h3>
-             <p style="font-size: 24px; font-weight: bold;">{{ total_reservas }}</p>
-          </div>
-          <div class="card" style="padding: 15px; flex: 1;">
-             <h3>Pendientes</h3>
-             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.pendiente }}</p>
-          </div>
-          <div class="card" style="padding: 15px; flex: 1;">
-             <h3>Finalizadas</h3>
-             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.finalizada }}</p>
-          </div>
-          <div class="card" style="padding: 15px; flex: 1;">
-             <h3>Canceladas</h3>
-             <p style="font-size: 24px; font-weight: bold;">{{ conteo_estados.cancelada }}</p>
-          </div>
-        </div>
 
         <div class="page-actions">
             <button id="btn-open-view-services" class="btn btn-secondary btn-small">Ver servicios</button>
@@ -153,14 +135,14 @@ Reservas | Dashboard
                             data-telefono="{{ reserva.telefono or '' }}"
                             data-servicios="{{ reserva.servicios_str }}"
                             data-estado="{{ reserva.estado }}"
-                            data-cantidad="{{ reserva.cantidad_personas }}">
+                            data-cantidad="{{ reserva.cantidad_personas }}"
+                            data-comentario="{{ reserva.comentario }}">
 
                             <td class="reserva-id">{{ reserva.reserva_id }}</td>
                             <td class="reserva-fecha">{{ reserva.fecha }}</td>
                             <td class="reserva-dni">{{ reserva.DNI }}</td>
                             <td class="reserva-estado">{{ reserva.estado }}</td>
                             <td class="reserva-cantidad">{{ reserva.cantidad_personas }}</td>
-
                             <td>
                                 <button class="btn btn-primary btn-small btn-open-view-reservation">
                                     Ver
@@ -376,9 +358,14 @@ Reservas | Dashboard
                         <tr>
                             <th>Servicios</th>
                             <td id="modal-reserva-servicios"></td>
-                        </tr><tr>
+                        </tr>
+                        <tr>
                             <th>Cantidad de personas</th>
                             <td id="modal-reserva-cantidad"></td>
+                        </tr>
+                        <tr>
+                            <th>Comentarios</th>
+                            <td id="modal-reserva-comentarios"></td>
                         </tr>
                         <tr>
                             <th>Estado</th>

@@ -21,6 +21,7 @@ def crear_reserva(data):
     dni = data["DNI"]
     telefono = data["telefono"]
     cantidad_personas = data["cantidad_personas"]
+    comentario = data.get("comentario", None)
     estado = data.get("estado", "reservada")
 
     if re.fullmatch(r'[A-Za-z0-9 áéíóúÁÉÍÓÚñÑüÜ\'´`-]+', nombre) is None or len(nombre) > 100:
@@ -40,7 +41,7 @@ def crear_reserva(data):
         return 'cantidad_invalida'
 
     try:
-        resultado = insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
+        resultado = insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado)
         if resultado == 'duplicado':
             return 'reserva_duplicada'
         if resultado == 'servicio_no_existe':

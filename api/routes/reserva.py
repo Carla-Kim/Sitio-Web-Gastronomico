@@ -8,7 +8,9 @@ reservas_bp = Blueprint('reservas', __name__)
 @reservas_bp.route('/reservas', methods=['POST'])
 def agregar_reserva():
     data = request.get_json()
+    print("recibo: ", data)
     result = reservas_service.crear_reserva(data)
+    print("RESULTADO: ", result)
     
     if isinstance(result, tuple) and result[0] == 'exito':
         reserva_id=result[1]

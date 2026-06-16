@@ -10,10 +10,9 @@ def _get_client():
         
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
-ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
-
 def extension_valida(filename):
     """Verifica que la extension del archivo sea permitida."""
+    ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def subir_imagen(archivo) -> str | None:
@@ -48,26 +47,3 @@ def subir_imagen(archivo) -> str | None:
 
     except Exception as e:
         raise ValueError(f"Error al subir imagen a Supabase Storage: {e}")
-
-#Ver si realmente lo vamos a usar (lo saqué del ejemplo)
-
-def obtener_imagen_base64(img_foto):
-    """
-    Descarga una imagen del bucket de Supabase Storage y la retorna
-    como un data URI en base64 (ej: 'data:image/jpeg;base64,...').
-    """
-    if not img_foto:
-        return ''
-
-    try:
-        supabase = _get_client()
-        contenido = supabase.storage.from_(SUPABASE_BUCKET).download(img_foto)
-
-        extension = img_foto.rsplit('.', 1)[1].lower() if '.' in img_foto else 'jpeg'
-        mime_type = f'image/{extension}'
-
-        b64 = base64.b64encode(contenido).decode('utf-8')
-
-        return f'data:{mime_type};base64,{b64}'
-    except Exception as e:
-        raise ValueError(f"Error al descargar imagen {img_foto} desde Supabase Storage: {e}")
