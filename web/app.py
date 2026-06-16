@@ -444,7 +444,7 @@ def dashboard_reservas():
             
         paginacion_links = build_links(url_for('dashboard_reservas'), request.args.to_dict(), _limit, _offset, total_registros)
 
-        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=_limit, offset=_offset, paginacion_links=paginacion_links, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
+        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=_limit, offset=_offset, paginacion_links=paginacion_links, total_paginas=total_paginas, pagina_actual=pagina_actual, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
     except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los criterios seleccionados.")
             return redirect(url_for('dashboard_reservas'))
@@ -719,7 +719,7 @@ def dashboard_menu():
             total_paginas = (total_registros + _limit - 1) // _limit if total_registros > 0 else 1
             pagina_actual = ( _offset // _limit) + 1
 
-            paginacion_links = build_links(url_for('dashboard_menu'), request.args.to_dict(), _limit, _offset, total_registros)
+            paginacion_links = build_links(url_for('dashboard_reservas'), request.args.to_dict(), _limit, _offset, total_registros)
 
             return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, paginacion_links=paginacion_links, pagina_actual=pagina_actual, total_paginas=total_paginas, limit=_limit, offset=_offset)
         
