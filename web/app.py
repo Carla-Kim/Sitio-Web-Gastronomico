@@ -3,6 +3,7 @@ import sys
 import requests
 from functools import wraps
 from api.app import app as api_app
+from api.utils.pagination import build_links
 from flask import (
     Flask,
     render_template,
@@ -426,7 +427,21 @@ def dashboard_reservas():
                 datos_mesas['total'] = datos_mesas.get('ocupadas', 0) + datos_mesas.get('desocupadas', 0)
         except:
             pass
-        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
+
+        try:
+            raw_data = response.json()
+            if isinstance(raw_data, list) and len(raw_data) > 0 and isinstance(raw_data[0], dict) and 'count' in raw_data[0]:
+                total_registros = raw_data[0]['count']
+            elif isinstance(raw_data, dict):
+                total_registros = raw_data.get('count', raw_data.get('total', len(lista_reservas)))
+            else:
+                total_registros = len(lista_reservas)
+        except Exception:
+            total_registros = len(lista_reservas)
+            
+        paginacion_links = build_links(url_for('dashboard_reservas'), request.args.to_dict(), limit, offset, total_registros)
+
+        return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=limit, offset=offset, paginacion_links=paginacion_links, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
     except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los criterios seleccionados.")
             return redirect(url_for('dashboard_reservas'))
@@ -596,7 +611,15 @@ def dashboard_resenas():
                 data = response.json()
                 lista_resenas = data if isinstance(data, list) else data.get('resenas', [])
 
-            return render_template('dashboard-resenas.html', resenas=lista_resenas, _limit=int(_limit), _offset=int(_offset))
+            try:
+                raw_data = response.json()
+                total_registros = raw_data.get('count', raw_data.get('total', len(lista_resenas))) if isinstance(raw_data, dict) else len(lista_resenas)
+            except Exception:
+                total_registros = len(lista_resenas)
+                
+            paginacion_links = build_links(url_for('dashboard_resenas'), request.args.to_dict(), _limit, _offset, total_registros)
+
+            return render_template('dashboard-resenas.html', resenas=lista_resenas, _limit=int(_limit), _offset=int(_offset), paginacion_links=paginacion_links)
        
         except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los filtros aplicados.")
@@ -680,7 +703,16 @@ def dashboard_menu():
                 if not producto.get("imagen_url"):
                     producto["imagen_url"] = "/uploads/productos/image.webp"
                 producto["categoria_nombre"] = dict_categorias.get(producto.get("categoria"), "Sin categoría")
-            return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias)
+
+            try:
+                raw_data = response_productos.json()
+                total_registros = raw_data.get('count', raw_data.get('total', len(lista_productos))) if isinstance(raw_data, dict) else len(lista_productos)
+            except Exception:
+                total_registros = len(lista_productos)
+
+            paginacion_links = build_links(url_for('dashboard_menu'), request.args.to_dict(), limit, offset, total_registros)
+
+            return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, paginacion_links=paginacion_links)
         
         except requests.exceptions.HTTPError:
             flash("No se encontraron resultados para los filtros aplicados.")
@@ -854,7 +886,15 @@ def dashboard_usuarios():
                response = requests.get(url_api, params=params, timeout=5)
                response.raise_for_status()
                lista_usuarios = response.json().get('data', [])
-           return render_template('dashboard-usuarios.html', usuarios=lista_usuarios, limit=limit, offset=offset)
+
+           try:
+               raw_data = response.json()
+               total_registros = raw_data.get('count', raw_data.get('total', len(lista_usuarios))) if isinstance(raw_data, dict) else len(lista_usuarios)
+           except Exception:
+               total_registros = len(lista_usuarios)
+               
+           paginacion_links = build_links(url_for('dashboard_usuarios'), request.args.to_dict(), limit, offset, total_registros)
+           return render_template('dashboard-usuarios.html', usuarios=lista_usuarios, limit=limit, offset=offset, paginacion_links=paginacion_links)
 
         except requests.exceptions.HTTPError:
             flash("No se encontraron resultados.")
