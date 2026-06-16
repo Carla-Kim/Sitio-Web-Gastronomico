@@ -173,6 +173,7 @@ def cancelar_reserva_endpoint(id):
         return jsonify(response_body), 200
 
 @reservas_bp.route('/reservas/<int:id>/escanear', methods=['PATCH'])
+#@login_requerido
 def escanear_reserva_endpoint(id):
     result = reservas_service.escanear_y_finalizar_reserva(id)
     
