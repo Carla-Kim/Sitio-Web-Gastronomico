@@ -9,11 +9,14 @@ services:
       MYSQL_DATABASE: gastronomia_db
       MYSQL_USER: flask_user
       MYSQL_PASSWORD: flask_password
+      TZ: America/Argentina/Buenos_Aires # 👈 1. Setea la zona horaria en el entorno de MySQL
+
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./data/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - /etc/localtime:/etc/localtime:ro # 👈 2. Mapea la hora de tu PC (Linux/Mac) al contenedor
 
   app:
     build: .
@@ -29,6 +32,9 @@ services:
       DB_PASSWORD: flask_password
       DB_NAME: gastronomia_db
       DB_PORT: 3306
+      TZ: America/Argentina/Buenos_Aires # 👈 3. Setea la zona horaria en Flask
+
+
     ports:
       - "5000:5000"
     volumes:
