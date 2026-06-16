@@ -108,35 +108,35 @@ INSERT IGNORE INTO Categorias (categorias_id, nombre) VALUES
 
 INSERT IGNORE INTO Productos (producto_id, categorias_id, descripcion, nombre, precio, imagen_url) VALUES 
 -- Entradas
-(1, 1, 'Empanada de carne cortada a cuchillo, frita', 'Empanada de Carne', 450.00, NULL),
-(2, 1, 'Provoleta tradicional a la chapa con orégano y oliva', 'Provoleta Clásica', 1800.00, NULL),
+(1, 1, 'Empanada de carne cortada a cuchillo, frita', 'Empanada de Carne', 450.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/empanadas.jpg"),
+(2, 1, 'Provoleta tradicional a la chapa con orégano y oliva', 'Provoleta Clásica', 1800.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/provoleta.jpg"),
 (3, 1, 'Porción de papas fritas bastón crujientes', 'Papas Fritas Medianas', 1100.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/papas.jpg"),
-(4, 1, 'Bastones de muzzarella rebozados acompañados de salsa pomodoro', 'Bastones de Muzzarella', 1500.00, NULL),
+(4, 1, 'Bastones de muzzarella rebozados acompañados de salsa pomodoro', 'Bastones de Muzzarella', 1500.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/baston_muzza.jpg"),
 
 -- Platos Principales
-(5, 2, 'Milanesa de ternera acompañada de papas fritas', 'Milanesa Clásica', 1250.00, NULL),
-(6, 2, 'Bife de chorizo de 400g con guarnición a elección', 'Bife de Chorizo', 4200.00, NULL),
-(7, 2, 'Ravioles caseros de verdura y ricota con salsa tuco', 'Ravioles con Tuco', 2100.00, NULL),
-(8, 2, 'Pechuga de pollo a la grilla con vegetales salteados', 'Pollo a la Grilla', 2800.00, NULL),
-(9, 2, 'Ensalada César con pollo, lechuga romana, croutons y aderezo', 'Ensalada César', 2400.00, NULL),
+(5, 2, 'Milanesa de ternera acompañada de papas fritas', 'Milanesa Clásica', 1250.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/milanesa.jpg"),
+(6, 2, 'Bife de chorizo de 400g con guarnición a elección', 'Bife de Chorizo', 4200.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/bife.jpg"),
+(7, 2, 'Ravioles caseros de verdura y ricota con salsa tuco', 'Ravioles con Tuco', 2100.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/ravioles.jpg"),
+(8, 2, 'Pechuga de pollo a la grilla con vegetales salteados', 'Pollo a la Grilla', 2800.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/pollo.jpg"),
+(9, 2, 'Ensalada César con pollo, lechuga romana, croutons y aderezo', 'Ensalada César', 2400.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/ensalada_cesar.jpg"),
 
 -- Postres
-(10, 3, 'Flan casero con opción de dulce de leche o crema', 'Flan Mixto', 850.00, NULL),
-(11, 3, 'Bocha de helado de crema americana con salsa de chocolate', 'Copa Helada', 900.00, NULL),
-(12, 3, 'Mousse de chocolate artesanal con hilos de chocolate amargo', 'Mousse de Chocolate', 1100.00, NULL),
-(13, 3, 'Tradicional postre vigilante con queso fresco y dulce de batata', 'Queso y Dulce', 950.00, NULL),
+(10, 3, 'Flan casero con opción de dulce de leche o crema', 'Flan Mixto', 850.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/flan.jpg"),
+(11, 3, 'Bocha de helado de crema americana con salsa de chocolate', 'Copa Helada', 900.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/copa_helada.jpg"),
+(12, 3, 'Mousse de chocolate artesanal con hilos de chocolate amargo', 'Mousse de Chocolate', 1100.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/mousse.jpg"),
+(13, 3, 'Tradicional postre vigilante con queso fresco y dulce de batata', 'Queso y Dulce', 950.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/vigilante.jpeg"),
 
 -- Bebidas
-(14, 4, 'Agua mineral sin gas 500ml', 'Agua Mineral', 500.00, NULL),
-(15, 4, 'Cerveza artesanal tirada de la casa 500ml', 'Cerveza Pinta', 1200.00, NULL),
-(16, 4, 'Gaseosa línea Coca-Cola original de 354ml', 'Gaseosa Común', 650.00, NULL),
-(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00, NULL),
+(14, 4, 'Agua mineral sin gas 500ml', 'Agua Mineral', 500.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/agua.jpg"),
+(15, 4, 'Cerveza artesanal tirada de la casa 500ml', 'Cerveza Pinta', 1200.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/cerveza.jpg"),
+(16, 4, 'Gaseosa línea Coca-Cola original de 354ml', 'Gaseosa Común', 650.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/coca.jpg"),
+(17, 4, 'Copa de vino tinto Malbec de la casa', 'Copa de Vino Malbec', 1400.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/vino.jpg"),
 
 -- Especialidades Nórdicas
-(18, 5, 'Costillas asadas con especias de Skyrim', 'Costillas de Carrera Blanca', 3200.00, NULL),
-(19, 5, 'Bebida dulce inspirada en la famosa hidromiel', 'Hidromiel Honningbrew', 950.00, NULL),
-(20, 5, 'Tarta de manzana tradicional', 'Tarta de Soledad', 1400.00, NULL),
-(21, 5, 'Estofado caliente ideal para aventureros', 'Estofado del Sangre de Dragón', 2800.00, NULL);
+(18, 5, 'Costillas asadas con especias de Skyrim', 'Costillas de Carrera Blanca', 3200.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/default.jpg"),
+(19, 5, 'Bebida dulce inspirada en la famosa hidromiel', 'Hidromiel Honningbrew', 950.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/default.jpg"),
+(20, 5, 'Tarta de manzana tradicional', 'Tarta de Soledad', 1400.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/default.jpg"),
+(21, 5, 'Estofado caliente ideal para aventureros', 'Estofado del Sangre de Dragón', 2800.00, "https://uepxnfxlzaljovgxobqd.supabase.co/storage/v1/object/public/productos/default.jpg");
 
 -- Servicios
 INSERT IGNORE INTO Servicios (servicio_id, nombre) VALUES 
