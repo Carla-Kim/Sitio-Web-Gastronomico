@@ -9,8 +9,8 @@ def listar_usuarios():
     base_url = request.base_url
     query_args = request.args.to_dict()
 
-    limit = request.args.get("limit", type=int, default=10)
-    offset = request.args.get("offset", type=int, default=0)
+    limit = request.args.get("_limit", type=int, default=10)
+    offset = request.args.get("_offset", type=int, default=0)
     rol = request.args.get("rol")
 
     if limit <= 0 or offset < 0:

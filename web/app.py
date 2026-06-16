@@ -341,8 +341,8 @@ def dashboard_reservas():
     id_buscado = request.args.get('id')
 
     try:
-        _limit = int(request.args.get('_limit', 10))
-        _offset = int(request.args.get('_offset', 0))
+        _limit = int(request.args.get('limit', 10))
+        _offset = int(request.args.get('offset', 0))
     except ValueError:
         _limit, _offset = 10, 0
 
@@ -354,9 +354,9 @@ def dashboard_reservas():
         
         if id_buscado:
             url_api = f'http://localhost:5000/api/reservas/{id_buscado}'
-            response = requests.get(url_api, timeout=5)
-            response.raise_for_status()
-            data = response.json()
+            response_reservas = requests.get(url_api, timeout=5)
+            response_reservas.raise_for_status()
+            data = response_reservas.json()
             lista_reservas = [data]
             
             url_rel = f'http://localhost:5000/api/servicios-reservas/{id_buscado}'
@@ -366,27 +366,27 @@ def dashboard_reservas():
         
         elif estado:
             url_api = f'http://localhost:5000/api/reservas/estado/{estado}'
-            response = requests.get(url_api, params=params, timeout=5)
-            response.raise_for_status()
-            data = response.json()
+            response_reservas = requests.get(url_api, params=params, timeout=5)
+            response_reservas.raise_for_status()
+            data = response_reservas.json()
             if isinstance(data, list):
                 data = data[1]
             lista_reservas = data[1] if isinstance(data, list) else data.get('data', [])
             
         elif fecha:
             url_api = f'http://localhost:5000/api/reservas/fecha/{fecha}'
-            response = requests.get(url_api, params=params, timeout=5)
-            response.raise_for_status()
-            data = response.json()
+            response_reservas = requests.get(url_api, params=params, timeout=5)
+            response_reservas.raise_for_status()
+            data = response_reservas.json()
             if isinstance(data, list):
                 data = data[1]
             lista_reservas = data if isinstance(data, list) else data.get('data', [])
             
         else:
             url_api = 'http://localhost:5000/api/reservas'
-            response = requests.get(url_api, params=params, timeout=5)
-            response.raise_for_status()
-            lista_reservas = response.json().get('data', [])
+            response_reservas = requests.get(url_api, params=params, timeout=5)
+            response_reservas.raise_for_status()
+            lista_reservas = response_reservas.json().get('data', [])
         try:
             response = requests.get('http://localhost:5000/api/servicios', timeout=5)
             response.raise_for_status()
@@ -429,7 +429,7 @@ def dashboard_reservas():
             pass
 
         try:
-            raw_data = response.json()
+            raw_data = response_reservas.json()
             if isinstance(raw_data, list) and len(raw_data) > 0 and isinstance(raw_data[0], dict) and 'count' in raw_data[0]:
                 total_registros = raw_data[0]['count']
             elif isinstance(raw_data, dict):
@@ -588,8 +588,8 @@ def dashboard_resenas():
         id_buscado = request.args.get('resena-id')
         id_reserva_buscada = request.args.get('resena-reserva-id')
         try:        
-            _limit = int(request.args.get('_limit', 10))  
-            _offset = int(request.args.get('_offset', 0))  
+            _limit = int(request.args.get('limit', 10))  
+            _offset = int(request.args.get('offset', 0))  
         except ValueError:
             _limit, _offset = 10, 0
 
@@ -867,8 +867,8 @@ def dashboard_usuarios():
         email_buscado = request.args.get('email')
         rol_buscado = request.args.get('rol')
         try:
-            _limit = int(request.args.get('_limit', 10))
-            _offset = int(request.args.get('_offset', 0))
+            _limit = int(request.args.get('limit', 10))
+            _offset = int(request.args.get('offset', 0))
         except ValueError:
             _limit, _offset = 10, 0
 

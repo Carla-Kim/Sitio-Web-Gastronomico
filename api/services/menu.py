@@ -97,7 +97,8 @@ def ver_productos(base_url, limit, offset, orden= None):
     count = res_db["count"]
 
     return {
-        "productos": productos_mapeados
+        "productos": productos_mapeados,
+        "count": count
     }, 200
 
 def elimina_producto(id_producto):
