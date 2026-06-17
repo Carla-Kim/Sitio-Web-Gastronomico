@@ -154,7 +154,7 @@ def listar_reservas_por_fecha(fecha):
         return jsonify(ReturnErrors(500)), 500
     
     
-@reservas_bp.route('/reservas/<int:id>/cancelar', methods=['PATCH'])
+@reservas_bp.route('/reservas/<int:id>/cancelar', methods=['GET'])
 def cancelar_reserva_endpoint(id):
     result = reservas_service.cancelar_reserva(id)
 
@@ -172,7 +172,7 @@ def cancelar_reserva_endpoint(id):
         status, response_body = result
         return jsonify(response_body), 200
 
-@reservas_bp.route('/reservas/<int:id>/escanear', methods=['PATCH'])
+@reservas_bp.route('/reservas/<int:id>/escanear', methods=['GET'])
 #@login_requerido
 def escanear_reserva_endpoint(id):
     result = reservas_service.escanear_y_finalizar_reserva(id)

@@ -26,6 +26,8 @@ services:
       - db
     env_file:
       - .env
+    command: flask run --host=0.0.0.0 --port=5000 --debug # Abre la puerta al celular
+
     environment:
       DB_HOST: db
       DB_USER: flask_user
