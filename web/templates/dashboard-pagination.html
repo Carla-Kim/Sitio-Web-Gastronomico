@@ -1,0 +1,46 @@
+{% macro render_pagination(endpoint, pagina_actual, total_paginas, limit, offset) %}
+<div class="pagination">
+    {# Botón Anterior #}
+    {% if pagina_actual > 1 %}
+        <a href="{{ url_for(endpoint, limit=limit, offset=offset - limit) }}" class="btn btn-page">Previous</a>
+    {% else %}
+        <button class="btn btn-page" disabled>Previous</button>
+    {% endif %}
+
+    {# Primer página si estamos lejos #}
+    {% if pagina_actual > 3 %}
+        <a href="{{ url_for(endpoint, limit=limit, offset=0) }}" class="btn btn-page">1</a>
+        {% if pagina_actual > 4 %}
+            <span class="page-dots">...</span>
+        {% endif %}
+    {% endif %}
+
+    {# Números centrales móviles #}
+    {% for num in range(1, total_paginas + 1) %}
+        {% if num >= pagina_actual - 2 and num <= pagina_actual + 2 %}
+            {% set numero_offset = (num - 1) * limit %}
+            {% if num == pagina_actual %}
+                <button class="btn btn-page active">{{ num }}</button>
+            {% else %}
+                <a href="{{ url_for(endpoint, limit=limit, offset=numero_offset) }}" class="btn btn-page">{{ num }}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {# Última página si queda lejos #}
+    {% if pagina_actual < total_paginas - 2 %}
+        {% if pagina_actual < total_paginas - 3 %}
+            <span class="page-dots">...</span>
+        {% endif %}
+        {% set ultimo_offset = (total_paginas - 1) * limit %}
+        <a href="{{ url_for(endpoint, limit=limit, offset=ultimo_offset) }}" class="btn btn-page">{{ total_paginas }}</a>
+    {% endif %}
+
+    {# Botón Siguiente #}
+    {% if pagina_actual < total_paginas %}
+        <a href="{{ url_for(endpoint, limit=limit, offset=offset + limit) }}" class="btn btn-page">Next</a>
+    {% else %}
+        <button class="btn btn-page" disabled>Next</button>
+    {% endif %}
+</div>
+{% endmacro %}

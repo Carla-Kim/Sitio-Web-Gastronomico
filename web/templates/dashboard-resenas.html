@@ -8,6 +8,7 @@ Reseñas | Dashboard
 {% endblock %}
 
 {% block content %}
+{% from "dashboard-pagination.html" import render_pagination %}
 
 {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -108,30 +109,7 @@ Reseñas | Dashboard
                 Reseñas
             </h2>
 
-            <div class="pagination">
-                <button class="btn btn-page">
-                    Previous
-                </button>
-                <button class="btn btn-page active">
-                    1
-                </button>
-                <button class="btn btn-page">
-                    2
-                </button>
-                <button class="btn btn-page">
-                    3
-                </button>
-                <span class="page-dots">...</span>
-                <button class="btn btn-page">
-                    67
-                </button>
-                <button class="btn btn-page">
-                    68
-                </button>
-                <button class="btn btn-page">
-                    Next
-                </button>
-            </div>
+            {{ render_pagination('dashboard_resenas', pagina_actual, total_paginas, limit, offset) }}
 
         </div>
 

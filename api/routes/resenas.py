@@ -8,8 +8,8 @@ resenas_bp = Blueprint("resenas", __name__)
 @resenas_bp.route('/resenas', methods=['GET'])
 def obtener_resenas():
     base_url = request.base_url
-    limit = request.args.get('limit', default=10, type=int)
-    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('_limit', default=10, type=int)
+    offset = request.args.get('_offset', default=0, type=int)
     
     estado = request.args.get('estado', default=None, type=str)
     fecha_desde = request.args.get('fecha_desde', default=None, type=str)
