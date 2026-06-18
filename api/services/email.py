@@ -1,9 +1,10 @@
 import logging
+from flask_mailman import EmailMessage
 from flask import current_app
 
 logger = logging.getLogger(__name__)
 
-def enviar_confirmacion_reserva(usuario: dict, reserva: dict) -> None:
+def enviar_confirmacion_reserva(usuario: dict, reserva: dict, qr_reserva=None, qr_cancelacion=None) -> None:
     asunto = 'Confirmación de tu reserva - Sitio Gastronómico'
     
     cuerpo = (
@@ -12,19 +13,35 @@ def enviar_confirmacion_reserva(usuario: dict, reserva: dict) -> None:
         f"Detalles de la reserva:\n"
         f"- Cantidad de personas: {reserva['cantidad_personas']}\n"
         f"- Teléfono de contacto: {reserva['telefono']}\n\n"
+        f"Adjuntamos dos códigos QR en este correo:\n"
+        f"1) Código QR de reserva: presentalo en la entrada para acceder al local.\n"
+        f"2) Código QR de cancelación: usalo si necesitas cancelar tu reserva.\n\n"
         f"¡Te esperamos!"
     )
 
     app_activa = current_app._get_current_object()
-    mail = app_activa.extensions['mailman']
 
-    mail.send_mail(
-        subject=asunto,
-        message=cuerpo,
-        from_email=app_activa.config['MAIL_USERNAME'],
-        recipient_list=[usuario['email']]
-    )
-    
+    if qr_reserva or qr_cancelacion:
+        msg = EmailMessage(
+            subject=asunto,
+            body=cuerpo,
+            from_email=app_activa.config['MAIL_USERNAME'],
+            to=[usuario['email']]
+        )
+        if qr_reserva is not None:
+            msg.attach(f"reserva_{reserva.get('id', 'reserva')}.png", qr_reserva.getvalue(), "image/png")
+        if qr_cancelacion is not None:
+            msg.attach(f"cancelacion_{reserva.get('id', 'reserva')}.png", qr_cancelacion.getvalue(), "image/png")
+        msg.send()
+    else:
+        mail = app_activa.extensions['mailman']
+        mail.send_mail(
+            subject=asunto,
+            message=cuerpo,
+            from_email=app_activa.config['MAIL_USERNAME'],
+            recipient_list=[usuario['email']]
+        )
+
     logger.info(f"Email enviado con éxito a {usuario['email']}")
 
 def enviar_cancelacion_reserva(usuario: dict, reserva: dict) -> None:
