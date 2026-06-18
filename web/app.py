@@ -269,6 +269,23 @@ def resena_enviada():
     
     return render_template('resena-enviada.html', reserva_id=reserva_id)
 
+
+
+@app.route('/reservas/<int:id>/escanear', methods=['GET'])
+@login_requerido
+def escaneo(id):
+  
+    url_api = f"http://app:5000/api/reservas/{id}/escanear"
+    
+    try:
+        respuesta_api = requests.get(url_api)
+        status_code = respuesta_api.status_code 
+        
+    except requests.exceptions.RequestException:
+        status_code = 500
+
+    return render_template('resultado_escaneo.html', status=status_code, id=id)
+
 @app.route('/dashboard')
 @login_requerido
 def dashboard_home():

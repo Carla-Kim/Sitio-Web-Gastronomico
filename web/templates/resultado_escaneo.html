@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Reserva</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_qr.css') }}">
+</head>
+<body>
+
+<div class="card">
+    {% if status == 200 %}
+        <h1 class="exito">✓ ¡Validada!</h1>
+        <p>La reserva <strong>#{{ id }}</strong> se finalizó correctamente.</p>
+        <p>Las mesas correspondientes fueron liberadas en MySQL.</p>
+    {% elif status == 409 %}
+        <h1 class="alerta">⚠ Atención</h1>
+        <p>La reserva <strong>#{{ id }}</strong> ya había sido escaneada o cancelada anteriormente.</p>
+    {% elif status == 404 %}
+        <h1 class="error">✗ Código Inválido</h1>
+        <p>La reserva no existe en el sistema gastronómico.</p>
+    {% else %}
+        <h1 class="error">✗ Error Interno</h1>
+        <p>Hubo un problema al procesar la solicitud en la base de datos.</p>
+    {% endif %}
+
+    <a href="#" onclick="window.close();" class="btn">Cerrar Ventana</a>
+</div>
+
+</body>
+</html>
