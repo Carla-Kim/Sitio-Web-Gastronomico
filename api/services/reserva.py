@@ -51,8 +51,10 @@ def crear_reserva(data):
         
         try:
             usuario_datos = {
-                "nombre": f"{nombre} {apellido}",
-                "email": email
+                "nombre": nombre,
+                "apellido": apellido,
+                "email": email,
+                "dni": dni
             }
             reserva_datos = {
                 "id": resultado,

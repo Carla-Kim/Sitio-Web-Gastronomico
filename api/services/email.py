@@ -6,34 +6,29 @@ logger = logging.getLogger(__name__)
 
 def enviar_confirmacion_reserva(usuario: dict, reserva: dict, qr_reserva=None, cancel_link=None) -> None:
     asunto = 'Confirmación de tu reserva - Sitio Gastronómico'
+    nombre_completo = f"{usuario.get('nombre', '')} {usuario.get('apellido', '')}".strip()
     
     cuerpo = (
-        f"¡Hola {usuario['nombre']}!\n\n"
+        f"¡Hola {nombre_completo}!\n\n"
         f"Tu reserva para el día {reserva['fecha']} ha sido confirmada con éxito.\n\n"
         f"Detalles de la reserva:\n"
+        f"- Número de reserva: {reserva.get('id', 'N/A')}\n"
+        f"- Fecha y hora: {reserva['fecha']}\n"
         f"- Cantidad de personas: {reserva['cantidad_personas']}\n"
-        f"- Teléfono de contacto: {reserva['telefono']}\n\n"
+        f"- Teléfono de contacto: {reserva['telefono']}\n"
+        f"- DNI: {usuario.get('dni', 'N/A')}\n"
+        f"- Email de contacto: {usuario.get('email', 'N/A')}\n\n"
         f"Adjuntamos el código QR de reserva en este correo. Presentalo en la entrada para acceder al local.\n"
     )
 
     if cancel_link:
         cuerpo += (
-            f"\nHACÉ CLICK AQUÍ: {cancel_link}\n"
+            f"\nPara cancelar tu reserva, ingresá en: {cancel_link}\n"
         )
 
-    cuerpo += "\n¡Te esperamos!"
+    cuerpo += "\n¡Te esperamos en Sitio Gastronómico!"
 
     html_cuerpo = None
-    if cancel_link:
-        html_cuerpo = (
-            f"<p>¡Hola {usuario['nombre']}!</p>"
-            f"<p>Tu reserva para el día {reserva['fecha']} ha sido confirmada con éxito.</p>"
-            f"<p>Detalles de la reserva:<br>"
-            f"- Cantidad de personas: {reserva['cantidad_personas']}<br>"
-            f"- Teléfono de contacto: {reserva['telefono']}</p>"
-            f"<p>Si necesitás cancelar tu reserva, hacé click <a href=\"{cancel_link}\">AQUÍ</a>.</p>"
-            f"<p>¡Te esperamos!</p>"
-        )
 
     app_activa = current_app._get_current_object()
 
