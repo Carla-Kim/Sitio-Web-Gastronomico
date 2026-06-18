@@ -4,7 +4,7 @@ from flask import current_app
 
 logger = logging.getLogger(__name__)
 
-def enviar_confirmacion_reserva(usuario: dict, reserva: dict, qr_reserva=None, qr_cancelacion=None) -> None:
+def enviar_confirmacion_reserva(usuario: dict, reserva: dict, qr_reserva=None, cancel_link=None) -> None:
     asunto = 'Confirmación de tu reserva - Sitio Gastronómico'
     
     cuerpo = (
@@ -13,25 +13,43 @@ def enviar_confirmacion_reserva(usuario: dict, reserva: dict, qr_reserva=None, q
         f"Detalles de la reserva:\n"
         f"- Cantidad de personas: {reserva['cantidad_personas']}\n"
         f"- Teléfono de contacto: {reserva['telefono']}\n\n"
-        f"Adjuntamos dos códigos QR en este correo:\n"
-        f"1) Código QR de reserva: presentalo en la entrada para acceder al local.\n"
-        f"2) Código QR de cancelación: usalo si necesitas cancelar tu reserva.\n\n"
-        f"¡Te esperamos!"
+        f"Adjuntamos el código QR de reserva en este correo. Presentalo en la entrada para acceder al local.\n"
     )
+
+    if cancel_link:
+        cuerpo += (
+            f"\nHACÉ CLICK AQUÍ: {cancel_link}\n"
+        )
+
+    cuerpo += "\n¡Te esperamos!"
+
+    html_cuerpo = None
+    if cancel_link:
+        html_cuerpo = (
+            f"<p>¡Hola {usuario['nombre']}!</p>"
+            f"<p>Tu reserva para el día {reserva['fecha']} ha sido confirmada con éxito.</p>"
+            f"<p>Detalles de la reserva:<br>"
+            f"- Cantidad de personas: {reserva['cantidad_personas']}<br>"
+            f"- Teléfono de contacto: {reserva['telefono']}</p>"
+            f"<p>Si necesitás cancelar tu reserva, hacé click <a href=\"{cancel_link}\">AQUÍ</a>.</p>"
+            f"<p>¡Te esperamos!</p>"
+        )
 
     app_activa = current_app._get_current_object()
 
-    if qr_reserva or qr_cancelacion:
+    if qr_reserva:
         msg = EmailMessage(
             subject=asunto,
             body=cuerpo,
             from_email=app_activa.config['MAIL_USERNAME'],
             to=[usuario['email']]
         )
-        if qr_reserva is not None:
-            msg.attach(f"reserva_{reserva.get('id', 'reserva')}.png", qr_reserva.getvalue(), "image/png")
-        if qr_cancelacion is not None:
-            msg.attach(f"cancelacion_{reserva.get('id', 'reserva')}.png", qr_cancelacion.getvalue(), "image/png")
+        if html_cuerpo is not None:
+            try:
+                msg.attach_alternative(html_cuerpo, "text/html")
+            except Exception:
+                setattr(msg, 'html_message', html_cuerpo)
+        msg.attach(f"reserva_{reserva.get('id', 'reserva')}.png", qr_reserva.getvalue(), "image/png")
         msg.send()
     else:
         mail = app_activa.extensions['mailman']

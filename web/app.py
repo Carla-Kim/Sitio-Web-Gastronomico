@@ -113,6 +113,26 @@ def reservas():
 
     return render_template('reservas.html', servicios=servicios)
 
+@app.route('/cancelar-reserva/<int:id>', methods=['GET', 'POST'])
+def cancelar_reserva_publica(id):
+    error = None
+    exito = False
+
+    if request.method == 'POST':
+        try:
+            url_api = f'{API_URL}/reservas/{id}/cancelar'
+            response = requests.patch(url_api, timeout=5)
+            if response.status_code == 200:
+                exito = True
+            else:
+                payload = response.json()
+                error = payload.get('errors', [{}])[0].get('message', 'Error al cancelar la reserva')
+        except Exception as e:
+            print(f"Error cancelando reserva desde la web: {e}")
+            error = 'No se pudo conectar con el servicio de reservas.'
+
+    return render_template('cancelar-reserva.html', reserva_id=id, error=error, exito=exito)
+
 @app.route('/menu', endpoint='menu')
 def mostrar_menu():
     with api_app.test_client() as client:

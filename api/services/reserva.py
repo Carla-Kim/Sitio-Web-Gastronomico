@@ -3,7 +3,7 @@ import logging
 from flask import current_app
 from api.database.reserva import *
 from api.utils.pagination import build_links
-from api.utils.qrcode_generator import generar_qr_reserva, generar_qr_cancelacion
+from api.utils.qrcode_generator import generar_qr_reserva
 from api.services.email import enviar_confirmacion_reserva, enviar_cancelacion_reserva, enviar_mensaje_agradecimiento
 
 logger = logging.getLogger(__name__)
@@ -62,12 +62,13 @@ def crear_reserva(data):
             }
 
             qr_reserva = generar_qr_reserva(reserva_id=resultado)
-            qr_cancelacion = generar_qr_cancelacion(reserva_id=resultado)
+            frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5000')
+            cancel_link = f"{frontend_url}/cancelar-reserva/{resultado}"
             enviar_confirmacion_reserva(
                 usuario=usuario_datos,
                 reserva=reserva_datos,
                 qr_reserva=qr_reserva,
-                qr_cancelacion=qr_cancelacion
+                cancel_link=cancel_link
             )
             
         except Exception as email_error:
