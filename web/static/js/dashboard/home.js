@@ -10,6 +10,7 @@ const menu = dashboard.productos_por_categoria
 const reservas_por_mes = dashboard.reservas_por_mes
 const reservas_por_estado = dashboard.reservas_por_estado
 const reseñas = dashboard.promedio_resenas
+document.getElementById("total-reservas-estado").textContent = reservas_por_estado.cantidades.reduce((a, b) => a + b, 0);
 
 new Chart(
     menu_chart,

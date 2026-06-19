@@ -430,12 +430,7 @@ def dashboard_reservas():
             lista_servicios = response.json().get('data', [])
             dict_servicios = {s['servicio_id']: s['nombre'] for s in lista_servicios}
 
-            # total_reservas = len(lista_reservas)
-            # conteo_estados = {'pendiente': 0,'finalizada': 0,'cancelada': 0}
             for reserva in lista_reservas:
-                # estado = reserva.get('estado')
-                # if estado in conteo_estados:
-                #    conteo_estados[estado] += 1
                 reserva_id = reserva.get('reserva_id')
                 if reserva_id:
                     try:
@@ -461,7 +456,7 @@ def dashboard_reservas():
             resp_mesas = requests.get('http://localhost:5000/api/mesas', timeout=5)
             if resp_mesas.status_code == 200:
                 datos_mesas = resp_mesas.json()
-                datos_mesas['total'] = datos_mesas.get('ocupadas', 0) + datos_mesas.get('desocupadas', 0)
+                datos_mesas['total'] = int(datos_mesas.get('ocupadas', 0)) + int(datos_mesas.get('desocupadas', 0))
         except:
             pass
 
@@ -488,6 +483,24 @@ def dashboard_reservas():
     except requests.exceptions.RequestException as e:
         print(f"Error crítico: {e}")
         return render_template('error-conexion.html'), 500
+    
+@app.route('/dashboard/reservas/registrar_ingreso', methods=['POST'])
+def registrar_ingreso():
+    id_reserva = request.form.get('reserva_id')
+    
+    try:
+        url_api = f'http://localhost:5000/api/reservas/{id_reserva}/escanear'
+        response = requests.patch(url_api, timeout=5)
+        
+        if response.status_code == 200:
+            flash("Ingreso registrado con éxito.")
+        else:
+            flash("Error al registrar el ingreso: " + response.json().get('message', 'Error desconocido'))
+            
+    except requests.exceptions.RequestException:
+        flash("Error de conexión con el servidor.")
+        
+    return redirect(url_for('dashboard_reservas'))
 
 
 @app.route('/dashboard/servicios/crear', methods=['POST'])
