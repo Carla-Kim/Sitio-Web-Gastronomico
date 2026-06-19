@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancelar Reserva - Basheros{% endblock %}
+
+{% block content %}
+<section class="seccion-reserva">
+    <div class="contenedor-reserva">
+        <h2>Cancelar reserva</h2>
+
+        {% if exito %}
+            <div class="mensaje-exito">
+                <p>Tu reserva <strong>#{{ reserva_id }}</strong> ha sido cancelada correctamente.</p>
+                <p>Gracias. Si necesitás hacer otra reserva, volvé a nuestra página principal.</p>
+            </div>
+        {% else %}
+            <p>Estás a punto de cancelar la reserva <strong>#{{ reserva_id }}</strong>.</p>
+            <p>Si estás seguro, hacé clic en el botón de abajo.</p>
+
+            {% if error %}
+                <div class="mensaje-error">
+                    <p>{{ error }}</p>
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                <button type="submit" class="boton-reserva">Cancelar reserva</button>
+            </form>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

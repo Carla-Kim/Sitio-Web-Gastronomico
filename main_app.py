@@ -32,6 +32,7 @@ backend.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_APP_PASSWORD')
 backend.config['MAIL_USE_TLS'] = True
 backend.config['MAIL_USE_SSL'] = False
 backend.config['MAIL_DEFAULT_TO_SET'] = os.environ.get('EMAIL_USER')
+backend.config['FRONTEND_URL'] = os.environ.get('FRONTEND_URL', 'http://localhost:5000')
 
 mail = Mail(backend)
 

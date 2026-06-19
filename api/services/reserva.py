@@ -1,6 +1,5 @@
 import re
 import logging
-from flask_mailman import EmailMessage
 from flask import current_app
 from api.database.reserva import *
 from api.utils.pagination import build_links
@@ -53,29 +52,27 @@ def crear_reserva(data):
         
         try:
             usuario_datos = {
-                "nombre": f"{nombre} {apellido}",
-                "email": email
+                "nombre": nombre,
+                "apellido": apellido,
+                "email": email,
+                "dni": dni
             }
             reserva_datos = {
+                "id": resultado,
                 "fecha": fecha,
                 "cantidad_personas": cantidad_personas,
                 "telefono": telefono
             }
 
-            enviar_confirmacion_reserva(usuario=usuario_datos, reserva=reserva_datos)
-            qr_generado = generar_qr_reserva(reserva_id=resultado)
-            app_activa = current_app._get_current_object()
-            
-            msg_qr = EmailMessage(
-                subject='Tu código de acceso - Sitio Gastronómico',
-                body=f"¡Hola {nombre}! Adjuntamos el código QR correspondiente a tu reserva N° {resultado} para presentar en la entrada.",
-                from_email=app_activa.config['MAIL_USERNAME'],
-                to=[email]
+            qr_reserva = generar_qr_reserva(reserva_id=resultado)
+            frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5000')
+            cancel_link = f"{frontend_url}/cancelar-reserva/{resultado}"
+            enviar_confirmacion_reserva(
+                usuario=usuario_datos,
+                reserva=reserva_datos,
+                qr_reserva=qr_reserva,
+                cancel_link=cancel_link
             )
-            msg_qr.attach(f"reserva_{resultado}.png", qr_generado.getvalue(), "image/png")
-            msg_qr.send()
-            
-            logger.info(f"Mail independiente con QR enviado con éxito a {email}")
             
         except Exception as email_error:
             logger.error(f"La reserva se creó pero falló el envío del mail: {email_error}")
