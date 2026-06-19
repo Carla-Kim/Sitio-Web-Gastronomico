@@ -117,3 +117,27 @@ def ingresar_producto(categoria_id, nombre,descripcion ,precio, imagen_url):
     finally:
         cursor.close()
         conn.close()
+
+def seleccionar_unico_producto(id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT * FROM Productos WHERE producto_id = %s"
+        cursor.execute(query, [id])
+        producto = cursor.fetchone()
+        return producto
+    finally:
+        cursor.close()
+        conn.close()
+
+def seleccionar_productos_por_categoria(categoria_id):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = "SELECT * FROM Productos WHERE categorias_id = %s"
+        cursor.execute(query, [categoria_id])
+        productos = cursor.fetchall() 
+        return productos
+    finally:
+        cursor.close()
+        conn.close()
