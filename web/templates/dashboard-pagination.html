@@ -1,15 +1,16 @@
 {% macro render_pagination(endpoint, pagina_actual, total_paginas, limit, offset) %}
 <div class="pagination">
+    {% set params = request.args.to_dict() %}
     {# Botón Anterior #}
     {% if pagina_actual > 1 %}
-        <a href="{{ url_for(endpoint, limit=limit, offset=offset - limit) }}" class="btn btn-page">Previous</a>
+        <a href="{{ url_for(endpoint, **dict(params, limit=limit, offset=offset - limit)) }}" class="btn btn-page">Previous</a>
     {% else %}
         <button class="btn btn-page" disabled>Previous</button>
     {% endif %}
 
     {# Primer página si estamos lejos #}
     {% if pagina_actual > 3 %}
-        <a href="{{ url_for(endpoint, limit=limit, offset=0) }}" class="btn btn-page">1</a>
+        <a href="{{ url_for(endpoint, **dict(params, limit=limit, offset=0)) }}" class="btn btn-page">1</a>
         {% if pagina_actual > 4 %}
             <span class="page-dots">...</span>
         {% endif %}
@@ -22,7 +23,7 @@
             {% if num == pagina_actual %}
                 <button class="btn btn-page active">{{ num }}</button>
             {% else %}
-                <a href="{{ url_for(endpoint, limit=limit, offset=numero_offset) }}" class="btn btn-page">{{ num }}</a>
+                <a href="{{ url_for(endpoint, **dict(params, limit=limit, offset=numero_offset)) }}" class="btn btn-page">{{ num }}</a>
             {% endif %}
         {% endif %}
     {% endfor %}
@@ -33,12 +34,12 @@
             <span class="page-dots">...</span>
         {% endif %}
         {% set ultimo_offset = (total_paginas - 1) * limit %}
-        <a href="{{ url_for(endpoint, limit=limit, offset=ultimo_offset) }}" class="btn btn-page">{{ total_paginas }}</a>
+        <a href="{{ url_for(endpoint, **dict(params, limit=limit, offset=ultimo_offset)) }}" class="btn btn-page">{{ total_paginas }}</a>
     {% endif %}
 
     {# Botón Siguiente #}
     {% if pagina_actual < total_paginas %}
-        <a href="{{ url_for(endpoint, limit=limit, offset=offset + limit) }}" class="btn btn-page">Next</a>
+        <a href="{{ url_for(endpoint, **dict(params, limit=limit, offset=offset + limit)) }}" class="btn btn-page">Next</a>
     {% else %}
         <button class="btn btn-page" disabled>Next</button>
     {% endif %}

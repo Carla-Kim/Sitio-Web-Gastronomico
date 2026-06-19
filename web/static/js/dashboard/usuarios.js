@@ -1,4 +1,4 @@
-import { createTableFilter } from "./core.js";
+import { createModal } from "./core.js";
 
 const rows = document.querySelectorAll(".usuario-fila");
 const form = document.querySelector(".form-filter");
@@ -9,37 +9,10 @@ const inputs = {
     rol: form.querySelector("#filter-usuario-rol")
 };
 
-createTableFilter({
-    inputs,
-    rows,
-
-    getRowData: (row) => ({
-        nombre: row.querySelector(".usuario-nombre").textContent.toLowerCase(),
-        apellido: row.querySelector(".usuario-apellido").textContent.toLowerCase(),
-        email: row.querySelector(".usuario-email").textContent.toLowerCase(),
-        rol: row.dataset.rol
-    }),
-
-    matchRow: (data) => {
-        const nombre_apellido = inputs.nombre_apellido.value.toLowerCase().trim();
-        const email = inputs.email.value.toLowerCase().trim();
-        const rol = inputs.rol.value;
-
-        return (
-            (!nombre_apellido || data.nombre.includes(nombre_apellido) || data.apellido.includes(nombre_apellido)) &&
-            (!email || data.email.includes(email)) &&
-            (!rol || rol === data.rol)
-        );
-    }
-});
-
-
-import { createModal } from "./core.js";
 
 const addUserModal = createModal("modal-add-user");
 const editUserParcialModal = createModal("modal-edit-user-parcial");
 const editUserCompletoModal = createModal("modal-edit-user-completo");
-// const viewCredentialsModal = createModal("modal-view-credentials");
 
 document
     .getElementById("btn-open-add-user")

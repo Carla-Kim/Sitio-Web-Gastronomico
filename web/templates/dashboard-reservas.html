@@ -42,7 +42,7 @@ Reservas | Dashboard
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-reserva-id">ID de la reserva</label>
-                    <input type="text" id="filter-reserva-id" name="id" placeholder="ID de la reserva">
+                    <input type="text" id="filter-reserva-id" name="id" placeholder="ID de la reserva" value="{{ request.args.get('id', '') }}">
                 </div>
             </div>
 
@@ -50,15 +50,23 @@ Reservas | Dashboard
                 <div class="form-group">
                     <label for="filter-estado">Estado</label>
                     <select id="filter-estado" name="estado">
-                        <option value="">Todos</option>
-                        <option value="finalizada">Finalizada</option>
-                        <option value="cancelada">Cancelada</option>
-                        <option value="reservada">Reservada</option>
+                        <option value="" {% if not request.args.get('estado') %}selected{% endif %}>
+                            Todos
+                        </option>
+                        <option value="finalizada" {% if request.args.get('estado') == 'finalizada' %}selected{% endif %}>
+                            Finalizada
+                        </option>
+                        <option value="cancelada" {% if request.args.get('estado') == 'cancelada' %}selected{% endif %}>
+                            Cancelada
+                        </option>
+                        <option value="reservada" {% if request.args.get('estado') == 'reservada' %}selected{% endif %}>
+                            Reservada
+                        </option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-fecha">Fecha</label>
-                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha">
+                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha" value="{{ request.args.get('fecha', '') }}">
                 </div>
             </div>
 

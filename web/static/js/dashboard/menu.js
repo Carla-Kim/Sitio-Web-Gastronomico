@@ -1,4 +1,4 @@
-import { createTableFilter, createModal } from "./core.js";
+import { createModal } from "./core.js";
 
 const rows = document.querySelectorAll(".producto-fila");
 const form = document.querySelector(".form-filter");
@@ -11,32 +11,6 @@ const addCategoryModal = createModal("modal-add-category");
 const editCategoryModal = createModal("modal-edit-category");
 const editProductModal = createModal("modal-edit-product");
 
-createTableFilter({
-    inputs: {
-        nombre: document.querySelector("#filter-nombre"),
-        min: document.querySelector("#filter-min"), 
-        max: document.querySelector("#filter-max"), 
-        categoria: document.querySelector("#filter-categoria")
-    },
-    rows,
-    getRowData: (row) => ({
-        nombre: row.querySelector(".producto-nombre").textContent.toLowerCase(),
-        precio: parseFloat(row.querySelector(".producto-precio").textContent.replace("$", "")),
-        categoria: row.dataset.categoria
-    }),
-    matchRow: (data) => {
-        const nombre = document.querySelector("#filter-nombre").value.toLowerCase().trim();
-        const min = parseFloat(document.querySelector("#filter-min").value) || 0;
-        const max = parseFloat(document.querySelector("#filter-max").value) || Infinity;
-        const categoria = document.querySelector("#filter-categoria").value;
-
-        return (
-            (!nombre || data.nombre.includes(nombre)) &&
-            (data.precio >= min && data.precio <= max) &&
-            (categoria === "all" || categoria === data.categoria)
-        );
-    }
-});
 
 document.getElementById("btn-open-add-product").addEventListener("click", () => addProductModal.open());
 document.getElementById("btn-open-view-categories").addEventListener("click", () => viewCategoriesModal.open());
@@ -55,7 +29,7 @@ document.querySelectorAll(".btn-open-edit-product").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
         const data = row.dataset;
-        document.querySelector("#edit-product-id").value = data.id;
+        document.querySelector("#edit-product-id").value = data.producto_id;
         document.querySelector("#edit-product-name").value = data.nombre;
         document.querySelector("#edit-product-price").value = data.precio;
         document.querySelector("#edit-product-description").value = data.descripcion;
