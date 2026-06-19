@@ -37,53 +37,59 @@ Reseñas | Dashboard
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-resena-id">ID</label>
-                    <input type="text" id="filter-resena-id" name="resena-id" placeholder="ID de la resena">
+                    <input type="text" id="filter-resena-id" name="resena-id" placeholder="ID de la resena" value="{{ request.args.get('resena-id', '') }}">
                 </div>
                 <div class="form-group">
                     <label for="filter-resena-reserva-id">ID de la Reserva</label>
                     <input type="text" id="filter-resena-reserva-id" name="resena-reserva-id" placeholder="ID de la reserva">
+                </div>
+                <div class="form-group">
+                    <label for="filter-estado">Estado</label>
+                    <select id="filter-estado" name="estado">
+                        <option value="">Todos</option>
+                        <option value="habilitada" {% if request.args.get('estado') == 'habilitada' %}selected{% endif %}>Habilitada</option>
+
+                        <option value="deshabilitada" {% if request.args.get('estado') == 'deshabilitada' %}selected{% endif %}>Deshabilitada</option>
+                    </select>
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-fecha">Fecha</label>
-                    <input type="date" id="filter-fecha" name="fecha" placeholder="Fecha">
+                    <input type="date" id="filter-fecha-desde" name="fecha_desde" value="{{ request.args.get('fecha_desde', '') }}">
                 </div>
-            </div>
-
-            <div class="filter-row">
                 <div class="form-group">
                     <label for="filter-resena-ambiente">Ambiente</label>
-                    <select name="ambiente" id="filter-ambiente">
+                    <select name="puntaje_ambiente" id="filter-ambiente">
                         <option value="">Todos</option>
-                        <option value="1">1 Estrella</option>
-                        <option value="2">2 Estrellas</option>
-                        <option value="3">3 Estrellas</option>
-                        <option value="4">4 Estrellas</option>
-                        <option value="5">5 Estrellas</option>
+                        <option value="1" {% if request.args.get('puntaje_ambiente') == '1' %}selected{% endif %}>1 Estrella</option>
+                        <option value="2" {% if request.args.get('puntaje_ambiente') == '2' %}selected{% endif %}>2 Estrellas</option>
+                        <option value="3" {% if request.args.get('puntaje_ambiente') == '3' %}selected{% endif %}>3 Estrellas</option>
+                        <option value="4" {% if request.args.get('puntaje_ambiente') == '4' %}selected{% endif %}>4 Estrellas</option>
+                        <option value="5" {% if request.args.get('puntaje_ambiente') == '5' %}selected{% endif %}>5 Estrellas</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-resena-servicio">Servicio</label>
-                    <select name="servicio" id="filter-servicio"> 
+                    <select name="puntaje_servicio" id="filter-servicio"> 
                         <option value="">Todos</option>
-                        <option value="1">1 Estrella</option>
-                        <option value="2">2 Estrellas</option>
-                        <option value="3">3 Estrellas</option>
-                        <option value="4">4 Estrellas</option>
-                        <option value="5">5 Estrellas</option>
+                        <option value="1" {% if request.args.get('puntaje_servicio') == '1' %}selected{% endif %}>1 Estrella</option>
+                        <option value="2" {% if request.args.get('puntaje_servicio') == '2' %}selected{% endif %}>2 Estrellas</option>
+                        <option value="3" {% if request.args.get('puntaje_servicio') == '3' %}selected{% endif %}>3 Estrellas</option>
+                        <option value="4" {% if request.args.get('puntaje_servicio') == '4' %}selected{% endif %}>4 Estrellas</option>
+                        <option value="5" {% if request.args.get('puntaje_servicio') == '5' %}selected{% endif %}>5 Estrellas</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="filter-resena-comida">Comida</label>
-                    <select name="comida" id="filter-comida">
+                    <select name="puntaje_comida" id="filter-comida">
                         <option value="">Todos</option>
-                        <option value="1">1 Estrella</option>
-                        <option value="2">2 Estrellas</option>
-                        <option value="3">3 Estrellas</option>
-                        <option value="4">4 Estrellas</option>
-                        <option value="5">5 Estrellas</option>
+                        <option value="1" {% if request.args.get('puntaje_comida') == '1' %}selected{% endif %}>1 Estrella</option>
+                        <option value="2" {% if request.args.get('puntaje_comida') == '2' %}selected{% endif %}>2 Estrellas</option>
+                        <option value="3" {% if request.args.get('puntaje_comida') == '3' %}selected{% endif %}>3 Estrellas</option>
+                        <option value="4" {% if request.args.get('puntaje_comida') == '4' %}selected{% endif %}>4 Estrellas</option>
+                        <option value="5" {% if request.args.get('puntaje_comida') == '5' %}selected{% endif %}>5 Estrellas</option>
                     </select>
                 </div>
             </div>

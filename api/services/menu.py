@@ -123,3 +123,41 @@ def obtener_producto(nombre):
         return {"producto": producto}, 200
     except Exception:
         return ReturnErrors(500), 500
+
+def obtener_producto_por_id(id):
+    try:
+        producto = menu_db.seleccionar_unico_producto(id)
+        if not producto:
+            return 'producto_no_encontrado'
+            
+        producto_mapeado = {
+            "id": producto["producto_id"],
+            "categoria": producto["categorias_id"],
+            "nombre": producto["nombre"],
+            "descripcion": producto["descripcion"],
+            "precio": producto["precio"],
+            "imagen_url": producto["imagen_url"]
+        }
+        return 'exito', producto_mapeado
+        
+    except Exception:
+        return 'error_db'
+
+def obtener_productos_por_categoria(categoria_id):
+    try:
+        productos = menu_db.seleccionar_productos_por_categoria(categoria_id)
+        if not productos:
+            return 'no_encontrado'
+
+        productos_mapeados = [{
+            "id": d["producto_id"],
+            "categoria": d["categorias_id"],
+            "nombre": d["nombre"],
+            "descripcion": d["descripcion"],
+            "precio": d["precio"],
+            "imagen_url": d["imagen_url"]
+        } for d in productos]
+        
+        return 'exito', productos_mapeados
+    except Exception:
+        return 'error_db'

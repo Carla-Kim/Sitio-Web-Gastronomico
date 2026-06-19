@@ -43,3 +43,31 @@ def ingresar_producto():
     resultado, code = menu_service.ingresar_producto(data, imagen)
     
     return jsonify(resultado), code
+
+@menu_bp.route('/productos/<int:id>', methods=['GET'])
+def buscar_producto(id):
+    result = menu_service.obtener_producto_por_id(id)
+    
+    if result == 'producto_no_encontrado':
+        return jsonify(ReturnErrors(404)), 404
+        
+    elif isinstance(result, tuple) and result[0] == 'exito':
+        producto_dict = result[1]
+        return jsonify(producto_dict), 200
+        
+    else:
+        return jsonify(ReturnErrors(500)), 500
+
+@menu_bp.route('/productos/categoria/<int:categoria_id>', methods=['GET'])
+def buscar_productos_por_categoria(categoria_id):
+    result = menu_service.obtener_productos_por_categoria(categoria_id)
+    
+    if result == 'no_encontrado':
+        return jsonify({"message": "No se encontraron productos para esta categoría", "data": []}), 200
+        
+    elif isinstance(result, tuple) and result[0] == 'exito':
+        productos_lista = result[1]
+        return jsonify(productos_lista), 200
+        
+    else:
+        return jsonify(ReturnErrors(500)), 500

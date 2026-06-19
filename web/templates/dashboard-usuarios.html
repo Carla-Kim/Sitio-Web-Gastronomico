@@ -40,10 +40,6 @@ Usuarios | Dashboard
 
             <div class="filter-row">
                 <div class="form-group">
-                    <label for="filter-nombre-apellido">Nombre o apellido</label>
-                    <input type="text" name="nombre" id="filter-nombre-apellido" placeholder="Nombre o apellido">
-                </div>
-                <div class="form-group">
                     <label for="filter-usuario-id">ID de usuario</label>
                     <input type="number" name="id" id="filter-usuario-id" placeholder="ID de usuario">
                 </div>
@@ -57,9 +53,15 @@ Usuarios | Dashboard
                 <div class="form-group">
                     <label for="filter-usuario-rol">Rol</label>
                     <select name="rol" id="filter-usuario-rol">
-                        <option value="">Todos los roles</option>
-                        <option value="admin">Administrador</option>
-                        <option value="cliente">Usuario</option>
+                        <option value="" {% if not request.args.get('rol') %}selected{% endif %}>
+                            Todos
+                        </option>
+                        <option value="admin" {% if request.args.get('rol') == 'admin' %}selected{% endif %}>
+                            Administrador
+                        </option>
+                        <option value="cliente" {% if request.args.get('rol') == 'cliente' %}selected{% endif %}>
+                            Usuario
+                        </option>
                     </select>
                 </div>
             </div>

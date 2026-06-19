@@ -3,7 +3,6 @@ import sys
 import requests
 from functools import wraps
 from api.app import app as api_app
-from api.utils.pagination import build_links
 from flask import (
     Flask,
     render_template,
@@ -134,26 +133,6 @@ def reservas():
 
 
     return render_template('reservas.html', servicios=servicios)
-
-@app.route('/cancelar-reserva/<int:id>', methods=['GET', 'POST'])
-def cancelar_reserva_publica(id):
-    error = None
-    exito = False
-
-    if request.method == 'POST':
-        try:
-            url_api = f'{API_URL}/reservas/{id}/cancelar'
-            response = requests.patch(url_api, timeout=5)
-            if response.status_code == 200:
-                exito = True
-            else:
-                payload = response.json()
-                error = payload.get('errors', [{}])[0].get('message', 'Error al cancelar la reserva')
-        except Exception as e:
-            print(f"Error cancelando reserva desde la web: {e}")
-            error = 'No se pudo conectar con el servicio de reservas.'
-
-    return render_template('cancelar-reserva.html', reserva_id=id, error=error, exito=exito)
 
 @app.route('/menu', endpoint='menu')
 def mostrar_menu():
@@ -289,23 +268,6 @@ def resena_enviada():
         return redirect(url_for('index'))
     
     return render_template('resena-enviada.html', reserva_id=reserva_id)
-
-
-
-@app.route('/reservas/<int:id>/escanear', methods=['GET'])
-@login_requerido
-def escaneo(id):
-  
-    url_api = f"http://app:5000/api/reservas/{id}/escanear"
-    
-    try:
-        respuesta_api = requests.get(url_api)
-        status_code = respuesta_api.status_code 
-        
-    except requests.exceptions.RequestException:
-        status_code = 500
-
-    return render_template('resultado_escaneo.html', status=status_code, id=id)
 
 @app.route('/dashboard')
 @login_requerido
@@ -483,7 +445,7 @@ def dashboard_reservas():
     except requests.exceptions.RequestException as e:
         print(f"Error crítico: {e}")
         return render_template('error-conexion.html'), 500
-    
+
 @app.route('/dashboard/reservas/registrar_ingreso', methods=['POST'])
 def registrar_ingreso():
     id_reserva = request.form.get('reserva_id')
@@ -644,6 +606,7 @@ def dashboard_resenas():
             _limit, _offset = 10, 0
 
         try:
+            params = {'_limit': _limit, '_offset': _offset}
             if id_buscado:
                 url_api = f'http://localhost:5000/api/resenas/{id_buscado}'
                 response = requests.get(url_api, timeout=5)
@@ -657,7 +620,11 @@ def dashboard_resenas():
                 lista_resenas = [response.json()]
 
             else:
-                params = {'_limit': _limit, '_offset': _offset}
+                filtros = ['estado', 'fecha_desde', 'fecha_hasta', 'puntaje_ambiente', 'puntaje_servicio', 'puntaje_comida']
+                for f in filtros:
+                    valor = request.args.get(f)
+                    if valor:
+                        params[f] = valor
                 url_api = f'http://localhost:5000/api/resenas'
                 response = requests.get(url_api, params=params, timeout=5)
                 response.raise_for_status()
@@ -718,6 +685,7 @@ def dashboard_menu():
     else:
         nombre_buscado = request.args.get('nombre_buscado')
         id_buscado = request.args.get('id')
+        categoria_id = request.args.get('categoria_id')
 
         try:
             _limit = int(request.args.get('limit', 10))
@@ -732,20 +700,21 @@ def dashboard_menu():
             lista_categorias = response_categorias.json().get('data', [])
 
             params = {'limit': _limit, 'offset': _offset}
-            if nombre_buscado:
-                params['nombre'] = nombre_buscado
-                url_productos = 'http://localhost:5000/api/productos/obtener'
+            if id_buscado:
+                url_productos = f'http://localhost:5000/api/productos/{id_buscado}'
+                response_productos = requests.get(url_productos, timeout=5)
+                response_productos.raise_for_status()
+                data = response_productos.json()
+                lista_productos = [data]
+            elif categoria_id:
+                url_productos = f'http://localhost:5000/api/productos/categoria/{categoria_id}'
                 response_productos = requests.get(url_productos, params=params, timeout=5)
                 response_productos.raise_for_status()
                 data = response_productos.json()
-                lista_productos = data.get('productos', [])
-            elif id_buscado:
-                params['id'] = id_buscado # ARREGLARLO
-                url_productos = 'http://localhost:5000/api/productos'
-                response_productos = requests.get(url_productos, params=params, timeout=5)
-                response_productos.raise_for_status()
-                data = response_productos.json()
-                lista_productos = data.get('productos', [])
+                if isinstance(data, list):
+                    lista_productos = data
+                else:
+                    lista_productos = data.get('productos', [])
             else:
                 url_productos = 'http://localhost:5000/api/productos'
                 response_productos = requests.get(url_productos, params=params, timeout=5)

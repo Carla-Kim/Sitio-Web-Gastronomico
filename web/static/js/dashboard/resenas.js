@@ -1,4 +1,4 @@
-import { createModal, createTableFilter } from "./core.js";
+import { createModal } from "./core.js";
 
 const viewReviewModal = createModal("modal-view-review");
 const ocultarReviewModal = createModal("modal-ocultar-review");
@@ -50,26 +50,3 @@ document
         ocultarReviewModal.close();
     });
 
-createTableFilter({
-    inputs: {
-        ambiente: document.getElementById("filter-ambiente"),
-        servicio: document.getElementById("filter-servicio"),
-        comida: document.getElementById("filter-comida")
-    },
-    rows: document.querySelectorAll(".resena-fila"),
-    getRowData: (row) => ({
-        ambiente: row.dataset.ambiente,
-        servicio: row.dataset.servicio,
-        comida: row.dataset.comida
-    }),
-    matchRow: (data) => {
-        const fAmb = document.getElementById("filter-ambiente").value;
-        const fServ = document.getElementById("filter-servicio").value;
-        const fCom = document.getElementById("filter-comida").value;
-
-        if (fAmb && data.ambiente !== fAmb) return false;
-        if (fServ && data.servicio !== fServ) return false;
-        if (fCom && data.comida !== fCom) return false;
-        return true;
-    }
-});
