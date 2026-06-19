@@ -42,6 +42,7 @@ document.querySelectorAll(".btn-open-view-reservation").forEach(btn => {
         document.querySelector("#modal-reserva-servicios").textContent = data.servicios;
         document.querySelector("#modal-reserva-cantidad").textContent = data.cantidad;
         document.querySelector("#modal-reserva-estado").textContent = data.estado;
+        document.querySelector("#modal-reserva-comentarios").textContent = data.comentario;
 
         document.querySelector("#hidden-id-reserva").value = data.id;
         document.querySelector("#hidden-id-reserva-ingreso").value = data.id;

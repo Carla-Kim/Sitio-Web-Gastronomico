@@ -1,33 +1,66 @@
 const menu_chart = document.getElementById("menu-chart");
 const reseñas_chart = document.getElementById("reseñas-chart");
-const reservas_chart = document.getElementById("reservas-chart");
-const usuarios_chart = document.getElementById("usuarios-chart");
+const reservas_por_mes_chart = document.getElementById("reservas-por-mes-chart");
+const reservas_por_estado_chart = document.getElementById("reservas-por-estado-chart");
 
 const dashboard = JSON.parse(
     document.getElementById("dashboard-data").textContent
 );
-const menu = dashboard.menu
-const reservas = dashboard.reservas
-const reseñas = dashboard.reseñas
-const usuarios = dashboard.usuarios
+const menu = dashboard.productos_por_categoria
+const reservas_por_mes = dashboard.reservas_por_mes
+const reservas_por_estado = dashboard.reservas_por_estado
+const reseñas = dashboard.promedio_resenas
 
 new Chart(
     menu_chart,
     {
-        type: "polarArea",
+        type: "bar",
 
         data: {
             labels: menu.categorias,
 
-            datasets: [{
-                label: "Menús",
-                data: menu.cantidades
-            }]
+            datasets: [
+                {
+                    label: "Cantidad",
+                    data: menu.cantidades,
+                    yAxisID: "y"
+                },
+
+                {
+                    label: "Precio Promedio",
+                    data: menu.precios_promedio,
+                    yAxisID: "y1"
+                }
+            ]
         },
 
         options: {
             responsive: true,
             maintainAspectRatio: false,
+
+            scales: {
+                y: {
+                    position: "left",
+
+                    title: {
+                        display: true,
+                        text: "Cantidad"
+                    }
+                },
+
+                y1: {
+                    position: "right",
+
+                    title: {
+                        display: true,
+                        text: "Precio promedio"
+                    },
+
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            },
 
             plugins: {
                 title: {
@@ -42,14 +75,25 @@ new Chart(
 new Chart(
     reseñas_chart,
     {
-        type: "bar",
+        type: "radar",
 
         data: {
-            labels: reseñas.aspectos,
+            labels: [
+                "Ambiente",
+                "Servicio",
+                "Comida",
+                "General"
+            ],
 
             datasets: [{
-                label: "Reseñas",
-                data: reseñas.promedios
+                label: "Promedio",
+
+                data: [
+                    reseñas.ambiente,
+                    reseñas.servicio,
+                    reseñas.comida,
+                    reseñas.general
+                ]
             }]
         },
 
@@ -57,10 +101,21 @@ new Chart(
             responsive: true,
             maintainAspectRatio: false,
 
+            scales: {
+                r: {
+                    min: 0,
+                    max: 5,
+
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+
             plugins: {
                 title: {
                     display: true,
-                    text: "Promedio de Reseñas"
+                    text: "Promedio de reseñas"
                 }
             }
         }
@@ -68,16 +123,16 @@ new Chart(
 );
 
 new Chart(
-    reservas_chart,
+    reservas_por_mes_chart,
     {
         type: "line",
 
         data: {
-            labels: reservas.meses,
+            labels: reservas_por_mes.meses,
 
             datasets: [{
                 label: "Reservas",
-                data: reservas.cantidades
+                data: reservas_por_mes.cantidades
             }]
         },
 
@@ -96,16 +151,16 @@ new Chart(
 );
 
 new Chart(
-    usuarios_chart,
+    reservas_por_estado_chart,
     {
         type: "bar",
 
         data: {
-            labels: usuarios.roles,
+            labels: reservas_por_estado.estados,
 
             datasets: [{
-                label: "Usuarios",
-                data: usuarios.cantidades
+                label: "Reservas",
+                data: reservas_por_estado.cantidades
             }]
         },
 
@@ -113,12 +168,10 @@ new Chart(
             responsive: true,
             maintainAspectRatio: false,
 
-            indexAxis: "y",
-
             plugins: {
                 title: {
                     display: true,
-                    text: "Usuarios por rol"
+                    text: "Reservas por estado"
                 }
             }
         }

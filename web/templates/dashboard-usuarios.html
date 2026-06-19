@@ -149,9 +149,9 @@ Usuarios | Dashboard
                             <button class="btn btn-primary btn-small btn-open-edit-user-role">
                                 Editar credenciales
                             </button>
-                            <button class="btn btn-primary btn-small btn-view-credentials" data-email="{{ usuario.email }}">
+                            <!-- <button class="btn btn-primary btn-small btn-view-credentials" data-email="{{ usuario.email }}">
                                 Ver Credenciales
-                            </button>
+                            </button> -->
                         </td>
                         <td>
                             <button class="btn btn-secondary btn-small btn-open-edit-completo">
@@ -236,13 +236,13 @@ Usuarios | Dashboard
                     <label for="edit-user-email">Nuevo email</label>
                     <div class="password-container">
                         <input type="email" id="edit-user-email" name="email" placeholder="Dejar vacío para no cambiar">
-                        <button type="button" id="toggle-pass-btn">Mostrar</button>
                     </div>
-
+                    
                 </div>
                 <div class="form-group">
                     <label for="edit-user-password">Nueva Contraseña</label>
                     <input type="password" id="edit-user-password" name="password" placeholder="Dejar vacío para no cambiar">
+                    <button type="button" id="toggle-pass-btn">Mostrar</button>
                 </div>
                 <div class="modal-actions">
                   <button type="submit" class="btn btn-primary btn-small btn-update-user-role">

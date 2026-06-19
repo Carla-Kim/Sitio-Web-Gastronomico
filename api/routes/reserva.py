@@ -1,13 +1,16 @@
 from flask import Blueprint, request, jsonify
 from api.services import reserva as reservas_service
 from api.utils.errors import ReturnErrors
+from api.utils.formato_fecha import formato_fecha
 
 reservas_bp = Blueprint('reservas', __name__)
 
 @reservas_bp.route('/reservas', methods=['POST'])
 def agregar_reserva():
     data = request.get_json()
+    print("recibo: ", data)
     result = reservas_service.crear_reserva(data)
+    print("RESULTADO: ", result)
     
     if isinstance(result, tuple) and result[0] == 'exito':
         reserva_id=result[1]
@@ -68,6 +71,11 @@ def listar_reservas():
 
     try:
         results = reservas_service.obtener_reservas(base_url, query_args, limit, offset)
+
+        lista_reservas = results.get('data', [])
+        if isinstance(lista_reservas, list):
+            formato_fecha(lista_reservas)
+
         return jsonify(results), 200
     except ValueError as val_err:
         if str(val_err) == "NOT_FOUND":
@@ -83,10 +91,15 @@ def buscar_reserva(id):
     
     if result == 'reserva_no_encontrada':
         return jsonify(ReturnErrors(404)), 404
-    elif result == 'error_db':
-        return jsonify(ReturnErrors(500)), 500
+    
+    elif isinstance(result, tuple) and result[0] == 'exito':
+        reserva_dict = result[1]
+        if isinstance(reserva_dict, dict):
+            formato_fecha([reserva_dict])
+        return jsonify(reserva_dict), 200
     else:
-        return jsonify(result), 200
+        return jsonify(ReturnErrors(500)), 500
+    
     
 @reservas_bp.route('/reservas/estado/<string:estado>', methods=['GET'])
 def listar_reservas_por_estado(estado):
@@ -104,10 +117,15 @@ def listar_reservas_por_estado(estado):
         return jsonify(ReturnErrors(400)), 400
     elif result == 'no_encontrado':
         return jsonify(ReturnErrors(404)), 404
-    elif result == 'error_db':
-        return jsonify(ReturnErrors(500)), 500
+    elif isinstance(result, tuple) and result[0] == 'exito':
+        response_body = result[1]
+        lista_reservas = response_body.get('data', [])
+        if isinstance(lista_reservas, list):
+            formato_fecha(lista_reservas)
+        return jsonify(response_body), 200
     else:
-        return jsonify(result), 200
+        return jsonify(ReturnErrors(500)), 500
+    
     
 @reservas_bp.route('/reservas/fecha/<string:fecha>', methods=['GET'])
 def listar_reservas_por_fecha(fecha):
@@ -126,12 +144,17 @@ def listar_reservas_por_fecha(fecha):
         return jsonify(ReturnErrors(400)), 400
     elif result == 'no_encontrado':
         return jsonify(ReturnErrors(404)), 404
-    elif result == 'error_db':
-        return jsonify(ReturnErrors(500)), 500
+    elif isinstance(result, tuple) and result[0] == 'exito':
+        response_body = result[1]
+        lista_reservas = response_body.get('data', [])
+        if isinstance(lista_reservas, list):
+            formato_fecha(lista_reservas)
+        return jsonify(response_body), 200
     else:
-        return jsonify(result), 200
+        return jsonify(ReturnErrors(500)), 500
     
-@reservas_bp.route('/reservas/<int:id>/cancelar', methods=['PATCH'])
+    
+@reservas_bp.route('/reservas/<int:id>/cancelar', methods=['GET'])
 def cancelar_reserva_endpoint(id):
     result = reservas_service.cancelar_reserva(id)
 
@@ -149,7 +172,8 @@ def cancelar_reserva_endpoint(id):
         status, response_body = result
         return jsonify(response_body), 200
 
-@reservas_bp.route('/reservas/<int:id>/escanear', methods=['PATCH'])
+@reservas_bp.route('/reservas/<int:id>/escanear', methods=['GET'])
+#@login_requerido
 def escanear_reserva_endpoint(id):
     result = reservas_service.escanear_y_finalizar_reserva(id)
     

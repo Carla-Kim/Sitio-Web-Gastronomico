@@ -4,6 +4,7 @@ const viewReviewModal = createModal("modal-view-review");
 const ocultarReviewModal = createModal("modal-ocultar-review");
 
 let currentReviewId = null;
+let currentStatusId = null;
 
 document.querySelectorAll(".btn-open-view-review").forEach(btn => {
     btn.addEventListener("click", (event) => {
@@ -11,10 +12,16 @@ document.querySelectorAll(".btn-open-view-review").forEach(btn => {
         const data = row.dataset;
 
         currentReviewId = data.resenaId;
+        currentStatusId = data.estado;
 
         const inputHidden = document.querySelector("#input-ocultar-id-resena");
         if (inputHidden) {
             inputHidden.value = currentReviewId;
+        }
+
+        const inputEstado = document.querySelector("#input-estado");
+        if (inputEstado) {
+            inputEstado.value = currentStatusId;
         }
 
         document.querySelector("#modal-resena-id").textContent = data.resenaId;
@@ -25,7 +32,7 @@ document.querySelectorAll(".btn-open-view-review").forEach(btn => {
         document.querySelector("#modal-resena-servicio").textContent = data.servicio;
         document.querySelector("#modal-resena-comida").textContent = data.comida;
         document.querySelector("#modal-resena-comentario").textContent = data.comentario;
-        document.querySelector("#modal-resena-fecha").textContent = data.fecha;
+        document.querySelector("#modal-resena-estado").textContent = data.estado;
 
         viewReviewModal.open();
     });

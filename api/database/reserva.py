@@ -4,7 +4,7 @@ from .connection import get_connection
 
 import math
 
-def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado):
+def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado):
     mesas_necesarias = math.ceil(cantidad_personas / 2)
     DURACION_RESERVA_HORAS = 2
 
@@ -49,12 +49,12 @@ def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_perso
             return 'sin_capacidad_mesas'
 
         insert_query = """
-            INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, estado) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Reservas (fecha, email, nombre, apellido, DNI, telefono, cantidad_personas, comentario, estado) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
             insert_query, 
-            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, estado)
+            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado)
         )
         conn.commit()
         return cursor.lastrowid

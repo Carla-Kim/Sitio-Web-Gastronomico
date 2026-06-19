@@ -1,5 +1,9 @@
 import qrcode
 import io
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _generar_qr_por_url(url):

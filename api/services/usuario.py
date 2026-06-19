@@ -158,9 +158,9 @@ def verificar_usuario(body):
         if field not in body:
             raise ValueError("BAD_REQUEST")
     
-    usuario_id = us.seleccionar_usuario_id_desde_login(body)
+    usuario = us.seleccionar_usuario_desde_login(body)
 
-    if usuario_id is None:
+    if usuario is None:
         return ValueError("UNAUTHORIZED")
 
-    return usuario_id
+    return usuario

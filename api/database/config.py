@@ -14,7 +14,8 @@ DB_CONFIG = {
     'host': DB_HOST,
     'user': DB_USER,
     'password': DB_PASSWORD,
-    'port': DB_PORT
+    'port': DB_PORT,
+    'charset': 'utf8mb4'
 }
 DB_NAME = "gastronomia_db"
 

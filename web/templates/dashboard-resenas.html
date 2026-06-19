@@ -147,6 +147,7 @@ Reseñas | Dashboard
                         <th>Servicio</th>
                         <th>Comida</th>
                         <th>Fecha</th>
+                        <th>Estado</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -161,7 +162,8 @@ Reseñas | Dashboard
                         data-servicio="{{ resena.puntuacion_servicio }}"
                         data-comida="{{ resena.puntuacion_comida }}"
                         data-comentario="{{ resena.comentario }}"
-                        data-fecha="{{ resena.fecha }}">
+                        data-fecha="{{ resena.fecha }}"
+                        data-estado="{{ resena.estado }}">
 
                         <td class="resena-id">{{ resena.resena_id }}</td>
                         <td class="resena-nombre-apellido">{{ resena.nombre_usuario }}</td>
@@ -170,6 +172,7 @@ Reseñas | Dashboard
                         <td class="resena-servicio">{{ resena.puntuacion_servicio }}</td>
                         <td class="resena-comida">{{ resena.puntuacion_comida }}</td>
                         <td class="resena-fecha">{{ resena.fecha }}</td>
+                        <td class="resena-estado">{{ resena.estado }}</td>
                         <td>
                             <button class="btn btn-primary btn-small btn-open-view-review">
                                 Ver
@@ -230,13 +233,17 @@ Reseñas | Dashboard
                             <th>Comentario</th>
                             <td id="modal-resena-comentario"></td>
                         </tr>
+                        <tr>
+                            <th>Estado</th>
+                            <td id="modal-resena-estado"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="modal-actions">
                 <button id="btn-open-ocultar-review" class="btn btn-primary btn-small">
-                    Ocultar en reseñas
+                    Cambiar estado de reseña
                 </button>
             </div>
 
@@ -247,11 +254,11 @@ Reseñas | Dashboard
         <div class="modal-card">
 
             <h2 class="modal-title">
-                Confirmar ocultamiento
+                Confirmar
             </h2>
 
             <p>
-                ¿Estás seguro de que deseas ocultar esta reseña?
+                ¿Estás seguro de que deseas cambiar el estado de esta reseña?
             </p>
 
             <div class="modal-actions">
@@ -262,6 +269,7 @@ Reseñas | Dashboard
 
                 <form id="ocultar-review-form" action="/dashboard/resenas" method="POST">
                     <input type="hidden" name="id_resena" id="input-ocultar-id-resena">
+                    <input type="hidden" name="estado" id="input-estado">
                     <button id="btn-confirm-ocultar-review" type="submit" class="btn btn-primary btn-small" form="ocultar-review-form">
                         Confirmar
                     </button>
