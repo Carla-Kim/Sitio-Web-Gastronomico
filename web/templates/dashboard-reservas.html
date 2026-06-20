@@ -232,11 +232,14 @@ Reservas | Dashboard
             <div class="modal-actions">
                 <form id="form-add-mesa" action="/dashboard/mesas/accion" method="POST">
                     <input type="hidden" name="accion" value="agregar">
+                    <input type="hidden" name="cantidad_actual" value="{{ datos_mesas.total if datos_mesas else 0 }}">
                     <button id="btn-agregar-mesa" class="btn btn-primary btn-small">Agregar mesa</button>
                 </form>
+                
                 <form id="form-delete-mesa" action="/dashboard/mesas/accion" method="POST">
                     <input type="hidden" name="accion" value="borrar">
-                    <input type="hidden" name="mesa_id" value="1"> <button type="submit" class="btn btn-danger btn-small">Borrar mesa</button>
+                    <input type="hidden" name="cantidad_actual" value="{{ datos_mesas.total if datos_mesas else 0 }}">
+                    <button type="submit" class="btn btn-danger btn-small">Borrar mesa</button>
                 </form>
             </div>
         </div>

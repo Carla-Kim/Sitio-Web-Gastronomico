@@ -557,27 +557,30 @@ def cambiar_estado_servicio():
 
 @app.route('/dashboard/mesas/accion', methods=['POST'])
 def gestionar_mesas():
-    accion = request.form.get('accion') 
-    mesa_id = request.form.get('mesa_id') 
+    accion = request.form.get('accion')
+    cantidad_actual = int(request.form.get('cantidad_actual', 0))
+    
+    if accion == 'agregar':
+        nueva_capacidad = cantidad_actual + 1
+    elif accion == 'borrar':
+        nueva_capacidad = cantidad_actual - 1
+    else:
+        flash("Acción no reconocida")
+        return redirect(url_for('dashboard_reservas'))
+
+    payload = {"cantidad_mesas": nueva_capacidad}
 
     try:
-        if accion == 'agregar':
-            url_api = 'http://localhost:5000/api/mesas'
-            response = requests.post(url_api, timeout=5)
+        url_api = 'http://localhost:5000/api/mesas/capacidad'
+        response = requests.patch(url_api, json=payload, timeout=5)
 
-            response.raise_for_status() 
-            flash("Mesa agregada correctamente.")
+        response.raise_for_status() 
+        flash(f"Capacidad actualizada a {nueva_capacidad} mesas correctamente.")
 
-        elif accion == 'borrar':
-            url_api = f'http://localhost:5000/api/mesas/%7Bmesa_id%7D'
-            response = requests.delete(url_api, timeout=5)
-            response.raise_for_status()
-            flash("Mesa eliminada.")
-
-    except requests.exceptions.HTTPError:
-        flash("Error al gestionar mesas")
+    except requests.exceptions.HTTPError as e:
+        flash("Error al gestionar mesas: No es posible realizar esta acción.")
     except Exception as e:
-        flash(f"Error inesperado: {e}")
+        flash(f"Error inesperado: {e}")  
     return redirect(url_for('dashboard_reservas'))
 
 @app.route('/dashboard/resenas', methods=['GET', 'POST'])
