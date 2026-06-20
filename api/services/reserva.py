@@ -66,7 +66,7 @@ def crear_reserva(data):
 
             qr_reserva = generar_qr_reserva(reserva_id=resultado)
             frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5000')
-            cancel_link = f"{frontend_url}/cancelar-reserva/{resultado}"
+            cancel_link = f"{frontend_url}/cancelar?id={resultado}"
             enviar_confirmacion_reserva(
                 usuario=usuario_datos,
                 reserva=reserva_datos,

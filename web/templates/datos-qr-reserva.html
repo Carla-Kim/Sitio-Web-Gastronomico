@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Basheros | Datos de la Reserva{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/datos-qr-reserva.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="contenedor">
+
+    <p class="titulo-resena">Reserva Confirmada</p>
+    <p class="subtitulo-resena">INFORMACIÓN DEL CÓDIGO QR</p>
+
+    <div class="tarjeta-resena">
+        <p class="titulo-tarjeta">Reserva #{{ reserva.reserva_id }}</p>
+
+        <div class="datos-reserva">
+            
+            <div class="fila-dato">
+                <span class="etiqueta-dato">ESTADO</span>
+                <span class="valor-dato estado-{{ reserva.estado | lower }}">{{ reserva.estado | upper }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">FECHA Y HORA</span>
+                <span class="valor-dato">{{ reserva.fecha }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">CLIENTE</span>
+                <span class="valor-dato">{{ reserva.nombre }} {{ reserva.apellido }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">DNI</span>
+                <span class="valor-dato">{{ reserva.DNI }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">EMAIL</span>
+                <span class="valor-dato">{{ reserva.email }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">TELÉFONO</span>
+                <span class="valor-dato">{{ reserva.telefono }}</span>
+            </div>
+
+            <div class="fila-dato">
+                <span class="etiqueta-dato">CANTIDAD DE PERSONAS</span>
+                <span class="valor-dato">{{ reserva.cantidad_personas }}</span>
+            </div>
+
+            <div class="seccion-servicios">
+                <p class="titulo-servicios">SERVICIOS ADICIONALES</p>
+                
+                {% if servicios %}
+                    <ul class="lista-servicios">
+                        {% for servicio in servicios %}
+                            <li class="item-servicio">
+                                <span>{{ servicio.nombre | upper }}</span> 
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="sin-servicios">Esta reserva no incluye servicios adicionales.</p>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="contenedor-acciones">
+            <a href="{{ url_for('index') }}" class="btn-volver">Ir al inicio</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

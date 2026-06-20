@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@400;500&display=swap');
+
+
+.contenedor-cancelar {
+    max-width: 40rem;
+    margin: 2rem auto;
+    padding: 4rem 3rem;
+    background: #1a1a1a;
+    text-align: center;
+    border: 0.1rem solid #c9a84c34;
+    border-radius: 0.5rem;
+}
+
+.titulo {
+    font-family: 'Cormorant Garamond', serif;
+    color: #c9a84c;
+    font-size: 1.8rem;
+    letter-spacing: 0.1rem;
+    margin-bottom: 1rem;
+}
+
+.subtitulo {
+    color: #f0f0f0;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.flash-msg {
+    padding: 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 1rem 0;
+    color:#f0f0f0 ;
+    background-color: #c9a84c38;
+}
+
+
+.campo-dni{
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.campo-dni label {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.04rem;
+    margin-bottom: 0.5rem;
+}
+
+.campo-dni input {
+    width: 100%;
+    padding: 1rem 1rem;
+    background: #0f0f0f;
+    border: 0.1rem solid #c9a84c34;
+    border-radius: 0.5rem;
+    color: #f0f0f0;
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+}
+
+.btn-cancelar{
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+    padding: .8rem;
+    color: #c9a84c;
+    background: transparent;
+    border: 0.1rem solid #c9a84c71;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+}
+
+.btn-cancelar:hover {
+    background: #c9a84c;
+    color: #0f0f0f;
+    transition: background 0.3s color 0.3s;
+}
+
+.btn-volver {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    padding: 1rem 2.3rem;
+    transition: all 0.25s ease;
+    background: #C9A84C;
+    color: #0c0c0c;
+    border: 1px solid #C9A84C;
+    border-radius: 3px;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.btn-volver:hover {
+    transform: translate(0px, -2px) scale(1.02);
+}

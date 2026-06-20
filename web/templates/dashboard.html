@@ -27,7 +27,7 @@
             <div class="brand">
 
                 <h1 class="brand-name">
-                    BASHEROS
+                    <a href="{{ url_for('dashboard_home') }}">BASHEROS</a>
                 </h1>
                 <span class="brand-badge">
                     Administración
@@ -74,9 +74,20 @@
                             </summary>
 
                             <div class="profile-menu">
-                                <a href="{{ url_for('logout') }}" class="profile-menu-item">
-                                    Cerrar sesión
-                                </a>
+                                <ul>
+                                    <li class="profile-menu-item-li datos">
+                                        {{ usuario_actual.nombre }}
+                                    </li>
+                                    <li class="profile-menu-item-li datos">
+                                        {{ usuario_actual.rol }}
+                                    </li>
+                                    <li class="profile-menu-item-li">
+                                        <a class="profile-menu-item" href="{{ url_for('logout') }}" >
+                                            Cerrar sesión
+                                        </a>
+                                    </li>
+                                </ul>
+
                             </div>
 
                         </details>

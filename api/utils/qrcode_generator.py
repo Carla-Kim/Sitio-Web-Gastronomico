@@ -22,7 +22,7 @@ def _generar_qr_por_url(url):
 
 def generar_qr_reserva(reserva_id):
     # URL que va a escanear el recepcionista en el local
-    url_finalizar = f"http://localhost:5000/api/reservas/{reserva_id}/escanear"
+    url_finalizar = f"http://localhost:5000/datos-reserva/{reserva_id}"
     return _generar_qr_por_url(url_finalizar)
 
 

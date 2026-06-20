@@ -23,6 +23,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 2rem;
     font-weight: 700;
+    color: #C9A84C;
 }
 
 .page-actions {
@@ -38,7 +39,8 @@
     flex-direction: column;
     gap: 1.5rem;
     padding: 2rem;
-    background-color: #F6F8FA;
+    background-color: #141414;
+    border: 1px solid rgba(201, 168, 76, 0.12);
     border-radius: 10px;
 }
 
@@ -53,6 +55,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
+    color: #C9A84C;
 }
 
 /* =========================
@@ -63,16 +66,36 @@
     border-radius: 6px;
     font-family: 'Montserrat', sans-serif;
     cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .btn-primary {
-    background-color: #606060;
-    color: #FFFFFF;
+    background-color: #C9A84C;
+    color: #0C0C0C;
+}
+.btn-primary:hover {
+    background-color: #B8973F;
 }
 
 .btn-secondary {
-    background-color: #D0D0D0;
-    color: #000000;
+    background-color: transparent;
+    color: #A09080;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(201, 168, 76, 0.08);
+    color: #C9A84C;
+}
+
+.btn-danger {
+    background-color: transparent;
+    color: #B85C5C;
+    border: 1px solid rgba(184, 92, 92, 0.4);
+}
+ 
+.btn-danger:hover {
+    background-color: rgba(184, 92, 92, 0.1);
 }
 
 .btn-small {
@@ -84,11 +107,16 @@
     padding: 0.3rem 0.6rem;
     background-color: transparent;
     font-size: 0.8rem;
+    color: #A09080;
+}
+
+.btn-page:hover {
+    color: #C9A84C;
 }
 
 .btn-page.active {
-    background-color: #606060;
-    color: #FFFFFF;
+    background-color: #C9A84C;
+    color: #0C0C0C;
 }
 
 /* =========================
@@ -123,11 +151,13 @@
 .form-group label {
     font-size: 0.8rem;
     font-weight: 600;
+    color: #A09080;
 }
 
 .form-group p {
     font-size: 0.8rem;
     font-weight: 600;
+    color: #A09080;
 }
 
 .form-group textarea {
@@ -145,15 +175,29 @@
     border-radius: 8px;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
-    border: 1px solid #D0D0D0;
-    background-color: #F6F8FA;
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    background-color: #1A1A1A;
+    color: #DCD3C7;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(160, 144, 128, 0.5);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: rgba(201, 168, 76, 0.5);
 }
 
 .form-help {
     display: block;
     margin-top: 0.25rem;
     font-size: 0.65rem;
-    color: #777;
+    color: rgba(160, 144, 128, 0.6);
 }
 
 /* =========================
@@ -161,7 +205,7 @@
 ========================= */
 .table-container {
     overflow-x: auto;
-    border: 1px solid #D0D0D0;
+    border: 1px solid rgba(201, 168, 76, 0.15);
     border-radius: 10px;
 }
 
@@ -175,15 +219,20 @@
     font-size: 0.8rem;
     padding: 1rem;
     text-align: left;
+    color: #A09080;
 }
 
 .table thead {
-    background-color: #F6F8FA;
-    border-bottom: 1px solid #E2E2E2;
+    background-color: #1A1A1A;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+}
+
+.table thead th {
+    color: #C9A84C;
 }
 
 .table tbody tr {
-    border-top: 1px solid #E2E2E2;
+    border-top: 1px solid rgba(201, 168, 76, 0.1);
 }
 
 .table-actions {
@@ -201,13 +250,15 @@
     font-weight: 600;
     padding: 0.8rem 1rem;
     width: 40%;
-    background-color: #F6F8FA;
-    border-bottom: 1px solid #E2E2E2;
+    background-color: #1A1A1A;
+    color: #C9A84C;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.12);
 }
 
 .detail-table td {
     padding: 0.8rem 1rem;
-    border-bottom: 1px solid #E2E2E2;
+    color: #A09080;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.1);
 }
 
 /* =========================
@@ -221,7 +272,7 @@
     align-items: flex-start;
     justify-content: center;
     padding: 2rem;
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(0, 0, 0, 0.7);
     z-index: 1000;
 }
 
@@ -281,7 +332,8 @@
     flex-direction: column;
     gap: 2rem;
     padding: 2rem;
-    background-color: #F6F8FA;
+    background-color: #141414;
+    border: 1px solid rgba(201, 168, 76, 0.15);
     border-radius: 10px;
 }
 
@@ -289,6 +341,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
+    color: #C9A84C;
 }
 
 .modal-close {
@@ -297,6 +350,11 @@
     right: 1.5rem;
     background: transparent;
     font-size: 1.8rem;
+    color: #A09080;
+}
+
+.modal-close:hover {
+    color: #C9A84C;
 }
 
 /* =========================
@@ -311,7 +369,7 @@
 .page-dots {
     font-size: 0.9rem;
     padding: 0.55rem 0.9rem;
-    color: #888;
+    color: rgba(160, 144, 128, 0.6);
 }
 
 /* =========================
@@ -324,8 +382,8 @@
 }
 
 .dashboard-widget {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E2E2;
+    background-color: #141414;
+    border: 1px solid rgba(201, 168, 76, 0.12);
     border-radius: 10px;
     padding: 1.5rem;
     min-height: 120px;
@@ -352,7 +410,7 @@
     max-width: 100%;
     height: auto;
     border-radius: 10px;
-    border: 3px solid #a0a0a0;
+    border: 3px solid rgba(201, 168, 76, 0.3);
 }
 
 /* =========================
@@ -371,17 +429,20 @@
     margin: 0;
     font-size: .85rem;
     opacity: 0.7;
+    color: #A09080;
 }
 
 .metric-value {
     margin: 0;
     font-size: 2rem;
     font-weight: 700;
+    color: #C9A84C;
 }
 
 .metric-caption {
     margin: 0;
     opacity: 0.8;
+    color: #A09080;
 }
 
 /* =========================

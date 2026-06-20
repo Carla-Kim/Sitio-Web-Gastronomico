@@ -12,6 +12,26 @@ const reservas_por_estado = dashboard.reservas_por_estado
 const reseñas = dashboard.promedio_resenas
 document.getElementById("total-reservas-estado").textContent = reservas_por_estado.cantidades.reduce((a, b) => a + b, 0);
 
+const DORADO = "#C9A84C";
+const DORADO_SUAVE = "rgba(201, 168, 76, 0.25)";
+const MUTED = "#A09080";
+const GRID_COLOR = "rgba(201, 168, 76, 0.12)";
+
+const PALETTE = ["#C9A84C", "#8B7355", "#A09080", "#D4B868", "#7C9473", "#6A6050"];
+
+const ESTADO_COLORES = {
+    reservada: "#C9A84C",
+    finalizada: "#7C9473",
+    cancelada: "#B85C5C"
+};
+
+Chart.defaults.color = MUTED;
+Chart.defaults.font.family = "'Montserrat', sans-serif";
+Chart.defaults.borderColor = GRID_COLOR;
+Chart.defaults.plugins.legend.labels.color = MUTED;
+Chart.defaults.plugins.title.color = DORADO;
+Chart.defaults.plugins.title.font = { size: 14, weight: "600" };
+
 new Chart(
     menu_chart,
     {
@@ -24,13 +44,19 @@ new Chart(
                 {
                     label: "Cantidad",
                     data: menu.cantidades,
-                    yAxisID: "y"
+                    yAxisID: "y",
+                    backgroundColor: DORADO,
+                    borderColor: DORADO,
+                    borderRadius: 4
                 },
 
                 {
                     label: "Precio Promedio",
                     data: menu.precios_promedio,
-                    yAxisID: "y1"
+                    yAxisID: "y1",
+                    backgroundColor: MUTED,
+                    borderColor: MUTED,
+                    borderRadius: 4
                 }
             ]
         },
@@ -42,24 +68,34 @@ new Chart(
             scales: {
                 y: {
                     position: "left",
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED },
 
                     title: {
                         display: true,
-                        text: "Cantidad"
+                        text: "Cantidad",
+                        color: MUTED
                     }
                 },
 
                 y1: {
                     position: "right",
+                    ticks: { color: MUTED },
 
                     title: {
                         display: true,
-                        text: "Precio promedio"
+                        text: "Precio promedio",
+                        color: MUTED
                     },
 
                     grid: {
                         drawOnChartArea: false
                     }
+                },
+
+                x: {
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED }
                 }
             },
 
@@ -94,7 +130,12 @@ new Chart(
                     reseñas.servicio,
                     reseñas.comida,
                     reseñas.general
-                ]
+                ],
+
+                backgroundColor: DORADO_SUAVE,
+                borderColor: DORADO,
+                pointBackgroundColor: DORADO,
+                pointBorderColor: "#0C0C0C"
             }]
         },
 
@@ -107,8 +148,14 @@ new Chart(
                     min: 0,
                     max: 5,
 
+                    angleLines: { color: GRID_COLOR },
+                    grid: { color: GRID_COLOR },
+                    pointLabels: { color: MUTED },
+
                     ticks: {
-                        stepSize: 1
+                        stepSize: 1,
+                        color: MUTED,
+                        backdropColor: "transparent"
                     }
                 }
             },
@@ -133,13 +180,29 @@ new Chart(
 
             datasets: [{
                 label: "Reservas",
-                data: reservas_por_mes.cantidades
+                data: reservas_por_mes.cantidades,
+                borderColor: DORADO,
+                backgroundColor: DORADO_SUAVE,
+                pointBackgroundColor: DORADO,
+                pointBorderColor: "#0C0C0C",
+                tension: 0.1
             }]
         },
 
         options: {
             responsive: true,
             maintainAspectRatio: false,
+
+            scales: {
+                x: {
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED }
+                },
+                y: {
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED }
+                }
+            },
 
             plugins: {
                 title: {
@@ -161,7 +224,11 @@ new Chart(
 
             datasets: [{
                 label: "Reservas",
-                data: reservas_por_estado.cantidades
+                data: reservas_por_estado.cantidades,
+                backgroundColor: reservas_por_estado.estados.map(
+                    (estado, i) => ESTADO_COLORES[String(estado).toLowerCase()] || PALETTE[i % PALETTE.length]
+                ),
+                borderRadius: 4
             }]
         },
 
@@ -169,7 +236,21 @@ new Chart(
             responsive: true,
             maintainAspectRatio: false,
 
+            scales: {
+                x: {
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED }
+                },
+                y: {
+                    grid: { color: GRID_COLOR },
+                    ticks: { color: MUTED }
+                }
+            },
+
             plugins: {
+                legend: {
+                    display: false
+                },
                 title: {
                     display: true,
                     text: "Reservas por estado"

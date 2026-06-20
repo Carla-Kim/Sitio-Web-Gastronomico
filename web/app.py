@@ -3,6 +3,7 @@ import sys
 import requests
 from functools import wraps
 from api.app import app as api_app
+from api.utils.pagination import build_links
 from flask import (
     Flask,
     render_template,
@@ -168,7 +169,7 @@ def resenas():
     offset = request.args.get('offset', default=0, type=int)
     
     with api_app.test_client() as client:
-        resenas_resp = client.get('/resenas', query_string={'limit': limit, 'offset': offset, 'estado':'habilitada'})
+        resenas_resp = client.get('/resenas', query_string={'_limit': limit, '_offset': offset, 'estado':'habilitada'})
         promedio_ambiente_resp = client.get('/resenas/promedio/ambiente')
         promedio_comida_resp = client.get('/resenas/promedio/comida')
         promedio_servicio_resp = client.get('/resenas/promedio/servicio')
@@ -302,6 +303,14 @@ def dashboard_login():
     datos = respuesta.json()
     session['usuario_id'] = datos['usuario_id']
     session['rol'] = datos['rol']
+    
+    try:
+        resp_usuario = requests.get(f"{API_URL}/usuarios/{datos['usuario_id']}", timeout=5)
+        if resp_usuario.status_code == 200:
+            usuario_data = resp_usuario.json()
+            session['nombre'] = usuario_data.get('nombre_usuario', '')
+    except requests.exceptions.RequestException:
+        session['nombre'] = '' 
 
     return redirect('/dashboard')
 
@@ -511,8 +520,8 @@ def editar_servicio():
         else:
             flash(f"Error al actualizar el servicio. {e}")
 
-    except requests.exceptions.RequestException as e:
-        flash(f"Error al actualizar el servicio {e}")
+    except requests.exceptions.RequestException:
+        flash(f"Error al actualizar el servicio")
 
     return redirect(url_for('dashboard_reservas'))
 
@@ -789,14 +798,14 @@ def crear_producto():
         print(response.text)
         flash("Producto creado con éxito")
     except requests.exceptions.RequestException as e:
-        flash("Error al crear el producto")
+        flash("Error al crear el producto {e}")
     return redirect(url_for('dashboard_menu'))
 
 @app.route('/dashboard/menu/editar', methods=['POST'])
 def editar_producto():
+    id_producto = request.form.get('id')
     nombre = request.form.get('nombre', '').strip()
     descripcion = request.form.get('descripcion', '').strip()
-    id_producto = request.form.get('id')
     try:
         precio = float(request.form.get('precio', 0))
         categorias_id = int(request.form.get('categorias_id', 0))
@@ -825,8 +834,8 @@ def editar_producto():
         response = requests.put(url_api, data=datos, files=files, timeout=5)
         response.raise_for_status()
         flash("Producto actualizado con éxito")
-    except requests.exceptions.RequestException:
-        flash("Error al actualizar el producto")
+    except requests.exceptions.RequestException as e:
+        flash(f"Error al actualizar el producto {e}")
     return redirect(url_for('dashboard_menu'))
 
 
@@ -968,10 +977,17 @@ def editar_usuario_parcial():
     id_usuario = request.form.get('id_usuario')
     email = request.form.get('email').strip()
     contrasena = request.form.get('password').strip()
-    if not email or not contrasena:
-        flash ("Error al editar credenciales: Datos invalidos")
-        return redirect(url_for('dashboard_usuarios'))
 
+    datos = {}
+    if email:
+        datos["email"] = email
+    if contrasena:
+        datos["contrasena"] = contrasena
+
+    if not datos:
+        flash("Debes completar al menos uno de los campos para actualizar.")
+        return redirect(url_for('dashboard_usuarios'))
+    
     datos = {
         "email": email,
         "contrasena": contrasena
@@ -1018,6 +1034,105 @@ def editar_usuario_completo():
 
     return redirect(url_for('dashboard_usuarios'))
 
+@app.route('/cancelar', methods=['GET', 'POST'])
+def pagina_cancelada():
+    if request.method == 'POST':
+        id_reserva = request.form.get('id')
+        dni_ingresado= request.form.get('dni', '').strip()
+        
+        if not id_reserva or not dni_ingresado:
+            flash("Debes completar el DNI para continuar.")
+            return render_template('cancelar.html', reserva_id=id_reserva)
+        
+        try:
+            resp = requests.get(f'http://localhost:5000/api/reservas/{id_reserva}', timeout=5)
+            if resp.status_code == 404:
+                flash("No se encontró la reserva")
+                return render_template('cancelar.html')
+            
+            resp.raise_for_status()
+            reserva = resp.json()
+
+            if reserva.get('estado') in ('finalizada', 'cancelada'):
+                flash(f"Esta reserva ya está {reserva['estado']}")
+                return render_template('cancelar.html')
+            if str(reserva.get('DNI')) != dni_ingresado:
+                flash("El DNI ingresado no coincide con el de la reserva.")
+                return render_template('cancelar.html', reserva_id=id_reserva)
+
+            url_api = f'http://localhost:5000/api/reservas/{id_reserva}/cancelar'
+            response = requests.patch(url_api, timeout=5)
+            response.raise_for_status()
+
+            flash("Reserva cancelada con éxito")
+            return render_template('cancelar.html', cancelada=True)
+
+        except requests.exceptions.RequestException as e:
+            flash(f"Error en la operación: {e}")
+            return render_template('cancelar.html', reserva_id=id_reserva)
+
+    id_reserva = request.args.get('id')
+    if not id_reserva:
+        flash("El enlace no es válido")
+        return render_template('cancelar.html')
+
+    try:
+        resp = requests.get(f'http://localhost:5000/api/reservas/{id_reserva}', timeout=5)
+        if resp.status_code == 404:
+            flash("No se encontró la reserva")
+            return render_template('cancelar.html')
+        
+        resp.raise_for_status()
+        reserva = resp.json()
+
+        if reserva.get('estado') in ('finalizada', 'cancelada'):
+            flash(f"Esta reserva ya está {reserva['estado']}")
+            return render_template('cancelar.html')
+            
+    except requests.exceptions.RequestException as e:
+        flash(f"Error en la operación: {e}", "error")
+        return render_template('cancelar.html')
+
+    return render_template('cancelar.html', reserva_id=id_reserva)
+
+@app.route('/datos-reserva/<int:id>', methods=['GET']) 
+def datos_reserva(id):
+    try:
+        datos = requests.get(f"http://localhost:5000/api/reservas/{id}")
+        servicios = requests.get(f"http://localhost:5000/api/servicios-reservas/{id}")
+
+        if datos.status_code != 200:
+            return redirect(url_for('inicio'))
+        
+        reserva_data = datos.json()
+        
+        servicios_lista = []
+        if servicios.status_code == 200:
+            servicios_data = servicios.json()
+            for item in servicios_data:
+                id_servicio = item.get('servicio_id')
+                
+                resp_servicio = requests.get(f"http://localhost:5000/api/servicios/{id_servicio}")
+                
+                if resp_servicio.status_code == 200:
+                    servicios_lista.append(resp_servicio.json())
+
+        return render_template('datos-qr-reserva.html', reserva=reserva_data, servicios=servicios_lista)
+    
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión con la API: {e}")
+        return redirect(url_for('inicio'))
+    
+# para el route de dashboard 
+@app.context_processor
+def inject_usuario_dashboard():
+    return {
+        'usuario_actual': {
+            'nombre': session.get('nombre'),
+            'rol': session.get('rol')
+        }
+    }
+
 # @app.route('/dashboard/usuarios/credenciales', methods=['POST'])
 # def obtener_credenciales():
 #     email = request.form.get('email')
@@ -1030,7 +1145,7 @@ def editar_usuario_completo():
 #     except requests.exceptions.RequestException:
 #         flash("Error al obtener las credenciales")
 #     return redirect(url_for('dashboard_usuarios'))
-  
+
 
 @app.errorhandler(404)
 def page_not_found(error):

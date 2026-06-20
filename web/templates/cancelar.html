@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Cancelar Reserva | Basheros{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cancelar.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="contenedor-cancelar">
+  <h2 class="titulo">Cancelar Reserva</h2>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-msg alerta alerta-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% if reserva_id and not cancelada %}
+  <p class="subtitulo">Para confirmar la cancelación de tu reserva, ingresá tu DNI</p>
+    <form method="POST" action="{{ url_for('pagina_cancelada') }}">
+        <input type="hidden" name="id" value="{{ reserva_id }}">
+        <div class="campo-dni">
+            <label for="dni">DNI</label>
+            <input type="text" id="dni" name="dni" inputmode="numeric" placeholder="Ej: 30123123" required>
+        </div>
+        <button type="submit" class="btn-cancelar">Confirmar cancelación</button>
+    </form>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="btn-volver">Volver al inicio</a>
+
+</div>
+
+{% endblock %}
