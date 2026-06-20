@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from api.routes.menu import menu_bp
@@ -10,7 +11,11 @@ from api.routes.servicios_reservas import servicio_reserva_bp
 from api.routes.usuario import usuarios_bp
 from api.routes.stats import stats_bp
 
-app = Flask(__name__)
+base_dir = os.path.abspath(os.path.dirname(__file__))
+project_root = os.path.dirname(base_dir)
+templates_path = os.path.join(project_root, 'web', 'templates')
+
+app = Flask(__name__, template_folder=templates_path)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.register_blueprint(menu_bp)

@@ -259,7 +259,12 @@ def escanear_y_finalizar_reserva(id):
                 "nombre": reserva["nombre"],
                 "email": reserva["email"]
             }
-            enviar_mensaje_agradecimiento(usuario=usuario_datos, reserva=reserva)
+            frontend_url = current_app.config.get('FRONTEND_URL', 'http://localhost:5000')
+            form_link = (
+                f"{frontend_url}/calificar"
+                f"?reserva_id={id}"
+            )
+            enviar_mensaje_agradecimiento(usuario=usuario_datos, reserva=reserva, form_link=form_link)
         except Exception as email_error:
             logger.error(f"La reserva se finalizó pero falló el envío del mail: {email_error}")
             

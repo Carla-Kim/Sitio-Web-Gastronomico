@@ -119,6 +119,7 @@
             </div>
 
             <div class="grupo-campo">
+                {% if servicios %}
                 <label class="etiqueta-campo">Servicios adicionales</label>
                 <div class="lista-checkboxes">
                     {% for servicio in servicios %}
@@ -128,6 +129,7 @@
                     </label>
                     {% endfor %}
                 </div>
+                {% endif %}
             </div>
 
             <div class="grupo-campo">
