@@ -1,47 +1,93 @@
-import os
-import sys
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE_DIR))
-
 import mysql.connector
-from api.database.config import DB_CONFIG, DB_NAME
+from api.database.config import DB_CONFIG
 
-conn = None
-cursor = None
+ADMIN = {
+    "nombre": "Administrador",
+    "apellido": "Sistema",
+    "nombre_usuario": "admin",
+    "email": "admin@admin.com",
+    "contrasena": "admin123",
+    "rol": "admin"
+}
 
-try:
+
+def ejecutar_sql(cursor, archivo):
+    with open(archivo, "r", encoding="utf-8") as f:
+        sql = f.read()
+
+    # ✔ forma correcta para mysql-connector
+    for result in cursor.execute(sql, multi=True):
+        pass
+
+
+def crear_instalacion_demo(cursor):
+    ejecutar_sql(cursor, "data/demo_data.sql")
+
+
+def crear_instalacion_vacia(cursor):
+    total_mesas = int(input("¿Cuántas mesas tiene el local?: "))
+
+    cursor.execute("""
+        INSERT INTO Usuarios
+        (nombre, apellido, nombre_usuario, email, contrasena, rol)
+        VALUES (%s,%s,%s,%s,%s,%s)
+    """, (
+        ADMIN["nombre"],
+        ADMIN["apellido"],
+        ADMIN["nombre_usuario"],
+        ADMIN["email"],
+        ADMIN["contrasena"],
+        ADMIN["rol"]
+    ))
+
+    cursor.execute("""
+        INSERT INTO Mesas (estado, cantidad_mesas)
+        VALUES ('ocupada', 0)
+    """)
+
+    cursor.execute("""
+        INSERT INTO Mesas (estado, cantidad_mesas)
+        VALUES ('desocupada', %s)
+    """, (total_mesas,))
+
+
+def main():
+    print("\n====================================")
+    print("Inicialización del Sistema")
+    print("====================================")
+    print("1) Proyecto vacío")
+    print("2) Proyecto demo")
+    print("====================================")
+
+    opcion = input("Seleccione una opción: ")
+
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
 
-    cursor.execute(f"SHOW DATABASES LIKE '{DB_NAME}'")
-    initialized = cursor.fetchone()
-
-    with open("data/init_db.sql", "r", encoding="utf-8") as f:
-        sql_init = f.read()
-
-    for line in sql_init.split(';'):
-        if line.strip():
-            cursor.execute(line)
-
-    conn.commit()
-    print("Base de datos creada.")
-
-except mysql.connector.Error as err:
-    print(f"Error de MySQL: {err}")
-
-except FileNotFoundError:
-    print("Archivo data/init_db.sql no encontrado.")
-
-finally:
     try:
-        if cursor is not None:
-            cursor.close()
-    except Exception:
-        pass
-    try:
-        if conn is not None:
-            conn.close()
-    except Exception:
-        pass
+        cursor.execute("DROP DATABASE IF EXISTS gastronomia_db")
+
+        ejecutar_sql(cursor, "data/schema.sql")
+
+        cursor.execute("USE gastronomia_db")
+
+        if opcion == "1":
+            crear_instalacion_vacia(cursor)
+
+        elif opcion == "2":
+            crear_instalacion_demo(cursor)
+
+        else:
+            raise ValueError("Opción inválida")
+
+        conn.commit()
+
+        print("\nInicialización completada.\n")
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+if __name__ == "__main__":
+    main()
