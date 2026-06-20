@@ -817,9 +817,9 @@ def editar_producto():
         flash("Datos inválidos (precio o categoría)")
         return redirect(url_for('dashboard_menu'))
     datos = {
-        "categorias_id": categorias_id,
+        "categorias_id": str(categorias_id), 
         "nombre": nombre,
-        "precio": precio,
+        "precio": str(precio),              
         "descripcion": descripcion
     }
 
@@ -840,6 +840,7 @@ def editar_producto():
     except requests.exceptions.RequestException as e:
         flash(f"Error al actualizar el producto {e}")
     return redirect(url_for('dashboard_menu'))
+
 
 
 @app.route('/dashboard/categorias/crear', methods=['POST'])

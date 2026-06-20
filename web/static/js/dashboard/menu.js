@@ -4,6 +4,7 @@ const rows = document.querySelectorAll(".producto-fila");
 const form = document.querySelector(".form-filter");
 const editImageInput = document.querySelector("#edit-product-image");
 const addImageInput = document.querySelector("#add-product-image");
+const addProductImageInput = document.querySelector("#add-product-image");
 
 const addProductModal = createModal("modal-add-product");
 const viewCategoriesModal = createModal("modal-view-categories");
@@ -33,8 +34,7 @@ document.querySelectorAll(".btn-open-edit-product").forEach(btn => {
         document.querySelector("#edit-product-name").value = data.nombre;
         document.querySelector("#edit-product-price").value = data.precio;
         document.querySelector("#edit-product-description").value = data.descripcion;
-        document.querySelector("#edit-product-category").value = data.categoria;
-        
+       
         const preview = document.querySelector("#edit-product-actual-preview");
         preview.src = data.imagen || "";
         editProductModal.open();
@@ -77,3 +77,35 @@ document.querySelectorAll('#btn-cancel-delete-product, #btn-cancel-delete-catego
         e.target.closest('.modal-overlay').classList.add('hidden');
     });
 });
+
+editImageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const preview = document.querySelector("#edit-product-new-preview");
+            preview.src = e.target.result;
+            document.querySelector("#edit-product-new-preview-group").classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+if (addProductImageInput) {
+    addProductImageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+                const preview = document.querySelector("#add-product-new-preview");
+                const previewGroup = document.querySelector("#add-product-new-preview-group");
+                
+                preview.src = event.target.result;
+                previewGroup.classList.remove("hidden"); // Muestra el div oculto
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    });
+}
