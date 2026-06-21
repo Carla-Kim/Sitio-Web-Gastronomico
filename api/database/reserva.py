@@ -53,17 +53,17 @@ def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_perso
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
-            insert_query, 
-            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado)
-        )
-
-        cursor.execute(
             "UPDATE Mesas SET cantidad_mesas = cantidad_mesas + %s WHERE estado = 'ocupada'",
             (mesas_necesarias,)
         )
         cursor.execute(
             "UPDATE Mesas SET cantidad_mesas = cantidad_mesas - %s WHERE estado = 'desocupada'",
             (mesas_necesarias,)
+        )
+        
+        cursor.execute(
+            insert_query, 
+            (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado)
         )
         
         conn.commit()
