@@ -354,51 +354,65 @@ def dashboard_reservas():
     except ValueError:
         _limit, _offset = 10, 0
 
-
     try:
         lista_servicios = []
         lista_servicios_reserva = []
         params = {'_limit': _limit, '_offset': _offset}
-        
+        lista_reservas = []
+        raw_data = None 
+
         if id_buscado:
             url_api = f'http://localhost:5000/api/reservas/{id_buscado}'
             response_reservas = requests.get(url_api, timeout=5)
-            response_reservas.raise_for_status()
-            data = response_reservas.json()
-            lista_reservas = [data]
+            if response_reservas.status_code == 404:
+                flash("No se encontraron resultados para los criterios seleccionados.")
+                return redirect(url_for('dashboard_reservas'))
+            else:
+                response_reservas.raise_for_status()
+                data = response_reservas.json()
+                lista_reservas = [data]
+                raw_data = data
             
-            url_rel = f'http://localhost:5000/api/servicios-reservas/{id_buscado}'
-            resp_rel = requests.get(url_rel, timeout=5)
-            if resp_rel.status_code == 200:
-                lista_servicios_reserva = resp_rel.json()
-        
-        elif estado:
-            url_api = f'http://localhost:5000/api/reservas/estado/{estado}'
-            response_reservas = requests.get(url_api, params=params, timeout=5)
-            response_reservas.raise_for_status()
-            data = response_reservas.json()
-            if isinstance(data, list):
-                data = data[1]
-            lista_reservas = data[1] if isinstance(data, list) else data.get('data', [])
-            
-        elif fecha:
-            url_api = f'http://localhost:5000/api/reservas/fecha/{fecha}'
-            response_reservas = requests.get(url_api, params=params, timeout=5)
-            response_reservas.raise_for_status()
-            data = response_reservas.json()
-            if isinstance(data, list):
-                data = data[1]
-            lista_reservas = data if isinstance(data, list) else data.get('data', [])
-            
+                url_rel = f'http://localhost:5000/api/servicios-reservas/{id_buscado}'
+                resp_rel = requests.get(url_rel, timeout=5)
+                if resp_rel.status_code == 200:
+                    lista_servicios_reserva = resp_rel.json()
         else:
-            url_api = 'http://localhost:5000/api/reservas'
-            response_reservas = requests.get(url_api, params=params, timeout=5)
-            response_reservas.raise_for_status()
-            lista_reservas = response_reservas.json().get('data', [])
+            if estado: 
+                url_api = f'http://localhost:5000/api/reservas/estado/{estado}'
+                response_reservas = requests.get(url_api, params=params, timeout=5)
+                if response_reservas.status_code == 404:
+                    flash("No se encontraron resultados para los criterios seleccionados.")
+                    return redirect(url_for('dashboard_reservas'))
+    
+            elif fecha: 
+                url_api = f'http://localhost:5000/api/reservas/fecha/{fecha}'
+                response_reservas = requests.get(url_api, params=params, timeout=5)
+                if response_reservas.status_code == 404:
+                    flash("No se encontraron resultados para los criterios seleccionados.")
+                    return redirect(url_for('dashboard_reservas'))
+
+            else: 
+                url_api = 'http://localhost:5000/api/reservas'
+                response_reservas = requests.get(url_api, params=params, timeout=5)
+            if response_reservas.status_code == 404:
+                lista_reservas = []
+                raw_data = {"data": [], "count": 0}
+            else:
+                response_reservas.raise_for_status()
+                raw_data = response_reservas.json()
+                lista_reservas = raw_data.get('data', []) if isinstance(raw_data, dict) else (raw_data if isinstance(raw_data, list) else [])
+
+
         try:
             response = requests.get('http://localhost:5000/api/servicios', timeout=5)
-            response.raise_for_status()
-            lista_servicios = response.json().get('data', [])
+            
+            if response.status_code == 404:
+                lista_servicios = []
+            else:
+                response.raise_for_status()
+                lista_servicios = response.json().get('data', [])
+            
             dict_servicios = {s['servicio_id']: s['nombre'] for s in lista_servicios}
 
             for reserva in lista_reservas:
@@ -409,18 +423,16 @@ def dashboard_reservas():
                         resp_rel = requests.get(url_rel, timeout=2)
                         if resp_rel.status_code == 200:
                             servicios_data = resp_rel.json()
-                            nombres = []
-                            for item in servicios_data:
-                               s_id = item.get('servicio_id')
-                               nombres.append(dict_servicios.get(s_id, "Desconocido"))
-                            reserva['servicios_str'] = ", ".join(nombres)
+                            nombres = [dict_servicios.get(item.get('servicio_id'), "Desconocido") for item in servicios_data]
+                            reserva['servicios_str'] = ", ".join(nombres) if nombres else "Ninguno"
                         else:
                             reserva['servicios_str'] = "Ninguno"
                     except:
                         reserva['servicios_str'] = "Error al cargar"
 
-        except requests.exceptions.RequestException:
-            return render_template('error-conexion.html'), 500
+        except requests.exceptions.RequestException as e:
+            print(f"Error al cargar servicios: {e}")
+            lista_servicios = []
         
         datos_mesas = {'ocupadas': 0, 'desocupadas': 0, 'total': 0}
         try:
@@ -430,21 +442,22 @@ def dashboard_reservas():
                 datos_mesas['total'] = int(datos_mesas.get('ocupadas', 0)) + int(datos_mesas.get('desocupadas', 0))
         except:
             pass
-
+            
+        total_registros = 0
         try:
-            raw_data = response_reservas.json()
-            if isinstance(raw_data, list) and len(raw_data) > 0 and isinstance(raw_data[0], dict) and 'count' in raw_data[0]:
-                total_registros = raw_data[0]['count']
+            if id_buscado:
+                total_registros = 1 if lista_reservas else 0
             elif isinstance(raw_data, dict):
                 total_registros = raw_data.get('count', raw_data.get('total', len(lista_reservas)))
+            elif isinstance(raw_data, list):
+                total_registros = len(raw_data)
             else:
                 total_registros = len(lista_reservas)
-        except Exception:
+        except:
             total_registros = len(lista_reservas)
 
         total_paginas = (total_registros + _limit - 1) // _limit if total_registros > 0 else 1
-        pagina_actual = ( _offset // _limit) + 1
-            
+        pagina_actual = (_offset // _limit) + 1
         paginacion_links = build_links(url_for('dashboard_reservas'), request.args.to_dict(), _limit, _offset, total_registros)
 
         return render_template('dashboard-reservas.html', reservas=lista_reservas, limit=_limit, offset=_offset, paginacion_links=paginacion_links, total_paginas=total_paginas, pagina_actual=pagina_actual, servicios=lista_servicios, servicios_reserva=lista_servicios_reserva, datos_mesas=datos_mesas)
@@ -695,7 +708,6 @@ def dashboard_menu():
              return render_template('error-conexion.html'), 500
         return redirect(url_for('dashboard_menu'))
     else:
-        nombre_buscado = request.args.get('nombre_buscado')
         id_buscado = request.args.get('id')
         categoria_id = request.args.get('categoria_id')
 
@@ -708,49 +720,56 @@ def dashboard_menu():
         try:
             url_api_categorias = 'http://localhost:5000/api/categorias'
             response_categorias = requests.get(url_api_categorias, timeout=5)
-            response_categorias.raise_for_status()
-            lista_categorias = response_categorias.json().get('data', [])
+            lista_categorias = []
+            if response_categorias.status_code == 200:
+                lista_categorias = response_categorias.json().get('data', [])
+            
+            dict_categorias = {c['categorias_id']: c['nombre'] for c in lista_categorias}
 
+
+            lista_productos = []
+            raw_data = {}
             params = {'limit': _limit, 'offset': _offset}
             if id_buscado:
                 url_productos = f'http://localhost:5000/api/productos/{id_buscado}'
-                response_productos = requests.get(url_productos, timeout=5)
-                response_productos.raise_for_status()
-                data = response_productos.json()
-                lista_productos = [data]
+                response_productos = requests.get(url_productos, params=params, timeout=5)
+
+                if response_productos.status_code == 204 or response_productos.status_code == 404:
+                    flash("No se encontraron resultados para los filtros aplicados.")
+                    return redirect(url_for('dashboard_menu'))
             elif categoria_id:
                 url_productos = f'http://localhost:5000/api/productos/categoria/{categoria_id}'
                 response_productos = requests.get(url_productos, params=params, timeout=5)
-                response_productos.raise_for_status()
-                data = response_productos.json()
-                if isinstance(data, list):
-                    lista_productos = data
-                else:
-                    lista_productos = data.get('productos', [])
+
+                if response_productos.status_code == 204 or response_productos.status_code == 404:
+                    flash("No se encontraron resultados para los filtros aplicados.")
+                    return redirect(url_for('dashboard_menu'))
+                
             else:
                 url_productos = 'http://localhost:5000/api/productos'
                 response_productos = requests.get(url_productos, params=params, timeout=5)
-                response_productos.raise_for_status()
-                data = response_productos.json()
-                lista_productos = data.get('productos', [])
 
-            dict_categorias = {c['categorias_id']: c['nombre'] for c in lista_categorias}
+            if response_productos.status_code == 204 or response_productos.status_code == 404:
+                lista_productos = []
+                raw_data = {"count": 0}
+            else:
+                response_productos.raise_for_status()
+                raw_data = response_productos.json()
+                lista_productos = raw_data if isinstance(raw_data, list) else raw_data.get('productos', [])
+                if not isinstance(lista_productos, list):
+                   lista_productos = [raw_data] if id_buscado else []
 
             for producto in lista_productos:
                 if not producto.get("imagen_url"):
                     producto["imagen_url"] = "/uploads/productos/image.webp"
                 producto["categoria_nombre"] = dict_categorias.get(producto.get("categoria"), "Sin categoría")
 
-            try:
-                raw_data = response_productos.json()
-                total_registros = raw_data.get('count', raw_data.get('total', len(lista_productos))) if isinstance(raw_data, dict) else len(lista_productos)
-            except Exception:
-                total_registros = len(lista_productos)
+            total_registros = raw_data.get('count', raw_data.get('total', len(lista_productos))) if isinstance(raw_data, dict) else len(lista_productos)
 
             total_paginas = (total_registros + _limit - 1) // _limit if total_registros > 0 else 1
             pagina_actual = ( _offset // _limit) + 1
 
-            paginacion_links = build_links(url_for('dashboard_reservas'), request.args.to_dict(), _limit, _offset, total_registros)
+            paginacion_links = build_links(url_for('dashboard_menu'), request.args.to_dict(), _limit, _offset, total_registros)
 
             return render_template('dashboard-menu.html', productos=lista_productos, categorias=lista_categorias, paginacion_links=paginacion_links, pagina_actual=pagina_actual, total_paginas=total_paginas, limit=_limit, offset=_offset)
         

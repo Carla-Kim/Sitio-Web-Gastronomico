@@ -137,33 +137,39 @@ Reseñas | Dashboard
                 </thead>
 
                 <tbody>
-                    {% for resena in resenas %}
-                    <tr class="resena-fila"
-                        data-resena-id="{{ resena.resena_id }}"
-                        data-nombre-apellido="{{ resena.nombre_usuario }}"
-                        data-reserva-id="{{ resena.reserva_id }}"
-                        data-ambiente="{{ resena.puntuacion_ambiente }}"
-                        data-servicio="{{ resena.puntuacion_servicio }}"
-                        data-comida="{{ resena.puntuacion_comida }}"
-                        data-comentario="{{ resena.comentario }}"
-                        data-fecha="{{ resena.fecha }}"
-                        data-estado="{{ resena.estado }}">
+                    {% if resenas %}
+                        {% for resena in resenas %}
+                        <tr class="resena-fila"
+                            data-resena-id="{{ resena.resena_id }}"
+                            data-nombre-apellido="{{ resena.nombre_usuario }}"
+                            data-reserva-id="{{ resena.reserva_id }}"
+                            data-ambiente="{{ resena.puntuacion_ambiente }}"
+                            data-servicio="{{ resena.puntuacion_servicio }}"
+                            data-comida="{{ resena.puntuacion_comida }}"
+                            data-comentario="{{ resena.comentario }}"
+                            data-fecha="{{ resena.fecha }}"
+                            data-estado="{{ resena.estado }}">
 
-                        <td class="resena-id">{{ resena.resena_id }}</td>
-                        <td class="resena-nombre-apellido">{{ resena.nombre_usuario }}</td>
-                        <td class="resena-reserva-id">{{ resena.reserva_id }}</td>
-                        <td class="resena-ambiente">{{ resena.puntuacion_ambiente }}</td>
-                        <td class="resena-servicio">{{ resena.puntuacion_servicio }}</td>
-                        <td class="resena-comida">{{ resena.puntuacion_comida }}</td>
-                        <td class="resena-fecha">{{ resena.fecha }}</td>
-                        <td class="resena-estado">{{ resena.estado }}</td>
-                        <td>
-                            <button class="btn btn-primary btn-small btn-open-view-review">
-                                Ver
-                            </button>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                            <td class="resena-id">{{ resena.resena_id }}</td>
+                            <td class="resena-nombre-apellido">{{ resena.nombre_usuario }}</td>
+                            <td class="resena-reserva-id">{{ resena.reserva_id }}</td>
+                            <td class="resena-ambiente">{{ resena.puntuacion_ambiente }}</td>
+                            <td class="resena-servicio">{{ resena.puntuacion_servicio }}</td>
+                            <td class="resena-comida">{{ resena.puntuacion_comida }}</td>
+                            <td class="resena-fecha">{{ resena.fecha }}</td>
+                            <td class="resena-estado">{{ resena.estado }}</td>
+                            <td>
+                                <button class="btn btn-primary btn-small btn-open-view-review">
+                                    Ver
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No hay reseñas cargadas</td>
+                        </tr>
+                    {% endif %}
                 </tbody>
 
             </table>
