@@ -9,6 +9,15 @@ const inputs = {
     rol: form.querySelector("#filter-usuario-rol")
 };
 
+const formEditCompleto = document.getElementById('form-edit-user-completo');
+
+formEditCompleto.addEventListener('submit', (e) => {
+    const selectRol = document.getElementById('input-full-rol');
+    
+    if (selectRol.disabled) {
+        selectRol.disabled = false;
+    }
+});
 
 const addUserModal = createModal("modal-add-user");
 const editUserParcialModal = createModal("modal-edit-user-parcial");
@@ -32,15 +41,35 @@ document.querySelectorAll(".btn-open-edit-user-role").forEach(btn => {
 document.querySelectorAll(".btn-open-edit-completo").forEach(btn => {
     btn.addEventListener("click", (event) => {
         const row = event.currentTarget.closest("tr");
+        const idUsuarioFila = String(row.dataset.usuarioId);
+        const currentUserId = String(document.body.dataset.userId);
         
-        document.querySelector("#input-full-id").value = row.dataset.usuarioId;
+        document.querySelector("#input-full-id").value = idUsuarioFila;
         document.querySelector("#input-full-username").value = row.dataset.usuarioUsuario;
         document.querySelector("#input-full-nombre").value = row.dataset.nombre;
         document.querySelector("#input-full-apellido").value = row.dataset.apellido;
-        document.querySelector("#input-full-rol").value = row.dataset.rol;
         document.querySelector("#input-full-email").value = row.dataset.email;
         document.querySelector("#input-full-password").value = row.dataset.password;
+
         
+        const selectRol = document.querySelector("#input-full-rol");
+        selectRol.value = row.dataset.rol;
+
+        const btnBorrarEnModal = document.querySelector(".btn-delete-user-modal");
+
+        if (idUsuarioFila === currentUserId) {
+            selectRol.disabled = true;    
+            btnBorrarEnModal.style.display = 'none'; 
+        } else {
+            selectRol.disabled = false;      
+            btnBorrarEnModal.style.display = 'inline-block';
+        }
+        
+        const esUnicoAdmin = (document.querySelectorAll('[data-rol="admin"]').length === 1 && row.dataset.rol === 'admin');
+        if (esUnicoAdmin) {
+            selectRol.disabled = true; 
+        }
+
         editUserCompletoModal.open();
     });
 });
@@ -115,4 +144,22 @@ document.getElementById('btn-confirm-delete').addEventListener('click', () => {
 
 document.getElementById('btn-cancel-delete').addEventListener('click', () => {
     deleteModal.classList.add('hidden');
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const filas = document.querySelectorAll(".usuario-fila");
+    
+    const admins = Array.from(filas).filter(fila => fila.dataset.rol === 'admin');
+
+    if (admins.length === 1) {
+        const filaAdmin = admins[0];
+        
+        const btnCredenciales = filaAdmin.querySelector(".btn-open-edit-user-role");
+        if (btnCredenciales) btnCredenciales.style.display = 'none';
+        
+        const btnEditarCompleto = filaAdmin.querySelector(".btn-open-edit-completo");
+        if (btnEditarCompleto) btnEditarCompleto.style.display = 'none';
+        
+        console.log("Protección activada: Es el último administrador.");
+    }
 });
