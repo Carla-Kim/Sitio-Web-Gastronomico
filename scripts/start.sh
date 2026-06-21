@@ -24,19 +24,19 @@ if [ "$1" = "local" ]; then
     echo "Esperando MySQL..."
 
 until "$PYTHON" -c 'import mysql.connector
-    try:
-        mysql.connector.connect(
-            host="127.0.0.1",
-            user="flask_user",
-            password="flask_password",
-            port=3306
-        ).close()
-    except Exception:
-        import sys
-        sys.exit(1)
-    ' 2>/dev/null
+try:
+    mysql.connector.connect(
+        host="127.0.0.1",
+        user="flask_user",
+        password="flask_password",
+        port=3306
+    ).close()
+except Exception:
+    import sys
+    sys.exit(1)
+' 2>/dev/null
     do
-        echo "MySQL se está inicializando... esperando 2 segundos."
+        echo "MySQL se está inicializando..."
         sleep 2
     done
 
