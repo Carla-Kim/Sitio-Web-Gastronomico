@@ -56,6 +56,16 @@ def insert_reserva(fecha, email, nombre, apellido, dni, telefono, cantidad_perso
             insert_query, 
             (fecha, email, nombre, apellido, dni, telefono, cantidad_personas, comentario, estado)
         )
+
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas + %s WHERE estado = 'ocupada'",
+            (mesas_necesarias,)
+        )
+        cursor.execute(
+            "UPDATE Mesas SET cantidad_mesas = cantidad_mesas - %s WHERE estado = 'desocupada'",
+            (mesas_necesarias,)
+        )
+        
         conn.commit()
         return cursor.lastrowid
 
