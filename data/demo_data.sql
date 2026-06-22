@@ -1,6 +1,6 @@
 -- Usuarios
 INSERT IGNORE INTO Usuarios (usuario_id, nombre, apellido, nombre_usuario, email, contrasena, rol) VALUES 
-(1, 'El', 'Supremo', 'El_Supremo', 'el_Supremon@test.com', 'hashed_password_777', 'admin'),
+(1, 'Administrador', 'Sistema', 'admin', 'admin@admin.com', 'admin123', 'admin'),
 (2, 'Kevin', 'La Rocca', 'kevin_dev', 'kevin@test.com', 'hashed_password_123', 'admin'),
 (3, 'Carla', 'Kim', 'carla_admin', 'carla@test.com', 'hashed_password_456', 'admin'),
 (4, 'Ulfric', 'Stormcloak', 'ulfric_windhelm', 'ulfric@skyrim.com', 'hashed_password_456', 'cliente'),

@@ -168,7 +168,7 @@ def registrar_ingreso():
     
     try:
         url_api = f'http://localhost:5000/api/reservas/{id_reserva}/escanear'
-        response = requests.patch(url_api, timeout=5)
+        response = requests.patch(url_api, timeout=240)
         
         if response.status_code == 200:
             flash("Ingreso registrado con éxito.")
