@@ -91,9 +91,12 @@ def dashboard_menu():
             else:
                 response_productos.raise_for_status()
                 raw_data = response_productos.json()
-                lista_productos = raw_data if isinstance(raw_data, list) else raw_data.get('productos', [])
-                if not isinstance(lista_productos, list):
-                   lista_productos = [raw_data] if id_buscado else []
+                if id_buscado:
+                    lista_productos = [raw_data] if raw_data else []
+                else:
+                    lista_productos = raw_data if isinstance(raw_data, list) else raw_data.get('productos', [])
+                    if not isinstance(lista_productos, list):
+                        lista_productos = []
 
             for producto in lista_productos:
                 if not producto.get("imagen_url"):
