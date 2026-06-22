@@ -16,11 +16,11 @@
         <h1 class="hero-title">El arte de comer <br> bien</h1>
         <p class="hero-info">Una propuesta gastronómica que trasciende lo ordinario. Donde cada plato cuenta una historia y cada momento se convierte en un recuerdo imborrable.</p>
         <div class="hero-actions">
-            <a href="{{ url_for('reservas') }}" class="btn btn-reserva">RESERVÁ AHORA</a> 
-            <a href="{{ url_for('menu') }}" class="btn btn-menu">VER MENÚ</a> 
+            <a href="{{ url_for('landing.reservas') }}" class="btn btn-reserva">RESERVÁ AHORA</a> 
+            <a href="{{ url_for('landing.menu') }}" class="btn btn-menu">VER MENÚ</a> 
         </div>
         <div class="hero-scroll">
-            <a href="{{ url_for('index') }}#destacado"><span>DESCUBRIR</span>
+            <a href="{{ url_for('landing.index') }}#destacado"><span>DESCUBRIR</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"/>
             </svg></a>

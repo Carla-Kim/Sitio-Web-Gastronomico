@@ -11,13 +11,13 @@
 <body>
     <header>
         <nav>
-            <h1><a href="{{ url_for('index') }}">B A S H E R O S</a></h1>
+            <h1><a href="{{ url_for('landing.index') }}">B A S H E R O S</a></h1>
 
             <ul class="nav-menu">
-                <li><a href="{{ url_for('index') }}#nosotros">NOSOTROS</a></li>
-                <li><a href="{{ url_for('resenas') }}">RESEÑAS</a></li> <!-- cambiar URL cuando exista la pagina-->
-                <li><a href="{{ url_for('menu') }}">MENÚ</a></li>
-                <li class="reservar"><a href="{{ url_for('reservas') }}">RESERVAR</a></li>
+                <li><a href="{{ url_for('landing.index') }}#nosotros">NOSOTROS</a></li>
+                <li><a href="{{ url_for('landing.resenas') }}">RESEÑAS</a></li> <!-- cambiar URL cuando exista la pagina-->
+                <li><a href="{{ url_for('landing.menu') }}">MENÚ</a></li>
+                <li class="reservar"><a href="{{ url_for('landing.reservas') }}">RESERVAR</a></li>
             </ul>
 
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -38,10 +38,10 @@
                     </button>
                 </div>
                 <ul>
-                    <li><a href="{{ url_for('index') }}#nosotros">Nosotros</a></li>
-                    <li><a href="{{ url_for('resenas') }}">Reseñas</a></li>
-                    <li><a href="{{ url_for('menu') }}">Menú</a></li>
-                    <li class="reservar"><a href="{{ url_for('reservas') }}">Reservar</a></li>
+                    <li><a href="{{ url_for('landing.index') }}#nosotros">Nosotros</a></li>
+                    <li><a href="{{ url_for('landing.resenas') }}">Reseñas</a></li>
+                    <li><a href="{{ url_for('landing.menu') }}">Menú</a></li>
+                    <li class="reservar"><a href="{{ url_for('landing.reservas') }}">Reservar</a></li>
                 </ul>
             </div>
         </nav>

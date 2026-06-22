@@ -19,7 +19,7 @@
   {% endwith %}
   {% if reserva_id and not cancelada %}
   <p class="subtitulo">Para confirmar la cancelación de tu reserva, ingresá tu DNI</p>
-    <form method="POST" action="{{ url_for('pagina_cancelada') }}">
+    <form method="POST" action="{{ url_for('landing.pagina_cancelada') }}">
         <input type="hidden" name="id" value="{{ reserva_id }}">
         <div class="campo-dni">
             <label for="dni">DNI</label>
@@ -28,7 +28,7 @@
         <button type="submit" class="btn-cancelar">Confirmar cancelación</button>
     </form>
     {% endif %}
-    <a href="{{ url_for('index') }}" class="btn-volver">Volver al inicio</a>
+    <a href="{{ url_for('landing.index') }}" class="btn-volver">Volver al inicio</a>
 
 </div>
 

@@ -24,7 +24,7 @@
     <div class="tarjeta-resena">
         <p class="titulo-tarjeta">Calificá tu experiencia</p>
 
-        <form class="formulario" method="POST" action="{{ url_for('calificar') }}" novalidate>
+        <form class="formulario" method="POST" action="{{ url_for('landing.calificar') }}" novalidate>
 
             <input type="hidden" name="reserva_id" value="{{ reserva_id }}">
 
