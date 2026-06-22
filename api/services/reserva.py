@@ -23,9 +23,9 @@ def crear_reserva(data):
     comentario = data.get("comentario", None)
     estado = data.get("estado", "reservada")
 
-    if re.fullmatch(r'[A-Za-z0-9 áéíóúÁÉÍÓÚñÑüÜ\'´`-]+', nombre) is None or len(nombre) > 100:
+    if re.fullmatch(r'[A-Za-z0-9\sáéíóúÁÉÍÓÚñÑüÜ''-]+', nombre) is None or len(nombre) > 100:
         return 'nombre_invalido'
-    if re.fullmatch(r'[A-Za-z0-9 áéíóúÁÉÍÓÚñÑüÜ\'´`-]+', apellido) is None or len(apellido) > 100:
+    if re.fullmatch(r'[A-Za-z0-9\sáéíóúÁÉÍÓÚñÑüÜ\'´-]+', apellido) is None or len(apellido) > 100:
         return 'apellido_invalido'
     if re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is None or len(email) > 100:
         return 'email_invalido'

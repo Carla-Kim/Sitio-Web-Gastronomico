@@ -44,37 +44,6 @@ def buscar_usuario(id):
         print(f"No fue posible obtener el usuario. Error: {e}")
         return jsonify(ReturnErrors(500)), 500
 
-@usuarios_bp.route('/usuarios/credenciales', methods=['POST'])
-def mostrar_contrasena():
-    body = request.get_json()
-    if not body or 'email' not in body:
-        return jsonify(ReturnErrors(400)), 400
-    try:
-        contrasena = user.obtener_contrasena_por_email(body['email'])
-        return jsonify(contrasena), 200
-    except ValueError as val_err:
-        if str(val_err) == "NOT_FOUND":
-            return jsonify(ReturnErrors(404)), 404
-        return jsonify(ReturnErrors(400)), 400
-    except Exception as e:
-        print(f"No fue posible obtener la contraseña. Error: {e}")
-        return jsonify(ReturnErrors(500)), 500
-
-@usuarios_bp.route('/usuarios/rol', methods=['POST'])
-def mostrar_rol():
-    body = request.get_json()
-    if not body or 'email' not in body:
-        return jsonify(ReturnErrors(400)), 400
-    try:
-        rol = user.obtener_rol_por_email(body['email'])
-        return jsonify(rol), 200
-    except ValueError as val_err:
-        if str(val_err) == "NOT_FOUND":
-            return jsonify(ReturnErrors(404)), 404
-        return jsonify(ReturnErrors(400)), 400
-    except Exception as e:
-        print(f"No fue posible obtener el rol del usuario. Error: {e}")
-        return jsonify(ReturnErrors(500)), 500
 
 @usuarios_bp.route('/usuarios', methods=['POST'])
 def crear_usuario():
